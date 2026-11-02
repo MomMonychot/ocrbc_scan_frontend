@@ -13,34 +13,34 @@ function selectLanguage(lang) {
 </script>
 
 <template>
-  <div class="inline-flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200 text-xs font-medium h-10 select-none">
+  <div class="inline-flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200 select-none shrink-0 h-10">
     <button
       type="button"
       @click="selectLanguage('km')"
       :class="[
-        'h-8 min-w-[94px] px-3 rounded-lg transition-all duration-150 inline-flex items-center justify-center gap-1.5 text-xs font-semibold whitespace-nowrap',
+        'h-8 w-11 rounded-lg transition-all duration-150 inline-flex items-center justify-center text-xl shrink-0',
         currentLang === 'km'
-          ? 'bg-white text-gov-primary shadow-sm border border-slate-200/80'
-          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+          ? 'bg-white shadow-sm border border-slate-200/80 scale-[1.02]'
+          : 'opacity-50 hover:opacity-100 hover:bg-slate-200/60'
       ]"
+      title="ភាសាខ្មែរ (Khmer)"
       aria-label="ប្តូរទៅភាសាខ្មែរ"
     >
-      <span class="text-xs shrink-0">🇰🇭</span>
-      <span class="font-khmer">ភាសាខ្មែរ</span>
+      <span class="leading-none filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">🇰🇭</span>
     </button>
     <button
       type="button"
       @click="selectLanguage('en')"
       :class="[
-        'h-8 min-w-[94px] px-3 rounded-lg transition-all duration-150 inline-flex items-center justify-center gap-1.5 text-xs font-semibold whitespace-nowrap',
+        'h-8 w-11 rounded-lg transition-all duration-150 inline-flex items-center justify-center text-xl shrink-0',
         currentLang === 'en'
-          ? 'bg-white text-gov-primary shadow-sm border border-slate-200/80'
-          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+          ? 'bg-white shadow-sm border border-slate-200/80 scale-[1.02]'
+          : 'opacity-50 hover:opacity-100 hover:bg-slate-200/60'
       ]"
+      title="English"
       aria-label="Switch to English"
     >
-      <span class="text-xs shrink-0">🇬🇧</span>
-      <span class="font-latin">English</span>
+      <span class="leading-none filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">🇬🇧</span>
     </button>
   </div>
 </template>
