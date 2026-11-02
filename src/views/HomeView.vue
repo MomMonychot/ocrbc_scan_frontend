@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import { fetchSystemHealth } from '../services/api_client'
 
 const { t, locale } = useI18n()
@@ -62,12 +61,6 @@ onMounted(() => {
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
             Zero-Data-Retention Enforced
           </span>
-        </div>
-
-        <!-- Language toggle for quick access in dashboard view -->
-        <div class="flex items-center gap-3">
-          <span class="text-xs text-gov-text-muted font-medium">{{ t('common.language') }}:</span>
-          <LanguageSwitcher />
         </div>
       </div>
 
