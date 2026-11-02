@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Force light mode styles across the document */
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    font-family: 'Google Sans', 'Kantumruy Pro', 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #F8FAFC;
+    color: #0F172A;
+  }
+
+  /* Specific typography styling for Khmer text readability */
+  [lang="km"] {
+    font-family: 'Kantumruy Pro', 'Google Sans', 'Inter', sans-serif;
+    line-height: 1.65;
+  }
+
+  /* Specific typography styling for English/Latin UI */
+  [lang="en"] {
+    font-family: 'Google Sans', 'Inter', 'Kantumruy Pro', sans-serif;
+    line-height: 1.5;
+  }
+}
+
+/* Custom utility classes for government tech UI */
+@layer components {
+  .gov-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide border;
+  }
+}

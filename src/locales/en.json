@@ -1,0 +1,105 @@
+{
+  "header": {
+    "republic": "KINGDOM OF CAMBODIA",
+    "motto": "NATION RELIGION KING",
+    "ministry": "MINISTRY OF INTERIOR",
+    "district_office": "District Civil Administration & Document Verification Portal"
+  },
+  "nav": {
+    "home": "Overview",
+    "verify": "Document Verification",
+    "standards": "Security Standards",
+    "guidelines": "User Guide"
+  },
+  "home": {
+    "badge": "District Governance • Secure OCR Architecture v1.0",
+    "title": "Document Processing & OCR Verification System",
+    "subtitle": "Official district-level administrative platform for rapid extraction, validation, and tamper-evident verification of civil status certificates, birth records, and administrative documents.",
+    "start_cta": "Start Document Processing",
+    "secondary_cta": "View Technical Guidelines",
+    "features": {
+      "zdr_title": "Zero-Data-Retention (ZDR) Baseline",
+      "zdr_desc": "Citizen identity buffers are securely zeroized from volatile memory immediately after inference. Zero persistent storage of civil documents.",
+      "accuracy_title": "Dual-Script Recognition Engine",
+      "accuracy_desc": "High-fidelity OCR model optimized for official Khmer administrative typography (Kantumruy) and Latin certificate records.",
+      "tamper_title": "Cryptographic Integrity Auditing",
+      "tamper_desc": "SHA-256 ephemeral fingerprint verification detects document tampering without exposing citizen Personally Identifiable Information."
+    },
+    "metrics": {
+      "retention_title": "Storage Retention",
+      "retention_val": "0 Days (Strict ZDR)",
+      "latency_title": "Inference Latency",
+      "latency_val": "< 1.8 Seconds",
+      "encryption_title": "Transport Security",
+      "encryption_val": "HSTS / Strict TLS"
+    }
+  },
+  "upload": {
+    "title": "Document Pre-Flight Quality Gate",
+    "subtitle": "Upload civil registration document (Birth Certificate, National ID) for pre-flight quality verification and OCR alignment.",
+    "dropzone_title": "Drag & drop document here, or browse file",
+    "dropzone_hint": "Supports PNG, JPEG, and PDF documents up to 15 MB",
+    "processing": "Evaluating document sharpness, exposure, and readability in volatile RAM...",
+    "inspect_success": "Document passed pre-flight quality check",
+    "proceed_cta": "Proceed to Verification Canvas",
+    "reupload_cta": "Upload Different Document",
+    "quality_error_title": "Pre-Flight Quality Gate Rejection",
+    "quality_error_message": "This file has quality issues (blur, dark, or incomplete). Please retake the photo.",
+    "quality_metrics": {
+      "confidence": "Quality Score",
+      "sharpness": "Sharpness (Laplacian)",
+      "brightness": "Exposure & Brightness",
+      "status": "Quality Status"
+    }
+  },
+  "verification": {
+    "title": "Civil Registration Document Verification & Alignment",
+    "subtitle": "Interactive bounding box alignment and side-by-side municipal database cross-referencing.",
+    "canvas_header": "Document Preview & Bounding Boxes",
+    "advanced_mode": "Advanced Coordinate Editing",
+    "standard_mode": "Standard Alignment",
+    "zoom_in": "Zoom In",
+    "zoom_out": "Zoom Out",
+    "reset_view": "Reset View",
+    "cross_reference_header": "Extracted Text vs Municipal Reference",
+    "officer_review_banner": "Administrative Officer Review Required",
+    "verified_banner": "Identity Authenticated Against Municipal Reference",
+    "manual_review_warning": "One or more fields have discrepancies or similarity below 85%. Please review and verify each highlighted field before approval.",
+    "verified_success": "All extracted fields match municipal civil registry records (confidence >= 85%). Minor OCR misreadings have been auto-corrected.",
+    "field_headers": {
+      "field_name": "Field",
+      "extracted_ocr": "Extracted OCR Text",
+      "municipal_ref": "Official Municipal Record",
+      "similarity": "Match %",
+      "status": "Verification State"
+    },
+    "fields": {
+      "national_id": "National ID Number",
+      "certificate_no": "Certificate Number",
+      "full_name_km": "Full Name (Khmer)",
+      "full_name_en": "Full Name (Latin)",
+      "district_office": "District Administration Office",
+      "birth_date": "Date of Birth"
+    },
+    "status_labels": {
+      "verified": "Verified (>=85%)",
+      "corrected": "Auto-Corrected",
+      "review_required": "Review Mandated (<85%)",
+      "not_found": "No Reference Found"
+    },
+    "actions": {
+      "re_run_verify": "Re-Cross Reference",
+      "approve_export": "Approve and Export Record",
+      "back_to_upload": "Upload New Document",
+      "export_success": "Document successfully approved! Local verification report downloaded.",
+      "export_downloading": "Generating official tamper-evident receipt..."
+    }
+  },
+  "common": {
+    "language": "Language",
+    "english": "English",
+    "khmer": "ភាសាខ្មែរ",
+    "status_operational": "System Operational",
+    "confidentiality_notice": "Official District Administrative System. All operations comply with national civil registration privacy protocols."
+  }
+}
