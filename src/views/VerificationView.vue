@@ -236,9 +236,9 @@ onMounted(() => {
   <div class="min-h-screen bg-gov-surface py-6 sm:py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-8">
       
-      <!-- Top Title & Navigation Ribbon -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-gov-border gap-4">
-        <div>
+      <!-- Top Title & Navigation Ribbon with deterministic min-height -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-gov-border gap-4 sm:min-h-[88px]">
+        <div class="min-w-0">
           <div class="flex items-center gap-2 mb-1">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-gov-primary border border-blue-200">
               {{ t('home.badge') }}
@@ -248,10 +248,10 @@ onMounted(() => {
               ZDR-RAM Active
             </span>
           </div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight truncate">
             {{ t('verification.title') }}
           </h1>
-          <p class="text-xs sm:text-sm text-gov-text-secondary mt-0.5">
+          <p class="text-xs sm:text-sm text-gov-text-secondary mt-0.5 truncate">
             {{ t('verification.subtitle') }}
           </p>
         </div>
@@ -259,14 +259,14 @@ onMounted(() => {
         <div class="flex items-center gap-3 shrink-0">
           <router-link
             to="/"
-            class="h-9 px-4 rounded-xl text-xs font-semibold text-slate-600 bg-white hover:bg-slate-50 border border-gov-border shadow-gov-sm transition-all inline-flex items-center justify-center whitespace-nowrap select-none"
+            class="h-9 px-4 rounded-xl text-xs font-semibold text-slate-600 bg-white hover:bg-slate-50 border border-gov-border shadow-gov-sm transition-all inline-flex items-center justify-center whitespace-nowrap select-none w-auto"
           >
             ← {{ t('nav.home') }}
           </router-link>
           <button
             v-if="uploadedFile"
             @click="handleUploadNewDocument"
-            class="h-9 px-4 rounded-xl text-xs font-semibold text-gov-primary bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all inline-flex items-center justify-center whitespace-nowrap select-none"
+            class="h-9 px-4 rounded-xl text-xs font-semibold text-gov-primary bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all inline-flex items-center justify-center whitespace-nowrap select-none w-auto"
           >
             {{ t('verification.actions.back_to_upload') }}
           </button>
@@ -284,17 +284,17 @@ onMounted(() => {
       <!-- State 2: Side-by-Side Interactive Verification Workspace -->
       <div v-else class="space-y-6">
         
-        <!-- Status Notification Banner -->
+        <!-- Status Notification Banner with deterministic min-height -->
         <div
           v-if="verificationResult"
           :class="[
-            'p-4 rounded-2xl border transition-all flex items-start sm:items-center justify-between gap-4',
+            'p-4 rounded-2xl border transition-all flex items-center justify-between gap-4 min-h-[72px]',
             verificationResult.requires_manual_review
               ? 'bg-amber-50/90 border-amber-300 text-amber-950'
               : 'bg-emerald-50/90 border-emerald-300 text-emerald-950'
           ]"
         >
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 min-w-0">
             <div
               :class="[
                 'w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm',
@@ -310,15 +310,15 @@ onMounted(() => {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <div>
-              <h3 class="text-sm font-bold">
+            <div class="min-w-0">
+              <h3 class="text-sm font-bold truncate">
                 {{
                   verificationResult.requires_manual_review
                     ? t('verification.officer_review_banner')
                     : t('verification.verified_banner')
                 }}
               </h3>
-              <p class="text-xs opacity-90">
+              <p class="text-xs opacity-90 truncate">
                 {{
                   verificationResult.requires_manual_review
                     ? t('verification.manual_review_warning')
@@ -328,7 +328,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="hidden sm:flex items-center gap-2">
+          <div class="hidden sm:flex items-center gap-2 shrink-0">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Confidence:</span>
             <span
               :class="[
@@ -349,13 +349,13 @@ onMounted(() => {
           <!-- ================================================================= -->
           <div class="lg:col-span-6 bg-white rounded-2xl border border-gov-border shadow-gov-md p-5 flex flex-col space-y-4">
             
-            <!-- Canvas Toolbar -->
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <!-- Canvas Toolbar with deterministic height -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 h-11">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-gov-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <h2 class="text-sm font-bold text-slate-900">
+                <h2 class="text-sm font-bold text-slate-900 whitespace-nowrap">
                   {{ t('verification.canvas_header') }}
                 </h2>
               </div>
@@ -574,13 +574,13 @@ onMounted(() => {
           <div class="lg:col-span-6 bg-white rounded-2xl border border-gov-border shadow-gov-md p-5 flex flex-col justify-between space-y-6">
             
             <div class="space-y-4">
-              <!-- Pane Header -->
-              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <!-- Pane Header with deterministic height matching Canvas Toolbar -->
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100 h-11">
                 <div class="flex items-center gap-2">
                   <svg class="w-4 h-4 text-gov-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <h2 class="text-sm font-bold text-slate-900">
+                  <h2 class="text-sm font-bold text-slate-900 whitespace-nowrap">
                     {{ t('verification.cross_reference_header') }}
                   </h2>
                 </div>
@@ -598,33 +598,33 @@ onMounted(() => {
                 </button>
               </div>
 
-              <!-- Field Comparison Form List -->
+              <!-- Field Comparison Form List with strictly locked card heights -->
               <div class="space-y-3">
                 <div
                   v-for="box in boundingBoxes"
                   :key="box.key"
                   @click="selectField(box.key)"
                   :class="[
-                    'p-3.5 rounded-xl border transition-all cursor-pointer',
+                    'p-3 rounded-xl border transition-all cursor-pointer',
                     selectedFieldKey === box.key ? 'ring-2 ring-gov-primary/20 shadow-sm' : '',
                     getFieldMatchStatus(box.key).color
                   ]"
                 >
-                  <!-- Field Header -->
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-                      <span class="text-xs font-bold text-slate-900">
+                  <!-- Field Header with fixed height -->
+                  <div class="flex items-center justify-between mb-1.5 h-6">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
+                      <span class="text-xs font-bold text-slate-900 truncate">
                         {{ t(box.labelKey) }}
                       </span>
                     </div>
 
-                    <!-- Match Status Badge -->
-                    <div class="flex items-center gap-2">
+                    <!-- Match Status Badge with fixed height -->
+                    <div class="flex items-center gap-2 shrink-0">
                       <span
                         v-if="verificationResult"
                         :class="[
-                          'px-2 py-0.5 rounded-full text-[10px] font-bold border',
+                          'h-5 px-2 rounded-full text-[10px] font-bold border inline-flex items-center justify-center whitespace-nowrap',
                           getFieldMatchStatus(box.key).badgeColor
                         ]"
                       >
@@ -642,27 +642,27 @@ onMounted(() => {
                     </div>
                   </div>
 
-                  <!-- Side-by-Side Values Grid -->
+                  <!-- Side-by-Side Values Grid with fixed box height to prevent jumping -->
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     <!-- Extracted OCR Input (Editable) -->
-                    <div class="bg-white/90 p-2.5 rounded-lg border border-slate-200">
-                      <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">
+                    <div class="bg-white/90 p-2 rounded-lg border border-slate-200 h-14 flex flex-col justify-between">
+                      <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">
                         {{ t('verification.field_headers.extracted_ocr') }}
                       </label>
                       <input
                         v-model="extractedFields[box.key]"
                         type="text"
-                        class="w-full text-xs font-bold text-slate-900 bg-transparent focus:outline-none focus:ring-1 focus:ring-gov-primary rounded px-1"
+                        class="w-full text-xs font-bold text-slate-900 bg-transparent focus:outline-none focus:ring-1 focus:ring-gov-primary rounded px-1 h-6"
                         @blur="triggerMunicipalCrossReference"
                       />
                     </div>
 
                     <!-- Official Reference (Read-Only) -->
-                    <div class="bg-slate-100/90 p-2.5 rounded-lg border border-slate-200">
-                      <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">
+                    <div class="bg-slate-100/90 p-2 rounded-lg border border-slate-200 h-14 flex flex-col justify-between">
+                      <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">
                         {{ t('verification.field_headers.municipal_ref') }}
                       </label>
-                      <div class="text-xs font-bold text-slate-800 truncate px-1">
+                      <div class="text-xs font-bold text-slate-800 truncate px-1 h-6 flex items-center">
                         {{ getFieldMatchStatus(box.key).refValue || '—' }}
                       </div>
                     </div>
@@ -671,15 +671,15 @@ onMounted(() => {
               </div>
 
               <!-- Database Connection & Audit Hash Telemetry -->
-              <div v-if="verificationResult" class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-[11px] space-y-1">
+              <div v-if="verificationResult" class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-[11px] space-y-1 h-16 flex flex-col justify-center">
                 <div class="flex justify-between items-center text-slate-600">
-                  <span class="font-medium">Master Registry Record:</span>
-                  <span class="font-bold text-slate-800">
+                  <span class="font-medium truncate">Master Registry Record:</span>
+                  <span class="font-bold text-slate-800 shrink-0">
                     {{ verificationResult.matched_records?.[0]?.national_id ? 'Authenticated (1 match)' : 'No exact record' }}
                   </span>
                 </div>
                 <div class="flex justify-between items-center text-slate-500 font-mono text-[10px]">
-                  <span>SHA-256 Audit:</span>
+                  <span class="shrink-0">SHA-256 Audit:</span>
                   <span class="truncate max-w-[200px]" :title="verificationResult.audit_hash">
                     {{ verificationResult.audit_hash }}
                   </span>
@@ -696,17 +696,17 @@ onMounted(() => {
                 <span>{{ exportNotification }}</span>
               </div>
 
-              <div class="flex items-center justify-between gap-4">
-                <div class="text-xs text-slate-500">
+              <div class="flex items-center justify-between gap-4 h-12">
+                <div class="text-xs text-slate-500 truncate">
                   Zero Data Retention: Results are rendered locally without disk retention.
                 </div>
 
                 <button
                   type="button"
                   @click="handleApproveAndExport"
-                  class="h-12 min-h-[48px] px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-emerald-200 inline-flex items-center justify-center gap-2 shrink-0 whitespace-nowrap select-none"
+                  class="h-12 min-h-[48px] px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-emerald-200 inline-flex items-center justify-center gap-2 shrink-0 whitespace-nowrap select-none w-auto"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                   </svg>
                   <span>{{ t('verification.actions.approve_export') }}</span>

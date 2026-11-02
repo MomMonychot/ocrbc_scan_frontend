@@ -9,49 +9,44 @@
   }
 
   html {
-    /* Harmonized bilingual font stack: Google Sans & Kantumruy Pro with fallback */
-    font-family: 'Google Sans', 'Kantumruy Pro', 'Inter', system-ui, -apple-system, sans-serif;
+    /* Unified bilingual font stack: Kantumruy Pro first to eliminate optical size discrepancies */
+    font-family: 'Kantumruy Pro', 'Google Sans', 'Inter', system-ui, -apple-system, sans-serif;
     background-color: #F8FAFC;
     color: #0F172A;
-    /* Unified line-height to eliminate vertical layout jumps when toggling languages */
-    line-height: 1.55;
+    /* Invariant line-height so glyph rendering never alters element box size */
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Optical size and line-height harmonization for Khmer */
-  [lang="km"] {
-    font-family: 'Kantumruy Pro', 'Google Sans', 'Inter', sans-serif;
-    line-height: 1.55;
-    letter-spacing: -0.01em;
-  }
-
-  /* Optical size and line-height harmonization for Latin/English */
+  /* Ensure Khmer and English share identical typography metrics, sizing, and vertical baselines */
+  [lang="km"],
   [lang="en"] {
-    font-family: 'Google Sans', 'Inter', 'Kantumruy Pro', sans-serif;
-    line-height: 1.55;
+    font-family: 'Kantumruy Pro', 'Google Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
     letter-spacing: normal;
   }
 
   /* Ensure headings have stable vertical cadences in both languages */
   h1, h2, h3, h4, h5, h6 {
-    line-height: 1.3;
+    line-height: 1.25;
   }
 }
 
 /* Custom utility classes for government tech UI */
 @layer components {
-  /* Standardized button styles with deterministic heights to prevent resize shifts */
+  /* Standardized button styles with deterministic heights and horizontal expansion for long text */
   .gov-btn-primary {
-    @apply inline-flex items-center justify-center font-semibold rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white shadow-gov-sm hover:shadow-gov-md transition-all duration-150 active:scale-[0.99] whitespace-nowrap select-none;
+    @apply h-12 min-h-[48px] px-7 inline-flex items-center justify-center font-semibold rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white shadow-gov-sm hover:shadow-gov-md transition-all duration-150 active:scale-[0.99] whitespace-nowrap select-none w-auto;
   }
 
   .gov-btn-secondary {
-    @apply inline-flex items-center justify-center font-semibold rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 shadow-gov-sm transition-all duration-150 active:scale-[0.99] whitespace-nowrap select-none;
+    @apply h-12 min-h-[48px] px-6 inline-flex items-center justify-center font-semibold rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 shadow-gov-sm transition-all duration-150 active:scale-[0.99] whitespace-nowrap select-none w-auto;
   }
 
   .gov-btn-success {
-    @apply inline-flex items-center justify-center font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-gov-sm hover:shadow-gov-md transition-all duration-150 active:scale-[0.99] whitespace-nowrap select-none;
+    @apply h-12 min-h-[48px] px-8 inline-flex items-center justify-center font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-gov-sm hover:shadow-gov-md transition-all duration-150 active:scale-[0.99] whitespace-nowrap select-none w-auto;
   }
 
   .gov-badge {

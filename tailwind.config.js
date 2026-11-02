@@ -9,10 +9,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        // Primary unified font stack: Google Sans for Latin glyphs, Kantumruy Pro for Khmer glyphs
-        sans: ['"Google Sans"', '"Kantumruy Pro"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        // Unified bilingual font stack: Kantumruy Pro first to guarantee identical optical size, metrics & heights across Khmer & English
+        sans: ['"Kantumruy Pro"', '"Google Sans"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
         khmer: ['"Kantumruy Pro"', 'sans-serif'],
-        latin: ['"Google Sans"', 'Inter', 'system-ui', 'sans-serif'],
+        latin: ['"Kantumruy Pro"', '"Google Sans"', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         // High-contrast, accessibility-focused government palette

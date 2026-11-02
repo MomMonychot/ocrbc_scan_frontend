@@ -69,7 +69,7 @@ onMounted(() => {
         
         <!-- Left: Portal Title, Value Proposition & Primary CTA -->
         <div class="lg:col-span-7 space-y-6">
-          <div class="space-y-4">
+          <div class="space-y-4 min-h-[170px] sm:min-h-[190px] lg:min-h-[200px] flex flex-col justify-start">
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gov-primary tracking-tight leading-[1.25]">
               {{ t('home.title') }}
             </h1>
@@ -84,7 +84,7 @@ onMounted(() => {
             <button
               type="button"
               @click="handleStartProcessing"
-              class="h-12 min-h-[48px] px-7 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-semibold text-sm sm:text-base shadow-gov-md hover:shadow-gov-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200 active:scale-[0.99] inline-flex items-center justify-center gap-3 whitespace-nowrap select-none"
+              class="h-12 min-h-[48px] px-7 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-semibold text-sm sm:text-base shadow-gov-md hover:shadow-gov-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200 active:scale-[0.99] inline-flex items-center justify-center gap-3 whitespace-nowrap select-none w-auto"
             >
               <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -95,7 +95,7 @@ onMounted(() => {
             <!-- Secondary Documentation Action -->
             <a
               href="#security-architecture"
-              class="h-12 min-h-[48px] px-6 rounded-xl bg-white hover:bg-slate-50 text-gov-text-primary font-semibold text-sm sm:text-base border border-gov-border shadow-gov-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-slate-300 inline-flex items-center justify-center gap-2 whitespace-nowrap select-none"
+              class="h-12 min-h-[48px] px-6 rounded-xl bg-white hover:bg-slate-50 text-gov-text-primary font-semibold text-sm sm:text-base border border-gov-border shadow-gov-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-slate-300 inline-flex items-center justify-center gap-2 whitespace-nowrap select-none w-auto"
             >
               <svg class="w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -227,48 +227,54 @@ onMounted(() => {
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
           <!-- Pillar 1: Zero Data Retention -->
-          <div class="bg-white p-6 rounded-2xl border border-gov-border shadow-gov-sm hover:shadow-gov-md transition-shadow">
-            <div class="w-12 h-12 rounded-xl bg-blue-50 text-gov-primary flex items-center justify-center mb-5">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
+          <div class="bg-white p-6 rounded-2xl border border-gov-border shadow-gov-sm hover:shadow-gov-md transition-shadow flex flex-col justify-between h-full">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-blue-50 text-gov-primary flex items-center justify-center mb-5 shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2 min-h-[3.25rem] flex items-center">
+                {{ t('home.features.zdr_title') }}
+              </h3>
             </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2">
-              {{ t('home.features.zdr_title') }}
-            </h3>
-            <p class="text-sm text-gov-text-secondary leading-relaxed">
+            <p class="text-sm text-gov-text-secondary leading-relaxed min-h-[4.5rem] flex-1">
               {{ t('home.features.zdr_desc') }}
             </p>
           </div>
 
           <!-- Pillar 2: Bilingual Typography & Model Accuracy -->
-          <div class="bg-white p-6 rounded-2xl border border-gov-border shadow-gov-sm hover:shadow-gov-md transition-shadow">
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-5">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-              </svg>
+          <div class="bg-white p-6 rounded-2xl border border-gov-border shadow-gov-sm hover:shadow-gov-md transition-shadow flex flex-col justify-between h-full">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-5 shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2 min-h-[3.25rem] flex items-center">
+                {{ t('home.features.accuracy_title') }}
+              </h3>
             </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2">
-              {{ t('home.features.accuracy_title') }}
-            </h3>
-            <p class="text-sm text-gov-text-secondary leading-relaxed">
+            <p class="text-sm text-gov-text-secondary leading-relaxed min-h-[4.5rem] flex-1">
               {{ t('home.features.accuracy_desc') }}
             </p>
           </div>
 
           <!-- Pillar 3: Cryptographic Integrity -->
-          <div class="bg-white p-6 rounded-2xl border border-gov-border shadow-gov-sm hover:shadow-gov-md transition-shadow">
-            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center mb-5">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
+          <div class="bg-white p-6 rounded-2xl border border-gov-border shadow-gov-sm hover:shadow-gov-md transition-shadow flex flex-col justify-between h-full">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center mb-5 shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2 min-h-[3.25rem] flex items-center">
+                {{ t('home.features.tamper_title') }}
+              </h3>
             </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2">
-              {{ t('home.features.tamper_title') }}
-            </h3>
-            <p class="text-sm text-gov-text-secondary leading-relaxed">
+            <p class="text-sm text-gov-text-secondary leading-relaxed min-h-[4.5rem] flex-1">
               {{ t('home.features.tamper_desc') }}
             </p>
           </div>

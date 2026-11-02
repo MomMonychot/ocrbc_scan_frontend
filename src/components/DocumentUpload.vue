@@ -115,8 +115,8 @@ function resetUpload() {
 
 <template>
   <div class="bg-white rounded-2xl border border-gov-border shadow-gov-md p-6 sm:p-8 max-w-3xl mx-auto">
-    <!-- Header -->
-    <div class="mb-6">
+    <!-- Header with deterministic min-height to prevent dropzone shifting -->
+    <div class="mb-6 sm:min-h-[72px] flex flex-col justify-start">
       <div class="flex items-center gap-2 mb-2">
         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-gov-primary border border-blue-200">
           <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,13 +147,13 @@ function resetUpload() {
       @drop="onDrop"
       @click="triggerFileSelect"
       :class="[
-        'border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200',
+        'border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer transition-all duration-200 min-h-[280px] flex flex-col items-center justify-center',
         isDragging
           ? 'border-gov-primary bg-blue-50/70 scale-[1.01]'
           : 'border-slate-300 hover:border-gov-primary hover:bg-slate-50/80 bg-slate-50/40'
       ]"
     >
-      <div class="mx-auto w-16 h-16 rounded-2xl bg-blue-50 text-gov-primary flex items-center justify-center mb-4 shadow-sm">
+      <div class="mx-auto w-16 h-16 rounded-2xl bg-blue-50 text-gov-primary flex items-center justify-center mb-4 shadow-sm shrink-0">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
         </svg>
@@ -162,18 +162,18 @@ function resetUpload() {
       <p class="text-base font-semibold text-slate-800 mb-1">
         {{ t('upload.dropzone_title') }}
       </p>
-      <p class="text-xs text-slate-500 max-w-sm mx-auto mb-4">
+      <p class="text-xs text-slate-500 max-w-sm mx-auto mb-4 min-h-[20px] flex items-center justify-center">
         {{ t('upload.dropzone_hint') }}
       </p>
 
       <button
         type="button"
-        class="h-9 px-4 rounded-xl bg-gov-primary text-white text-xs font-semibold hover:bg-gov-primary-hover shadow-sm transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap select-none"
+        class="h-10 px-5 rounded-xl bg-gov-primary text-white text-xs font-semibold hover:bg-gov-primary-hover shadow-sm transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap select-none w-auto"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
-        {{ t('upload.browse_file') }}
+        <span>{{ t('upload.browse_file') }}</span>
       </button>
     </div>
 
@@ -285,18 +285,18 @@ function resetUpload() {
           </span>
         </div>
 
-        <!-- Metrics Grid -->
+        <!-- Metrics Grid with deterministic card heights -->
         <div class="grid grid-cols-3 gap-2 text-xs">
-          <div class="bg-white p-2.5 rounded-xl border border-emerald-100">
-            <div class="text-slate-400 text-[10px]">{{ t('upload.quality_metrics.sharpness') }}</div>
-            <div class="font-bold text-emerald-700">{{ inspectResult.sharpness_score }}% (var: {{ inspectResult.laplacian_variance }})</div>
+          <div class="bg-white p-2.5 rounded-xl border border-emerald-100 h-16 flex flex-col justify-center">
+            <div class="text-slate-400 text-[10px] truncate">{{ t('upload.quality_metrics.sharpness') }}</div>
+            <div class="font-bold text-emerald-700 truncate">{{ inspectResult.sharpness_score }}% (var: {{ inspectResult.laplacian_variance }})</div>
           </div>
-          <div class="bg-white p-2.5 rounded-xl border border-emerald-100">
-            <div class="text-slate-400 text-[10px]">{{ t('upload.quality_metrics.brightness') }}</div>
-            <div class="font-bold text-emerald-700">{{ inspectResult.brightness_score }}% (mean: {{ inspectResult.mean_brightness }})</div>
+          <div class="bg-white p-2.5 rounded-xl border border-emerald-100 h-16 flex flex-col justify-center">
+            <div class="text-slate-400 text-[10px] truncate">{{ t('upload.quality_metrics.brightness') }}</div>
+            <div class="font-bold text-emerald-700 truncate">{{ inspectResult.brightness_score }}% (mean: {{ inspectResult.mean_brightness }})</div>
           </div>
-          <div class="bg-white p-2.5 rounded-xl border border-emerald-100">
-            <div class="text-slate-400 text-[10px]">CELERY ASYNC TASK</div>
+          <div class="bg-white p-2.5 rounded-xl border border-emerald-100 h-16 flex flex-col justify-center">
+            <div class="text-slate-400 text-[10px] truncate">CELERY ASYNC TASK</div>
             <div class="font-mono text-slate-800 truncate" :title="inspectResult.task_id || 'dispatched'">
               {{ inspectResult.task_id ? inspectResult.task_id.substring(0, 10) + '...' : 'active' }}
             </div>
