@@ -256,17 +256,17 @@ onMounted(() => {
           </p>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 shrink-0">
           <router-link
             to="/"
-            class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 bg-white hover:bg-slate-50 border border-gov-border shadow-gov-sm transition-all"
+            class="h-9 px-4 rounded-xl text-xs font-semibold text-slate-600 bg-white hover:bg-slate-50 border border-gov-border shadow-gov-sm transition-all inline-flex items-center justify-center whitespace-nowrap select-none"
           >
             ← {{ t('nav.home') }}
           </router-link>
           <button
             v-if="uploadedFile"
             @click="handleUploadNewDocument"
-            class="px-4 py-2 rounded-xl text-xs font-semibold text-gov-primary bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all"
+            class="h-9 px-4 rounded-xl text-xs font-semibold text-gov-primary bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all inline-flex items-center justify-center whitespace-nowrap select-none"
           >
             {{ t('verification.actions.back_to_upload') }}
           </button>
@@ -362,10 +362,10 @@ onMounted(() => {
 
               <!-- Controls: Zoom & Mode Toggle -->
               <div class="flex items-center gap-2">
-                <div class="inline-flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs">
+                <div class="inline-flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs h-8">
                   <button
                     @click="zoomOut"
-                    class="p-1 hover:bg-white rounded text-slate-600 hover:text-slate-900"
+                    class="w-7 h-7 flex items-center justify-center hover:bg-white rounded text-slate-600 hover:text-slate-900 transition-colors"
                     title="Zoom Out"
                   >
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -377,7 +377,7 @@ onMounted(() => {
                   </span>
                   <button
                     @click="zoomIn"
-                    class="p-1 hover:bg-white rounded text-slate-600 hover:text-slate-900"
+                    class="w-7 h-7 flex items-center justify-center hover:bg-white rounded text-slate-600 hover:text-slate-900 transition-colors"
                     title="Zoom In"
                   >
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -386,7 +386,7 @@ onMounted(() => {
                   </button>
                   <button
                     @click="resetZoom"
-                    class="px-1.5 py-0.5 text-[10px] text-slate-500 hover:text-slate-900 border-l border-slate-200"
+                    class="h-7 px-2 text-[10px] text-slate-500 hover:text-slate-900 border-l border-slate-200 inline-flex items-center justify-center whitespace-nowrap select-none font-medium transition-colors"
                   >
                     {{ t('verification.reset_view') }}
                   </button>
@@ -397,7 +397,7 @@ onMounted(() => {
                   type="button"
                   @click="isAdvancedMode = !isAdvancedMode"
                   :class="[
-                    'px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all',
+                    'h-8 px-3 rounded-lg text-xs font-semibold border transition-all inline-flex items-center justify-center whitespace-nowrap select-none',
                     isAdvancedMode
                       ? 'bg-gov-primary text-white border-gov-primary shadow-sm'
                       : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
@@ -557,7 +557,7 @@ onMounted(() => {
                 :key="b.key"
                 @click="selectField(b.key)"
                 :class="[
-                  'px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-all',
+                  'h-7 px-2.5 rounded-lg text-[11px] font-semibold border transition-all inline-flex items-center justify-center whitespace-nowrap select-none',
                   selectedFieldKey === b.key
                     ? 'bg-gov-primary text-white border-gov-primary shadow-sm'
                     : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
@@ -589,7 +589,7 @@ onMounted(() => {
                   type="button"
                   @click="triggerMunicipalCrossReference"
                   :disabled="isVerifying"
-                  class="inline-flex items-center gap-1.5 text-xs text-gov-primary hover:underline font-semibold disabled:opacity-50"
+                  class="h-7 px-2 inline-flex items-center gap-1.5 text-xs text-gov-primary hover:underline font-semibold disabled:opacity-50 whitespace-nowrap select-none"
                 >
                   <svg :class="['w-3.5 h-3.5', isVerifying ? 'animate-spin' : '']" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -704,7 +704,7 @@ onMounted(() => {
                 <button
                   type="button"
                   @click="handleApproveAndExport"
-                  class="inline-flex items-center justify-center px-7 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-emerald-200 gap-2 shrink-0"
+                  class="h-12 min-h-[48px] px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-emerald-200 inline-flex items-center justify-center gap-2 shrink-0 whitespace-nowrap select-none"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />

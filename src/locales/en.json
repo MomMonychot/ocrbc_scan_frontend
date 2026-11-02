@@ -39,6 +39,7 @@
     "subtitle": "Upload civil registration document (Birth Certificate, National ID) for pre-flight quality verification and OCR alignment.",
     "dropzone_title": "Drag & drop document here, or browse file",
     "dropzone_hint": "Supports PNG, JPEG, and PDF documents up to 15 MB",
+    "browse_file": "Browse Document",
     "processing": "Evaluating document sharpness, exposure, and readability in volatile RAM...",
     "inspect_success": "Document passed pre-flight quality check",
     "proceed_cta": "Proceed to Verification Canvas",

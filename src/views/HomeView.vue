@@ -78,15 +78,15 @@ onMounted(() => {
             </p>
           </div>
 
-          <!-- Primary Actions -->
+          <!-- Primary Actions with Fixed Deterministic Heights for EN/KH Harmonization -->
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
             <!-- Primary CTA Button -->
             <button
               type="button"
               @click="handleStartProcessing"
-              class="inline-flex items-center justify-center px-7 py-3.5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-semibold text-base shadow-gov-md hover:shadow-gov-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200 active:scale-[0.99] gap-3"
+              class="h-12 min-h-[48px] px-7 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-semibold text-sm sm:text-base shadow-gov-md hover:shadow-gov-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200 active:scale-[0.99] inline-flex items-center justify-center gap-3 whitespace-nowrap select-none"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
               </svg>
               <span>{{ t('home.start_cta') }}</span>
@@ -95,9 +95,9 @@ onMounted(() => {
             <!-- Secondary Documentation Action -->
             <a
               href="#security-architecture"
-              class="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-gov-text-primary font-semibold text-base border border-gov-border shadow-gov-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-slate-300 gap-2"
+              class="h-12 min-h-[48px] px-6 rounded-xl bg-white hover:bg-slate-50 text-gov-text-primary font-semibold text-sm sm:text-base border border-gov-border shadow-gov-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-slate-300 inline-flex items-center justify-center gap-2 whitespace-nowrap select-none"
             >
-              <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <span>{{ t('home.secondary_cta') }}</span>
