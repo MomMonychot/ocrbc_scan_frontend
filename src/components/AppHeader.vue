@@ -10,16 +10,16 @@ const { t } = useI18n()
     <!-- Main Navigation Bar with Fixed Height to Prevent Vertical Shifts -->
     <div class="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-6 min-w-0">
-        <router-link to="/" class="flex items-center gap-3.5 group min-w-0">
+        <router-link to="/" class="flex items-center gap-3 group shrink-0">
           <!-- Official District Portal Seal / Icon -->
-          <div class="w-10 h-10 rounded-lg bg-gov-primary flex items-center justify-center text-white shadow-sm ring-2 ring-blue-100 group-hover:scale-105 transition-transform shrink-0">
+          <div class="w-10 h-10 rounded-xl bg-gov-primary flex items-center justify-center text-white shadow-sm ring-2 ring-blue-100 group-hover:scale-105 transition-transform shrink-0">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
-          <div class="truncate">
-            <h1 class="text-sm sm:text-base lg:text-lg font-bold text-gov-primary leading-tight truncate">
-              {{ t('header.district_office') }}
+          <div>
+            <h1 class="text-base sm:text-lg lg:text-xl font-black text-gov-primary tracking-tight leading-tight whitespace-nowrap">
+              {{ t('header.project_name') }}
             </h1>
           </div>
         </router-link>
