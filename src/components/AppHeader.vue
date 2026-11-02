@@ -45,12 +45,6 @@ const { t } = useI18n()
       </div>
 
       <div class="flex items-center gap-4">
-        <!-- Live System Status Indicator -->
-        <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>{{ t('common.status_operational') }}</span>
-        </div>
-
         <!-- Language Switcher Component -->
         <LanguageSwitcher />
       </div>
