@@ -17,7 +17,15 @@
     "rules": "Rules",
     "templates": "Templates",
     "standards": "Security Standards",
-    "guidelines": "User Guide"
+    "guidelines": "User Guide",
+    "subtitles": {
+      "about": "District Civil Registry Mission",
+      "goal": "Statutory Development Targets",
+      "vision": "Smart Governance Direction",
+      "mission": "Core Administrative Commitment",
+      "policies": "Governance & Privacy Baseline",
+      "rules": "Enforceable Officer Directives"
+    }
   },
   "functions": {
     "title": "System Functions",
@@ -60,11 +68,24 @@
     },
     "overview": {
       "title": "About OCRBC Scan",
+      "subtitle": "Official Municipal Technology Platform",
       "p1": "OCRBC Scan is the official digital administration platform engineered for District One-Window Services (OWSU) and municipal civil status offices. Its primary mandate is to eliminate bureaucratic backlogs and expedite the accurate extraction and validation of civil registration documents, focusing on Birth Certificates (BC).",
-      "p2": "The system combines high-fidelity dual-script Khmer and Latin OCR artificial intelligence with an absolute Zero-Data-Retention (ZDR) baseline, guaranteeing citizen privacy and statutory compliance above all else."
+      "p2": "The system combines high-fidelity dual-script Khmer and Latin OCR artificial intelligence with an absolute Zero-Data-Retention (ZDR) baseline, guaranteeing citizen privacy and statutory compliance above all else.",
+      "metrics": {
+        "ocr_label": "Khmer Dual OCR",
+        "ocr_val": "Kantumruy Pro AI",
+        "ocr_sub": "Optimized for Cambodian civil certificates",
+        "privacy_label": "Privacy Standard",
+        "privacy_val": "Zero-Data-Retention",
+        "privacy_sub": "100% ephemeral in-memory processing",
+        "audience_label": "Target Audience",
+        "audience_val": "District / Khan / Commune",
+        "audience_sub": "Civil status administration offices"
+      }
     },
     "goal": {
-      "title": "Core Goals (Goal)",
+      "title": "Core Goals",
+      "subtitle": "Measurable Operational Milestones",
       "desc": "Eliminate error-prone manual typing and compress document verification cycles to under 1.8 seconds per civil certificate.",
       "items": [
         "Accelerate public service delivery at municipal and commune administrative counters.",
@@ -74,7 +95,8 @@
       ]
     },
     "vision": {
-      "title": "Strategic Vision (Vision)",
+      "title": "Strategic Vision",
+      "subtitle": "Long-term Strategic Direction",
       "desc": "Serve as the foundational blueprint for smart, trustworthy digital governance in Cambodia, establishing uncompromised privacy and operational transparency.",
       "items": [
         "Transition district civil status administration into modern, streamlined, paperless governance.",
@@ -83,7 +105,8 @@
       ]
     },
     "mission": {
-      "title": "Platform Mission (Mission)",
+      "title": "Platform Mission",
+      "subtitle": "Core Administrative Commitment",
       "desc": "Empower civil registry officers with intuitive, robust AI-driven tools to verify documents instantaneously with complete statutory accuracy.",
       "items": [
         "Deploy specialized OCR models fine-tuned on Cambodian administrative typefaces (Kantumruy Pro).",
@@ -92,7 +115,8 @@
       ]
     },
     "policies": {
-      "title": "Institutional Policies (Policies)",
+      "title": "Institutional Policies",
+      "subtitle": "Foundational Governance & Privacy Principles",
       "desc": "Foundational governance principles ensuring public trust and citizen privacy:",
       "items": [
         {
@@ -114,9 +138,10 @@
       ]
     },
     "rules": {
-      "title": "Operational Rules & Directives (Rules)",
+      "title": "Operational Rules & Directives",
+      "subtitle": "Mandatory Technical Directives & Officer Instructions",
       "desc": "Mandatory operational rules enforced for civil registry officers and system processes:",
-      "rules": [
+      "items": [
         {
           "name": "1. Mandatory Review Rule for Scores Below 85%",
           "detail": "Any bounding box or extracted field scoring below 85% confidence mandates visual inspection and manual correction by the presiding officer before approval."
@@ -238,6 +263,7 @@
     "delete": "Delete",
     "empty_title": "No templates in this category yet",
     "empty_desc": "Click the button below to create a new template and draw your first bounding box.",
+    "studio_badge": "Template Studio Editor",
     "tool_draw": "Draw Box",
     "tool_select": "Select / Move",
     "save": "Save Template",
@@ -249,7 +275,9 @@
     "change_image": "Change Sample Image",
     "reset_image": "Reset to Default Layout",
     "template_info": "Template Details",
-    "tpl_name_km": "Template Name",
+    "tpl_name": "Template Name",
+    "format_category": "Format Category",
+    "aspect_ratio": "Aspect Ratio",
     "active_box": "Active Selected Box",
     "btn_delete_box": "Delete Box",
     "assigned_field": "Assigned Data Field:",

@@ -166,32 +166,48 @@ onMounted(() => {
                     BC
                   </div>
                   <div>
-                    <h3 class="text-sm font-bold text-slate-900">Birth Certificate (BC)</h3>
-                    <p class="text-xs text-slate-500">Official Civil Registry Form</p>
+                    <h3 class="text-sm font-bold text-slate-900">
+                      {{ locale === 'km' ? 'សំបុត្រកំណើត' : 'Birth Certificate' }}
+                    </h3>
+                    <p class="text-xs text-slate-500">
+                      {{ locale === 'km' ? 'ទម្រង់អត្រានុកូលដ្ឋានផ្លូវការ' : 'Official Civil Registry Form' }}
+                    </p>
                   </div>
                 </div>
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800">
-                  Template Verified
+                  {{ locale === 'km' ? 'គំរូត្រូវបានផ្ទៀងផ្ទាត់' : 'Template Verified' }}
                 </span>
               </div>
 
               <!-- Simulation of OCR Field Extraction -->
               <div class="space-y-3 font-mono text-xs">
                 <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/70 flex justify-between items-center">
-                  <span class="text-slate-500 font-sans font-medium text-xs">ID Number / លេខកូដ:</span>
+                  <span class="text-slate-500 font-sans font-medium text-xs">
+                    {{ locale === 'km' ? 'លេខកូដសម្គាល់ជាតិ:' : 'ID Number:' }}
+                  </span>
                   <span class="text-slate-900 font-bold">1204-009821</span>
                 </div>
                 <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/70 flex justify-between items-center">
-                  <span class="text-slate-500 font-sans font-medium text-xs">Full Name / ឈ្មោះពេញ:</span>
+                  <span class="text-slate-500 font-sans font-medium text-xs">
+                    {{ locale === 'km' ? 'ឈ្មោះពេញ:' : 'Full Name:' }}
+                  </span>
                   <span class="text-gov-primary font-bold font-khmer">សុខ ចាន់ដារ៉ា</span>
                 </div>
                 <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/70 flex justify-between items-center">
-                  <span class="text-slate-500 font-sans font-medium text-xs">District Office / ខណ្ឌ:</span>
-                  <span class="text-slate-800 font-bold font-khmer">ដូនពេញ (Daun Penh)</span>
+                  <span class="text-slate-500 font-sans font-medium text-xs">
+                    {{ locale === 'km' ? 'រដ្ឋបាលខណ្ឌ:' : 'District Office:' }}
+                  </span>
+                  <span class="text-slate-800 font-bold font-khmer">
+                    {{ locale === 'km' ? 'ដូនពេញ' : 'Daun Penh' }}
+                  </span>
                 </div>
                 <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/70 flex justify-between items-center">
-                  <span class="text-slate-500 font-sans font-medium text-xs">Confidence Score:</span>
-                  <span class="text-emerald-700 font-bold">99.4% (Verified)</span>
+                  <span class="text-slate-500 font-sans font-medium text-xs">
+                    {{ locale === 'km' ? 'ពិន្ទុទំនុកចិត្ត:' : 'Confidence Score:' }}
+                  </span>
+                  <span class="text-emerald-700 font-bold">
+                    {{ locale === 'km' ? '៩៩.៤% (ត្រឹមត្រូវ)' : '99.4% (Verified)' }}
+                  </span>
                 </div>
               </div>
 
@@ -200,7 +216,10 @@ onMounted(() => {
                 <svg class="w-4 h-4 text-blue-600 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
-                <span>
+                <span v-if="locale === 'km'">
+                  <strong>វិធានមិនរក្សាទុកទិន្នន័យ:</strong> ឯកសារគំរូនេះស្ថិតនៅក្នុងអង្គចងចាំបណ្តោះអាសន្នប៉ុណ្ណោះ ហើយនឹងត្រូវលុបបំបាត់ភ្លាមៗក្រោយការផ្ទៀងផ្ទាត់។
+                </span>
+                <span v-else>
                   <strong>Zero-Data-Retention Safeguard:</strong> This document preview exists in transient memory only and will be purged following verification completion.
                 </span>
               </div>
@@ -260,7 +279,7 @@ onMounted(() => {
 
             <div class="pt-6 mt-6 border-t border-slate-100 relative z-10 flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
-                Birth Certificate
+                {{ locale === 'km' ? 'សំបុត្រកំណើត' : 'Birth Certificate' }}
               </span>
               <div class="h-9 px-3.5 rounded-xl bg-gov-primary text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-sm group-hover:bg-gov-primary-hover group-hover:translate-x-1 transition-all whitespace-nowrap">
                 <span>{{ t('functions.birth_certificate.action') }}</span>
@@ -303,7 +322,7 @@ onMounted(() => {
 
             <div class="pt-6 mt-6 border-t border-slate-100 relative z-10 flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
-                Templates Studio
+                {{ locale === 'km' ? 'ស្ទូឌីយោគំរូ' : 'Templates Studio' }}
               </span>
               <div class="h-9 px-3.5 rounded-xl bg-indigo-600 group-hover:bg-indigo-700 text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-sm group-hover:translate-x-1 transition-all whitespace-nowrap">
                 <span>{{ t('functions.templates.action') }}</span>
@@ -344,7 +363,7 @@ onMounted(() => {
 
             <div class="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
-                Pre-Flight Inspection
+                {{ locale === 'km' ? 'ការត្រួតពិនិត្យបឋម' : 'Pre-Flight Inspection' }}
               </span>
               <div class="h-9 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-all group-hover:translate-x-1 whitespace-nowrap">
                 <span>{{ t('functions.quality_gate.action') }}</span>
@@ -384,7 +403,7 @@ onMounted(() => {
 
             <div class="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
-                SHA-256 Fingerprint
+                {{ locale === 'km' ? 'ស្នាមមេដៃកូដសុវត្ថិភាព' : 'SHA-256 Fingerprint' }}
               </span>
               <div class="h-9 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-all group-hover:translate-x-1 whitespace-nowrap">
                 <span>{{ t('functions.audit_hash.action') }}</span>

@@ -24,7 +24,7 @@ function selectLanguage(lang) {
           ? 'bg-white shadow-sm border border-slate-200/80'
           : 'border border-transparent opacity-40 hover:opacity-100 hover:bg-slate-200/50'
       ]"
-      title="ភាសាខ្មែរ (Khmer)"
+      :title="currentLang === 'km' ? 'ភាសាខ្មែរ' : 'Khmer'"
       aria-label="ប្តូរទៅភាសាខ្មែរ"
     >
       <span class="flag-icon text-2xl select-none">🇰🇭</span>
@@ -40,7 +40,7 @@ function selectLanguage(lang) {
           ? 'bg-white shadow-sm border border-slate-200/80'
           : 'border border-transparent opacity-40 hover:opacity-100 hover:bg-slate-200/50'
       ]"
-      title="English"
+      :title="currentLang === 'km' ? 'ភាសាអង់គ្លេស' : 'English'"
       aria-label="Switch to English"
     >
       <span class="flag-icon text-2xl select-none">🇬🇧</span>

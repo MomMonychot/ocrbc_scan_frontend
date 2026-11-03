@@ -136,7 +136,7 @@ onUnmounted(() => {
                   </div>
                   <div>
                     <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.about') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">Platform Mandate & Overview</div>
+                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.about') }}</div>
                   </div>
                 </router-link>
 
@@ -155,7 +155,7 @@ onUnmounted(() => {
                   </div>
                   <div>
                     <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.goal') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">Performance & Accuracy Targets</div>
+                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.goal') }}</div>
                   </div>
                 </router-link>
 
@@ -173,7 +173,7 @@ onUnmounted(() => {
                   </div>
                   <div>
                     <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.vision') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">Smart Governance Direction</div>
+                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.vision') }}</div>
                   </div>
                 </router-link>
 
@@ -190,7 +190,7 @@ onUnmounted(() => {
                   </div>
                   <div>
                     <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.mission') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">Civil Registry Empowering Mandate</div>
+                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.mission') }}</div>
                   </div>
                 </router-link>
 
@@ -207,7 +207,7 @@ onUnmounted(() => {
                   </div>
                   <div>
                     <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.policies') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">Governance & Privacy Baseline</div>
+                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.policies') }}</div>
                   </div>
                 </router-link>
 
@@ -224,7 +224,7 @@ onUnmounted(() => {
                   </div>
                   <div>
                     <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.rules') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">Enforceable Officer Directives</div>
+                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.rules') }}</div>
                   </div>
                 </router-link>
               </div>

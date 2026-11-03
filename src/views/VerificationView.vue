@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import DocumentUpload from '../components/DocumentUpload.vue'
 import { verifyExtractedFields } from '../services/api_client'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // Document state
 const uploadedFile = ref(null)
@@ -431,27 +431,33 @@ onMounted(() => {
                     <div class="w-10 h-10 mx-auto rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-gov-primary font-bold text-xs">
                       🇰🇭
                     </div>
-                    <div class="text-[11px] font-bold text-slate-800 tracking-wider">ព្រះរាជាណាចក្រកម្ពុជា</div>
-                    <div class="text-[9px] text-slate-500">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
-                    <div class="text-xs font-extrabold text-gov-primary font-sans pt-1">សំបុត្រកំណើត / BIRTH CERTIFICATE</div>
+                    <div class="text-[11px] font-bold text-slate-800 tracking-wider">
+                      {{ locale === 'km' ? 'ព្រះរាជាណាចក្រកម្ពុជា' : 'KINGDOM OF CAMBODIA' }}
+                    </div>
+                    <div class="text-[9px] text-slate-500">
+                      {{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}
+                    </div>
+                    <div class="text-xs font-extrabold text-gov-primary font-sans pt-1">
+                      {{ locale === 'km' ? 'សំបុត្រកំណើត' : 'BIRTH CERTIFICATE' }}
+                    </div>
                   </div>
 
                   <div class="space-y-4 text-[10px] text-slate-600 border-t border-b border-slate-200 py-3 font-sans">
                     <div class="flex justify-between">
-                      <span>លេខកូដសម្គាល់ជាតិ: 1204009821</span>
-                      <span>សំបុត្រលេខ: BC-2024-009821</span>
+                      <span>{{ locale === 'km' ? 'លេខកូដសម្គាល់ជាតិ: 1204009821' : 'National ID Code: 1204009821' }}</span>
+                      <span>{{ locale === 'km' ? 'សំបុត្រលេខ: BC-2024-009821' : 'Certificate No: BC-2024-009821' }}</span>
                     </div>
-                    <div>ឈ្មោះខ្មែរ: <span class="font-bold text-slate-900 font-khmer">សុខ ចាន់ដារ៉ា</span></div>
-                    <div>Full Name (Latin): <span class="font-bold text-slate-900 font-latin">SOK CHANDARA</span></div>
-                    <div>ថ្ងៃខែឆ្នាំកំណើត: 15 ឧសភា 2000 (2000-05-15)</div>
-                    <div>រដ្ឋបាលខណ្ឌ: ដូនពេញ (Daun Penh) • រាជធានីភ្នំពេញ</div>
+                    <div>{{ locale === 'km' ? 'ឈ្មោះខ្មែរ:' : 'Khmer Name:' }} <span class="font-bold text-slate-900 font-khmer">សុខ ចាន់ដារ៉ា</span></div>
+                    <div>{{ locale === 'km' ? 'ឈ្មោះឡាតាំង:' : 'Latin Name:' }} <span class="font-bold text-slate-900 font-latin">SOK CHANDARA</span></div>
+                    <div>{{ locale === 'km' ? 'ថ្ងៃខែឆ្នាំកំណើត: ១៥ ឧសភា ២០០០' : 'Date of Birth: 15 May 2000' }}</div>
+                    <div>{{ locale === 'km' ? 'រដ្ឋបាលខណ្ឌ: ដូនពេញ • រាជធានីភ្នំពេញ' : 'District: Daun Penh • Phnom Penh' }}</div>
                   </div>
 
                   <div class="flex justify-between items-end text-[9px] text-slate-400">
-                    <div>ច្រកចេញចូលតែមួយ</div>
+                    <div>{{ locale === 'km' ? 'ច្រកចេញចូលតែមួយ' : 'One Window Service' }}</div>
                     <div class="text-center">
                       <div class="w-12 h-12 rounded-full border border-red-300 bg-red-50 text-red-700 flex items-center justify-center text-[8px] font-bold">
-                        SEAL
+                        {{ locale === 'km' ? 'ត្រា' : 'SEAL' }}
                       </div>
                     </div>
                   </div>

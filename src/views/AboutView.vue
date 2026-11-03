@@ -97,7 +97,7 @@ watch(() => route.query.section, (newSection) => {
               <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
                 {{ t('about_page.overview.title') }}
               </h2>
-              <p class="text-xs sm:text-sm text-slate-500">Official Municipal Technology Platform</p>
+              <p class="text-xs sm:text-sm text-slate-500">{{ t('about_page.overview.subtitle') }}</p>
             </div>
           </div>
 
@@ -109,19 +109,19 @@ watch(() => route.query.section, (newSection) => {
           <!-- Highlight Key Metrics -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
             <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <div class="text-xs font-semibold text-slate-500 uppercase">Khmer Dual OCR</div>
-              <div class="text-lg font-bold text-gov-primary mt-1">Kantumruy Pro AI</div>
-              <div class="text-xs text-slate-500 mt-0.5">Optimized for Cambodian civil certificates</div>
+              <div class="text-xs font-semibold text-slate-500 uppercase">{{ t('about_page.overview.metrics.ocr_label') }}</div>
+              <div class="text-lg font-bold text-gov-primary mt-1">{{ t('about_page.overview.metrics.ocr_val') }}</div>
+              <div class="text-xs text-slate-500 mt-0.5">{{ t('about_page.overview.metrics.ocr_sub') }}</div>
             </div>
             <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <div class="text-xs font-semibold text-slate-500 uppercase">Privacy Standard</div>
-              <div class="text-lg font-bold text-emerald-600 mt-1">Zero-Data-Retention</div>
-              <div class="text-xs text-slate-500 mt-0.5">100% ephemeral in-memory processing</div>
+              <div class="text-xs font-semibold text-slate-500 uppercase">{{ t('about_page.overview.metrics.privacy_label') }}</div>
+              <div class="text-lg font-bold text-emerald-600 mt-1">{{ t('about_page.overview.metrics.privacy_val') }}</div>
+              <div class="text-xs text-slate-500 mt-0.5">{{ t('about_page.overview.metrics.privacy_sub') }}</div>
             </div>
             <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <div class="text-xs font-semibold text-slate-500 uppercase">Target Audience</div>
-              <div class="text-lg font-bold text-slate-800 mt-1">District / Khan / Commune</div>
-              <div class="text-xs text-slate-500 mt-0.5">Civil status administration offices</div>
+              <div class="text-xs font-semibold text-slate-500 uppercase">{{ t('about_page.overview.metrics.audience_label') }}</div>
+              <div class="text-lg font-bold text-slate-800 mt-1">{{ t('about_page.overview.metrics.audience_val') }}</div>
+              <div class="text-xs text-slate-500 mt-0.5">{{ t('about_page.overview.metrics.audience_sub') }}</div>
             </div>
           </div>
         </div>
@@ -140,7 +140,7 @@ watch(() => route.query.section, (newSection) => {
               <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
                 {{ t('about_page.goal.title') }}
               </h2>
-              <p class="text-xs sm:text-sm text-slate-500">Measurable Operational Milestones</p>
+              <p class="text-xs sm:text-sm text-slate-500">{{ t('about_page.goal.subtitle') }}</p>
             </div>
           </div>
 
@@ -177,7 +177,7 @@ watch(() => route.query.section, (newSection) => {
               <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
                 {{ t('about_page.vision.title') }}
               </h2>
-              <p class="text-xs sm:text-sm text-slate-500">Long-term Strategic Direction</p>
+              <p class="text-xs sm:text-sm text-slate-500">{{ t('about_page.vision.subtitle') }}</p>
             </div>
           </div>
 
@@ -215,7 +215,7 @@ watch(() => route.query.section, (newSection) => {
               <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
                 {{ t('about_page.mission.title') }}
               </h2>
-              <p class="text-xs sm:text-sm text-slate-500">Core Administrative Commitment</p>
+              <p class="text-xs sm:text-sm text-slate-500">{{ t('about_page.mission.subtitle') }}</p>
             </div>
           </div>
 
@@ -251,7 +251,7 @@ watch(() => route.query.section, (newSection) => {
               <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
                 {{ t('about_page.policies.title') }}
               </h2>
-              <p class="text-xs sm:text-sm text-slate-500">Foundational Governance & Privacy Principles</p>
+              <p class="text-xs sm:text-sm text-slate-500">{{ t('about_page.policies.subtitle') }}</p>
             </div>
           </div>
 
@@ -290,7 +290,7 @@ watch(() => route.query.section, (newSection) => {
               <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
                 {{ t('about_page.rules.title') }}
               </h2>
-              <p class="text-xs sm:text-sm text-slate-500">Mandatory Technical Directives & Officer Instructions</p>
+              <p class="text-xs sm:text-sm text-slate-500">{{ t('about_page.rules.subtitle') }}</p>
             </div>
           </div>
 

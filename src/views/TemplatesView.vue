@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 
 // Storage key for persistence
@@ -12,17 +12,17 @@ const STORAGE_KEY = 'district_ocr_templates_v1'
 // Available Field Options for Birth Certificate Bounding Boxes
 const FIELD_DEFINITIONS = [
   { key: 'national_id', labelKm: 'លេខកូដសម្គាល់ជាតិ', labelEn: 'National ID', color: 'border-blue-500 bg-blue-500/15 text-blue-700' },
-  { key: 'certificate_no', labelKm: 'សៀវភៅលេខ / សំបុត្រលេខ', labelEn: 'Certificate No.', color: 'border-indigo-500 bg-indigo-500/15 text-indigo-700' },
-  { key: 'full_name_km', labelKm: 'ឈ្មោះខ្មែរ (គោត្តនាម-នាម)', labelEn: 'Full Name (Khmer)', color: 'border-emerald-500 bg-emerald-500/15 text-emerald-700' },
-  { key: 'full_name_en', labelKm: 'ឈ្មោះឡាតាំង (Full Name)', labelEn: 'Full Name (Latin)', color: 'border-teal-500 bg-teal-500/15 text-teal-700' },
+  { key: 'certificate_no', labelKm: 'សៀវភៅលេខ ឬសំបុត្រលេខ', labelEn: 'Certificate No.', color: 'border-indigo-500 bg-indigo-500/15 text-indigo-700' },
+  { key: 'full_name_km', labelKm: 'ឈ្មោះជាអក្សរខ្មែរ', labelEn: 'Khmer Full Name', color: 'border-emerald-500 bg-emerald-500/15 text-emerald-700' },
+  { key: 'full_name_en', labelKm: 'ឈ្មោះជាអក្សរឡាតាំង', labelEn: 'Latin Full Name', color: 'border-teal-500 bg-teal-500/15 text-teal-700' },
   { key: 'gender', labelKm: 'ភេទ', labelEn: 'Gender', color: 'border-cyan-500 bg-cyan-500/15 text-cyan-700' },
   { key: 'birth_date', labelKm: 'ថ្ងៃខែឆ្នាំកំណើត', labelEn: 'Date of Birth', color: 'border-amber-500 bg-amber-500/15 text-amber-700' },
   { key: 'birth_place', labelKm: 'ទីកន្លែងកំណើត', labelEn: 'Place of Birth', color: 'border-orange-500 bg-orange-500/15 text-orange-700' },
   { key: 'father_name', labelKm: 'ឈ្មោះឪពុក', labelEn: "Father's Name", color: 'border-violet-500 bg-violet-500/15 text-violet-700' },
   { key: 'mother_name', labelKm: 'ឈ្មោះម្តាយ', labelEn: "Mother's Name", color: 'border-pink-500 bg-pink-500/15 text-pink-700' },
-  { key: 'district_office', labelKm: 'សាលាក្រុង-ស្រុក-ខណ្ឌ', labelEn: 'District Office', color: 'border-purple-500 bg-purple-500/15 text-purple-700' },
-  { key: 'official_stamp', labelKm: 'ត្រា និងហត្ថលេខាមន្ត្រី', labelEn: 'Official Seal & Signature', color: 'border-rose-500 bg-rose-500/15 text-rose-700' },
-  { key: 'qr_code', labelKm: 'កូដ QR / បាកូដ', labelEn: 'QR Code / Barcode', color: 'border-slate-800 bg-slate-800/15 text-slate-900' },
+  { key: 'district_office', labelKm: 'សាលាក្រុង ស្រុក ខណ្ឌ', labelEn: 'District Office', color: 'border-purple-500 bg-purple-500/15 text-purple-700' },
+  { key: 'official_stamp', labelKm: 'ត្រា និងហត្ថលេខា', labelEn: 'Official Seal & Signature', color: 'border-rose-500 bg-rose-500/15 text-rose-700' },
+  { key: 'qr_code', labelKm: 'កូដ QR ឬបាកូដ', labelEn: 'QR Code or Barcode', color: 'border-slate-800 bg-slate-800/15 text-slate-900' },
   { key: 'custom', labelKm: 'វាលកំណត់ផ្សេងៗ', labelEn: 'Custom Field', color: 'border-gray-500 bg-gray-500/15 text-gray-700' },
 ]
 
@@ -190,6 +190,21 @@ function getFieldDef(key) {
   }
 }
 
+function getFieldLabel(key) {
+  const def = getFieldDef(key)
+  return locale.value === 'km' ? def.labelKm : def.labelEn
+}
+
+function getTemplateName(tpl) {
+  if (!tpl) return ''
+  return locale.value === 'km' ? (tpl.nameKm || tpl.nameEn) : (tpl.nameEn || tpl.nameKm)
+}
+
+function getTemplateDesc(tpl) {
+  if (!tpl) return ''
+  return locale.value === 'km' ? (tpl.descriptionKm || tpl.descriptionEn) : (tpl.descriptionEn || tpl.descriptionKm)
+}
+
 // Temporary preview rectangle while user drags mouse to draw
 const previewRect = computed(() => {
   if (!isDrawing.value) return null
@@ -343,7 +358,7 @@ function handleCanvasMouseUp() {
       editingTemplate.value.boxes.push(newBox)
       selectedBoxId.value = newBox.id
       studioMode.value = 'select'
-      showToast(`${t('templates.box_created', 'បានគូសប្រអប់ថ្មី')}: ${getFieldDef(newBox.key).labelKm}`)
+      showToast(`${t('templates.box_created')}: ${getFieldLabel(newBox.key)}`)
     }
     isDrawing.value = false
   }
@@ -402,10 +417,10 @@ function removeCustomImage() {
       <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-gov-border gap-4">
         <div>
           <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
-            {{ t('templates.title', 'គំរូទម្រង់សំបុត្រកំណើត (Templates)') }}
+            {{ t('templates.title') }}
           </h1>
           <p class="text-sm sm:text-base text-gov-text-secondary mt-1 max-w-3xl leading-relaxed">
-            {{ t('templates.subtitle', 'គ្រប់គ្រង និងកែសម្រួលគំរូទម្រង់ឯកសារអត្រានុកូលដ្ឋាន ព្រមទាំងគូសប្រអប់ Bounding Box សម្រាប់កំណត់ទីតាំង OCR ស្វ័យប្រវត្តិ។') }}
+            {{ t('templates.subtitle') }}
           </p>
         </div>
 
@@ -469,7 +484,7 @@ function removeCustomImage() {
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <span>{{ t('templates.tabs.new', 'ទម្រង់ថ្មី (New Format)') }}</span>
+            <span>{{ t('templates.tabs.new') }}</span>
             <span
               :class="[
                 'text-[11px] px-2 py-0.5 rounded-full font-mono font-bold',
@@ -494,7 +509,7 @@ function removeCustomImage() {
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>{{ t('templates.tabs.old', 'ទម្រង់ចាស់ (Old Format)') }}</span>
+            <span>{{ t('templates.tabs.old') }}</span>
             <span
               :class="[
                 'text-[11px] px-2 py-0.5 rounded-full font-mono font-bold',
@@ -515,7 +530,7 @@ function removeCustomImage() {
           <svg class="w-4 h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          <span>{{ t('templates.btn_add', '+ បន្ថែមគំរូថ្មី (Add New Template)') }}</span>
+          <span>{{ t('templates.btn_add') }}</span>
         </button>
       </div>
 
@@ -539,16 +554,15 @@ function removeCustomImage() {
                         : 'bg-amber-100 text-amber-800 border border-amber-200'
                     ]"
                   >
-                    {{ tpl.format === 'new' ? 'New Format / ទម្រង់ថ្មី' : 'Old Format / ទម្រង់ចាស់' }}
+                    {{ tpl.format === 'new' ? t('templates.tabs.new') : t('templates.tabs.old') }}
                   </span>
                   <span class="text-xs text-slate-400 font-mono">
-                    {{ tpl.boxes.length }} {{ t('templates.fields_count', 'ប្រអប់វាល') }}
+                    {{ tpl.boxes.length }} {{ t('templates.fields_count') }}
                   </span>
                 </div>
                 <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
-                  {{ tpl.nameKm }}
+                  {{ getTemplateName(tpl) }}
                 </h3>
-                <p class="text-xs text-slate-500 font-medium">{{ tpl.nameEn }}</p>
               </div>
 
               <!-- Template Mini Actions -->
@@ -578,7 +592,7 @@ function removeCustomImage() {
 
             <!-- Description -->
             <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-5">
-              {{ tpl.descriptionKm }}
+              {{ getTemplateDesc(tpl) }}
             </p>
 
             <!-- Mini Preview of Certificate Sheet with Real Bounding Box Overlays -->
@@ -594,10 +608,10 @@ function removeCustomImage() {
               >
                 <!-- Watermark Header -->
                 <div class="text-center opacity-70">
-                  <div class="font-bold">ព្រះរាជាណាចក្រកម្ពុជា</div>
-                  <div class="text-[7px]">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+                  <div class="font-bold">{{ locale === 'km' ? 'ព្រះរាជាណាចក្រកម្ពុជា' : 'KINGDOM OF CAMBODIA' }}</div>
+                  <div class="text-[7px]">{{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}</div>
                   <div class="font-sans font-bold text-gov-primary pt-0.5">
-                    {{ tpl.format === 'new' ? 'សំបុត្រកំណើត / BIRTH CERTIFICATE' : 'សំបុត្របញ្ជាក់កំណើត (កាលប្បវត្តិ)' }}
+                    {{ tpl.format === 'new' ? (locale === 'km' ? 'សំបុត្រកំណើត' : 'BIRTH CERTIFICATE') : (locale === 'km' ? 'សំបុត្របញ្ជាក់កំណើត' : 'CIVIL BIRTH EXTRACT') }}
                   </div>
                 </div>
 
@@ -616,13 +630,13 @@ function removeCustomImage() {
                     getFieldDef(b.key).color
                   ]"
                 >
-                  <span class="truncate">{{ getFieldDef(b.key).labelKm }}</span>
+                  <span class="truncate">{{ getFieldLabel(b.key) }}</span>
                 </div>
 
                 <!-- Bottom Document Footer -->
                 <div class="flex justify-between items-end opacity-60 text-[7px]">
-                  <span>រដ្ឋបាលក្រុង-ស្រុក-ខណ្ឌ</span>
-                  <span>{{ tpl.format === 'new' ? 'QR ENCRYPTED' : 'SEAL RECORD' }}</span>
+                  <span>{{ locale === 'km' ? 'រដ្ឋបាលក្រុង-ស្រុក-ខណ្ឌ' : 'District Administration' }}</span>
+                  <span>{{ tpl.format === 'new' ? (locale === 'km' ? 'កូដសម្ងាត់' : 'ENCRYPTED CODE') : (locale === 'km' ? 'ត្រារដ្ឋបាល' : 'OFFICIAL SEAL') }}</span>
                 </div>
               </div>
             </div>
@@ -630,7 +644,7 @@ function removeCustomImage() {
             <!-- Configured Fields Badges -->
             <div class="space-y-2 mb-6">
               <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                {{ t('templates.configured_fields', 'វាលដែលបានកំណត់ទីតាំង OCR:') }}
+                {{ t('templates.configured_fields') }}
               </div>
               <div class="flex flex-wrap gap-1.5">
                 <span
@@ -642,7 +656,7 @@ function removeCustomImage() {
                   ]"
                 >
                   <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                  <span>{{ getFieldDef(box.key).labelKm }}</span>
+                  <span>{{ getFieldLabel(box.key) }}</span>
                 </span>
               </div>
             </div>
@@ -658,15 +672,15 @@ function removeCustomImage() {
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
-              <span>{{ t('templates.btn_edit_boxes', 'កែសម្រួល & គូស Bounding Box') }}</span>
+              <span>{{ t('templates.btn_edit_boxes') }}</span>
             </button>
 
             <router-link
               to="/verify"
               class="h-11 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap"
-              :title="t('templates.test_verify', 'តេស្តផ្ទៀងផ្ទាត់')"
+              :title="t('templates.test_verify')"
             >
-              <span>{{ t('templates.test_verify', 'តេស្តស្កេន') }}</span>
+              <span>{{ t('templates.test_verify') }}</span>
               <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
@@ -683,10 +697,10 @@ function removeCustomImage() {
           </svg>
         </div>
         <h3 class="text-lg font-bold text-slate-800 mb-1">
-          {{ t('templates.empty_title', 'មិនទាន់មានគំរូទម្រង់ក្នុងផ្ទាំងនេះនៅឡើយទេ') }}
+          {{ t('templates.empty_title') }}
         </h3>
         <p class="text-xs sm:text-sm text-slate-500 mb-6 max-w-md mx-auto">
-          {{ t('templates.empty_desc', 'សូមចុចប៊ូតុងខាងក្រោមដើម្បីបង្កើតគំរូទម្រង់ថ្មី និងគូសប្រអប់ Bounding Box ដំបូងរបស់អ្នក។') }}
+          {{ t('templates.empty_desc') }}
         </p>
         <button
           type="button"
@@ -696,7 +710,7 @@ function removeCustomImage() {
           <svg class="w-4 h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          <span>{{ t('templates.btn_add', '+ បន្ថែមគំរូថ្មី') }}</span>
+          <span>{{ t('templates.btn_add') }}</span>
         </button>
       </div>
 
@@ -722,14 +736,14 @@ function removeCustomImage() {
             <div>
               <div class="flex items-center gap-2">
                 <span class="text-xs font-bold uppercase px-2 py-0.5 rounded bg-blue-100 text-gov-primary font-mono">
-                  STUDIO EDITOR
+                  {{ t('templates.studio_badge') }}
                 </span>
                 <span class="text-xs text-slate-500">
-                  {{ editingTemplate.format === 'new' ? 'ទម្រង់ថ្មី (New)' : 'ទម្រង់ចាស់ (Old)' }}
+                  {{ editingTemplate.format === 'new' ? t('templates.tabs.new') : t('templates.tabs.old') }}
                 </span>
               </div>
               <h2 class="text-base sm:text-lg font-bold text-slate-900">
-                {{ editingTemplate.nameKm }}
+                {{ getTemplateName(editingTemplate) }}
               </h2>
             </div>
           </div>
@@ -750,7 +764,7 @@ function removeCustomImage() {
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
-              <span>{{ t('templates.tool_draw', 'គូសប្រអប់ថ្មី (Draw Box)') }}</span>
+              <span>{{ t('templates.tool_draw') }}</span>
             </button>
 
             <!-- Tool: Select/Move Mode -->
@@ -767,7 +781,7 @@ function removeCustomImage() {
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
               </svg>
-              <span>{{ t('templates.tool_select', 'ជ្រើសរើស / រំកិល') }}</span>
+              <span>{{ t('templates.tool_select') }}</span>
             </button>
 
             <!-- Save Button -->
@@ -779,7 +793,7 @@ function removeCustomImage() {
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
               </svg>
-              <span>{{ t('templates.save', 'រក្សាទុកគំរូ') }}</span>
+              <span>{{ t('templates.save') }}</span>
             </button>
 
             <!-- Close Button -->
@@ -806,10 +820,10 @@ function removeCustomImage() {
               <div class="flex items-center gap-2 text-slate-600 font-medium">
                 <span class="w-2 h-2 rounded-full" :class="studioMode === 'draw' ? 'bg-gov-primary animate-ping' : 'bg-slate-400'"></span>
                 <span v-if="studioMode === 'draw'" class="text-gov-primary font-bold">
-                  {{ t('templates.canvas_draw_hint', 'ចុចលើផ្ទៃរូបភាព ហើយអូសកណ្តុរ (Drag) ដើម្បីគូសប្រអប់ថ្មី') }}
+                  {{ t('templates.canvas_draw_hint') }}
                 </span>
                 <span v-else class="text-slate-600">
-                  {{ t('templates.canvas_select_hint', 'ចុចលើប្រអប់ដើម្បីកែសម្រួល ឬអូសរំកិលទីតាំង') }}
+                  {{ t('templates.canvas_select_hint') }}
                 </span>
               </div>
 
@@ -886,39 +900,45 @@ function removeCustomImage() {
                       <div class="w-10 h-10 mx-auto rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center font-bold text-sm">
                         🇰🇭
                       </div>
-                      <div class="text-xs font-bold text-slate-800 tracking-wider">ព្រះរាជាណាចក្រកម្ពុជា</div>
-                      <div class="text-[9px] text-slate-500">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+                      <div class="text-xs font-bold text-slate-800 tracking-wider">
+                        {{ locale === 'km' ? 'ព្រះរាជាណាចក្រកម្ពុជា' : 'KINGDOM OF CAMBODIA' }}
+                      </div>
+                      <div class="text-[9px] text-slate-500">
+                        {{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}
+                      </div>
                       <div class="text-xs font-extrabold text-gov-primary font-sans pt-1">
-                        {{ editingTemplate.format === 'new' ? 'សំបុត្រកំណើត / BIRTH CERTIFICATE' : 'សំបុត្រកំណើតទម្រង់ចាស់ (បណ្ណសារដ្ឋាន)' }}
+                        {{ editingTemplate.format === 'new' ? (locale === 'km' ? 'សំបុត្រកំណើត' : 'BIRTH CERTIFICATE') : (locale === 'km' ? 'សំបុត្រកំណើតទម្រង់ចាស់' : 'ARCHIVAL CIVIL RECORD') }}
                       </div>
                     </div>
 
                     <!-- Mock Form Lines -->
                     <div class="space-y-4 text-[10px] text-slate-600 border-t border-b border-slate-200/80 py-4 font-sans">
                       <div class="flex justify-between font-mono">
-                        <span>លេខកូដសម្គាល់ជាតិ: 1204009821</span>
-                        <span>សៀវភៅលេខ: BC-2024-009821</span>
+                        <span>{{ locale === 'km' ? 'លេខកូដសម្គាល់ជាតិ: 1204009821' : 'National ID Code: 1204009821' }}</span>
+                        <span>{{ locale === 'km' ? 'សៀវភៅលេខ: BC-2024-009821' : 'Book No: BC-2024-009821' }}</span>
                       </div>
-                      <div>ឈ្មោះខ្មែរ: <span class="font-bold text-slate-900 font-khmer">សុខ ចាន់ដារ៉ា</span></div>
-                      <div>Full Name (Latin): <span class="font-bold text-slate-900 font-latin">SOK CHANDARA</span></div>
+                      <div v-if="locale === 'km'">ឈ្មោះខ្មែរ: <span class="font-bold text-slate-900 font-khmer">សុខ ចាន់ដារ៉ា</span></div>
+                      <div v-else>Khmer Name: <span class="font-bold text-slate-900 font-khmer">សុខ ចាន់ដារ៉ា</span></div>
+                      <div v-if="locale === 'km'">ឈ្មោះឡាតាំង: <span class="font-bold text-slate-900 font-latin">SOK CHANDARA</span></div>
+                      <div v-else>Latin Name: <span class="font-bold text-slate-900 font-latin">SOK CHANDARA</span></div>
                       <div class="flex justify-between">
-                        <span>ថ្ងៃខែឆ្នាំកំណើត: 15 ឧសភា 2000 (2000-05-15)</span>
-                        <span>ភេទ: ប្រុស (M)</span>
+                        <span>{{ locale === 'km' ? 'ថ្ងៃខែឆ្នាំកំណើត: ១៥ ឧសភា ២០០០' : 'Date of Birth: 15 May 2000' }}</span>
+                        <span>{{ locale === 'km' ? 'ភេទ: ប្រុស' : 'Gender: Male' }}</span>
                       </div>
-                      <div>ទីកន្លែងកំណើត: រាជធានីភ្នំពេញ (Phnom Penh)</div>
-                      <div>ឈ្មោះឪពុក: សុខ សុផល • ឈ្មោះម្តាយ: ចាន់ គន្ធា</div>
-                      <div>រដ្ឋបាលខណ្ឌ: ដូនពេញ (Daun Penh)</div>
+                      <div>{{ locale === 'km' ? 'ទីកន្លែងកំណើត: រាជធានីភ្នំពេញ' : 'Place of Birth: Phnom Penh' }}</div>
+                      <div>{{ locale === 'km' ? 'ឈ្មោះឪពុក: សុខ សុផល • ឈ្មោះម្តាយ: ចាន់ គន្ធា' : 'Father: SOK SOPHAL • Mother: CHAN KUNTHEA' }}</div>
+                      <div>{{ locale === 'km' ? 'រដ្ឋបាលខណ្ឌ: ដូនពេញ' : 'District: Daun Penh' }}</div>
                     </div>
 
                     <!-- Seal & Signatures -->
                     <div class="flex justify-between items-end text-[9px] text-slate-500 font-sans">
                       <div class="w-14 h-14 border border-dashed border-slate-300 rounded flex items-center justify-center text-[8px] text-slate-400">
-                        {{ editingTemplate.format === 'new' ? 'QR CODE' : 'ARCHIVE' }}
+                        {{ editingTemplate.format === 'new' ? 'QR' : (locale === 'km' ? 'បណ្ណសារ' : 'ARCHIVE') }}
                       </div>
                       <div class="text-center space-y-1">
-                        <div>ច្រកចេញចូលតែមួយ</div>
+                        <div>{{ locale === 'km' ? 'ច្រកចេញចូលតែមួយ' : 'One Window Service' }}</div>
                         <div class="w-12 h-12 rounded-full border border-red-300 bg-red-50 text-red-600 flex items-center justify-center text-[8px] font-bold">
-                          SEAL
+                          {{ locale === 'km' ? 'ត្រា' : 'SEAL' }}
                         </div>
                       </div>
                     </div>
@@ -943,7 +963,7 @@ function removeCustomImage() {
                     ]"
                   >
                     <span class="text-[9px] font-bold truncate tracking-tight uppercase select-none">
-                      {{ getFieldDef(b.key).labelKm }}
+                      {{ getFieldLabel(b.key) }}
                     </span>
 
                     <button
@@ -966,7 +986,7 @@ function removeCustomImage() {
                     }"
                     class="absolute border-2 border-dashed border-gov-primary bg-gov-primary/20 rounded pointer-events-none z-40 flex items-center justify-center text-xs font-bold text-gov-primary"
                   >
-                    <span>+ New Box</span>
+                    <span>+ {{ locale === 'km' ? 'ប្រអប់ថ្មី' : 'New Box' }}</span>
                   </div>
 
                 </div>
@@ -976,9 +996,9 @@ function removeCustomImage() {
             <!-- Canvas Bottom Helper Info -->
             <div class="pt-3 flex flex-wrap items-center justify-between text-xs text-slate-500 border-t border-slate-200 mt-2 gap-2">
               <div class="flex items-center gap-3">
-                <span>{{ t('templates.boxes_total', 'ចំនួន Bounding Box សរុប:') }} <strong class="text-gov-primary">{{ editingTemplate.boxes.length }}</strong></span>
+                <span>{{ t('templates.boxes_total') }} <strong class="text-gov-primary">{{ editingTemplate.boxes.length }}</strong></span>
                 <span>•</span>
-                <span>Coordinates: <strong class="font-mono text-slate-700">Responsive Relative %</strong></span>
+                <span>{{ locale === 'km' ? 'កូអរដោនេ:' : 'Coordinates:' }} <strong class="font-mono text-slate-700">Responsive %</strong></span>
               </div>
               <div class="flex items-center gap-2">
                 <label class="text-[11px] text-gov-primary hover:underline cursor-pointer">
@@ -1005,11 +1025,11 @@ function removeCustomImage() {
               <!-- Template Metadata Config -->
               <div class="space-y-3 pb-4 border-b border-slate-100">
                 <div class="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  {{ t('templates.template_info', 'ព័ត៌មានគំរូ') }}
+                  {{ t('templates.template_info') }}
                 </div>
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    {{ t('templates.tpl_name_km', 'ឈ្មោះគំរូ (ខ្មែរ)') }}
+                    {{ t('templates.tpl_name') }}
                   </label>
                   <input
                     v-model="editingTemplate.nameKm"
@@ -1019,17 +1039,21 @@ function removeCustomImage() {
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                   <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Format Category</label>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">
+                      {{ t('templates.format_category') }}
+                    </label>
                     <select
                       v-model="editingTemplate.format"
                       class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none"
                     >
-                      <option value="new">New Format (ទម្រង់ថ្មី)</option>
-                      <option value="old">Old Format (ទម្រង់ចាស់)</option>
+                      <option value="new">{{ t('templates.tabs.new') }}</option>
+                      <option value="old">{{ t('templates.tabs.old') }}</option>
                     </select>
                   </div>
                   <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Aspect Ratio</label>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">
+                      {{ t('templates.aspect_ratio') }}
+                    </label>
                     <input
                       v-model="editingTemplate.aspectRatio"
                       type="text"
@@ -1045,21 +1069,21 @@ function removeCustomImage() {
                 <div class="flex items-center justify-between">
                   <div class="text-xs font-bold text-gov-primary flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-gov-primary"></span>
-                    <span>{{ t('templates.active_box', 'ប្រអប់ដែលកំពុងជ្រើសរើស') }}</span>
+                    <span>{{ t('templates.active_box') }}</span>
                   </div>
                   <button
                     type="button"
                     @click="deleteBox(activeBox.id)"
                     class="text-[11px] text-red-600 hover:underline font-bold"
                   >
-                    {{ t('templates.btn_delete_box', 'លុបប្រអប់') }}
+                    {{ t('templates.btn_delete_box') }}
                   </button>
                 </div>
 
                 <!-- Field Mapping Selector -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    {{ t('templates.assigned_field', 'កំណត់ប្រភេទវាលទិន្នន័យ (Field):') }}
+                    {{ t('templates.assigned_field') }}
                   </label>
                   <select
                     v-model="activeBox.key"
@@ -1070,7 +1094,7 @@ function removeCustomImage() {
                       :key="f.key"
                       :value="f.key"
                     >
-                      {{ f.labelKm }} ({{ f.labelEn }})
+                      {{ locale === 'km' ? f.labelKm : f.labelEn }}
                     </option>
                   </select>
                 </div>
@@ -1127,13 +1151,13 @@ function removeCustomImage() {
               <!-- List of All Configured Bounding Boxes -->
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-xs font-bold text-slate-800">
-                  <span>{{ t('templates.all_boxes', 'បញ្ជី Bounding Boxes ទាំងអស់') }} ({{ editingTemplate.boxes.length }})</span>
+                  <span>{{ t('templates.all_boxes') }} ({{ editingTemplate.boxes.length }})</span>
                   <button
                     type="button"
                     @click="studioMode = 'draw'"
                     class="text-[11px] text-gov-primary hover:underline font-bold"
                   >
-                    + គូសបន្ថែម
+                    + {{ t('templates.tool_draw') }}
                   </button>
                 </div>
 
@@ -1151,7 +1175,7 @@ function removeCustomImage() {
                   >
                     <div class="flex items-center gap-2 truncate">
                       <span class="w-2 h-2 rounded-full shrink-0" :class="getFieldDef(b.key).color.split(' ')[0].replace('border-', 'bg-')"></span>
-                      <span class="truncate">{{ getFieldDef(b.key).labelKm }}</span>
+                      <span class="truncate">{{ getFieldLabel(b.key) }}</span>
                     </div>
 
                     <div class="flex items-center gap-2 shrink-0 font-mono text-[10px] text-slate-400">
@@ -1181,14 +1205,14 @@ function removeCustomImage() {
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
-                <span>{{ t('templates.save_changes', 'រក្សាទុកគំរូ និង Bounding Boxes') }}</span>
+                <span>{{ t('templates.save_changes') }}</span>
               </button>
               <button
                 type="button"
                 @click="closeStudio"
                 class="w-full h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs transition-colors"
               >
-                {{ t('common.cancel', 'បោះបង់') }}
+                {{ t('common.cancel') }}
               </button>
             </div>
 
