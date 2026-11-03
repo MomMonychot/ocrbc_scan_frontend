@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import VerificationView from '../views/VerificationView.vue'
 import AboutView from '../views/AboutView.vue'
+import TemplatesView from '../views/TemplatesView.vue'
 
 const routes = [
   {
@@ -18,6 +19,14 @@ const routes = [
     component: VerificationView,
     meta: {
       title: 'Civil Registration Verification'
+    }
+  },
+  {
+    path: '/templates',
+    name: 'templates',
+    component: TemplatesView,
+    meta: {
+      title: 'Civil Registry Document Templates'
     }
   },
   {

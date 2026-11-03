@@ -76,6 +76,15 @@ onUnmounted(() => {
             <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
           </router-link>
 
+          <router-link
+            to="/templates"
+            active-class="bg-blue-50 text-gov-primary font-bold"
+            class="h-9 px-3.5 rounded-lg text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+            @click="closeMenus"
+          >
+            <span>{{ t('nav.templates') }}</span>
+          </router-link>
+
           <!-- About Us Dropdown Menu (Hidden on first open) -->
           <div class="relative" ref="dropdownRef">
             <button
@@ -266,6 +275,14 @@ onUnmounted(() => {
       >
         <span>{{ t('nav.verify') }}</span>
         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      </router-link>
+
+      <router-link
+        to="/templates"
+        @click="closeMenus"
+        class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-800 hover:bg-slate-50"
+      >
+        {{ t('nav.templates') }}
       </router-link>
 
       <div class="pt-2 border-t border-slate-100">

@@ -74,6 +74,17 @@ onMounted(() => {
               <span>{{ t('home.start_cta') }}</span>
             </button>
 
+            <!-- Templates CTA Button -->
+            <router-link
+              to="/templates"
+              class="h-12 min-h-[48px] px-6 rounded-xl bg-white hover:bg-slate-50 text-gov-text-primary font-semibold text-sm sm:text-base border border-gov-border shadow-gov-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-slate-300 inline-flex items-center justify-center gap-2 whitespace-nowrap select-none w-auto"
+            >
+              <svg class="w-5 h-5 text-gov-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              <span>{{ t('home.templates_cta') }}</span>
+            </router-link>
+
             <!-- Secondary Documentation Action -->
             <a
               href="#security-architecture"
@@ -215,11 +226,11 @@ onMounted(() => {
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
           <!-- Function 1: Verify Birth Certificate (Primary Active Action) -->
           <div
             @click="handleStartProcessing"
-            class="group bg-white rounded-2xl border-2 border-gov-primary/30 hover:border-gov-primary p-6 sm:p-7 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden ring-4 ring-transparent hover:ring-blue-100 hover:-translate-y-1"
+            class="group bg-white rounded-2xl border-2 border-gov-primary/30 hover:border-gov-primary p-6 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden ring-4 ring-transparent hover:ring-blue-100 hover:-translate-y-1"
           >
             <!-- Decorative Subtle Corner Accent -->
             <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
@@ -238,10 +249,10 @@ onMounted(() => {
               </div>
 
               <div>
-                <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
                   {{ t('functions.birth_certificate.title') }}
                 </h3>
-                <p class="text-xs sm:text-sm text-gov-text-secondary mt-2 leading-relaxed">
+                <p class="text-xs text-gov-text-secondary mt-2 leading-relaxed">
                   {{ t('functions.birth_certificate.desc') }}
                 </p>
               </div>
@@ -249,9 +260,9 @@ onMounted(() => {
 
             <div class="pt-6 mt-6 border-t border-slate-100 relative z-10 flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
-                Birth Certificate (BC)
+                Birth Certificate
               </span>
-              <div class="h-9 px-4 rounded-xl bg-gov-primary text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-sm group-hover:bg-gov-primary-hover group-hover:translate-x-1 transition-all whitespace-nowrap">
+              <div class="h-9 px-3.5 rounded-xl bg-gov-primary text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-sm group-hover:bg-gov-primary-hover group-hover:translate-x-1 transition-all whitespace-nowrap">
                 <span>{{ t('functions.birth_certificate.action') }}</span>
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -260,10 +271,53 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- Function 2: Pre-Flight Document Quality Inspection -->
+          <!-- Function 2: Certificate Templates & Bounding Box Studio -->
+          <router-link
+            to="/templates"
+            class="group bg-white rounded-2xl border-2 border-indigo-200 hover:border-gov-primary p-6 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden ring-4 ring-transparent hover:ring-indigo-100 hover:-translate-y-1"
+          >
+            <!-- Decorative Subtle Corner Accent -->
+            <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
+
+            <div class="space-y-4 relative z-10">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                  {{ t('functions.templates.badge') }}
+                </span>
+              </div>
+
+              <div>
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
+                  {{ t('functions.templates.title') }}
+                </h3>
+                <p class="text-xs text-gov-text-secondary mt-2 leading-relaxed">
+                  {{ t('functions.templates.desc') }}
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 relative z-10 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
+                Templates Studio
+              </span>
+              <div class="h-9 px-3.5 rounded-xl bg-indigo-600 group-hover:bg-indigo-700 text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-sm group-hover:translate-x-1 transition-all whitespace-nowrap">
+                <span>{{ t('functions.templates.action') }}</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </div>
+            </div>
+          </router-link>
+
+          <!-- Function 3: Pre-Flight Document Quality Inspection -->
           <div
             @click="handleStartProcessing"
-            class="group bg-white rounded-2xl border border-gov-border hover:border-gov-primary p-6 sm:p-7 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-1"
+            class="group bg-white rounded-2xl border border-gov-border hover:border-gov-primary p-6 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-1"
           >
             <div class="space-y-4">
               <div class="flex items-center justify-between">
@@ -279,10 +333,10 @@ onMounted(() => {
               </div>
 
               <div>
-                <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
                   {{ t('functions.quality_gate.title') }}
                 </h3>
-                <p class="text-xs sm:text-sm text-gov-text-secondary mt-2 leading-relaxed">
+                <p class="text-xs text-gov-text-secondary mt-2 leading-relaxed">
                   {{ t('functions.quality_gate.desc') }}
                 </p>
               </div>
@@ -292,7 +346,7 @@ onMounted(() => {
               <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
                 Pre-Flight Inspection
               </span>
-              <div class="h-9 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-all group-hover:translate-x-1 whitespace-nowrap">
+              <div class="h-9 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-all group-hover:translate-x-1 whitespace-nowrap">
                 <span>{{ t('functions.quality_gate.action') }}</span>
                 <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -301,10 +355,10 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- Function 3: Cryptographic Document Audit -->
+          <!-- Function 4: Cryptographic Document Audit -->
           <div
             @click="handleStartProcessing"
-            class="group bg-white rounded-2xl border border-gov-border hover:border-gov-primary p-6 sm:p-7 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-1"
+            class="group bg-white rounded-2xl border border-gov-border hover:border-gov-primary p-6 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-1"
           >
             <div class="space-y-4">
               <div class="flex items-center justify-between">
@@ -319,10 +373,10 @@ onMounted(() => {
               </div>
 
               <div>
-                <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
                   {{ t('functions.audit_hash.title') }}
                 </h3>
-                <p class="text-xs sm:text-sm text-gov-text-secondary mt-2 leading-relaxed">
+                <p class="text-xs text-gov-text-secondary mt-2 leading-relaxed">
                   {{ t('functions.audit_hash.desc') }}
                 </p>
               </div>
@@ -332,7 +386,7 @@ onMounted(() => {
               <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
                 SHA-256 Fingerprint
               </span>
-              <div class="h-9 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-all group-hover:translate-x-1 whitespace-nowrap">
+              <div class="h-9 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-all group-hover:translate-x-1 whitespace-nowrap">
                 <span>{{ t('functions.audit_hash.action') }}</span>
                 <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
