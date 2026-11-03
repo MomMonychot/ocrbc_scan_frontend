@@ -488,10 +488,10 @@ function removeCustomImage() {
       
       <!-- Top Navigation & Header -->
       <div class="pb-6 mb-8 border-b border-gov-border">
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-gov-primary tracking-tight md:whitespace-nowrap">
           {{ t('templates.title') }}
         </h1>
-        <p class="text-sm sm:text-base text-gov-text-secondary mt-1 max-w-3xl leading-relaxed">
+        <p class="text-xs sm:text-sm lg:text-[15px] text-gov-text-secondary mt-1.5 max-w-none leading-relaxed lg:whitespace-nowrap overflow-hidden text-ellipsis">
           {{ t('templates.subtitle') }}
         </p>
       </div>
