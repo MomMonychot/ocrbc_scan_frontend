@@ -255,6 +255,10 @@
       "old": "Old Format"
     },
     "btn_add": "Add New Template",
+    "choice_existing": "Use Existing Template",
+    "choice_existing_desc": "Create a new template from official standard layout",
+    "choice_computer": "Add from Computer",
+    "choice_computer_desc": "Upload scan or image file directly from your computer",
     "fields_count": "Bounding Boxes",
     "configured_fields": "Configured OCR Field Boxes:",
     "btn_edit_boxes": "Edit & Draw Bounding Boxes",

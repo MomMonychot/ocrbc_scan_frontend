@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -135,6 +135,74 @@ const initialBoxPos = ref({ x: 0, y: 0 })
 // Upload custom template image
 const customImagePreview = ref(null)
 
+// Add Template Dropdown Menu State (Two Choices: Existing or Computer)
+const isAddMenuOpen = ref(false)
+const addMenuRef = ref(null)
+const computerFileInputRef = ref(null)
+
+function toggleAddMenu() {
+  isAddMenuOpen.value = !isAddMenuOpen.value
+}
+
+function handleDocumentClick(e) {
+  if (addMenuRef.value && !addMenuRef.value.contains(e.target)) {
+    isAddMenuOpen.value = false
+  }
+}
+
+function handleCreateFromExisting() {
+  isAddMenuOpen.value = false
+  handleAddNewTemplate()
+}
+
+function triggerComputerUpload() {
+  isAddMenuOpen.value = false
+  if (computerFileInputRef.value) {
+    computerFileInputRef.value.value = ''
+    computerFileInputRef.value.click()
+  }
+}
+
+function handleComputerFileSelected(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  if (!file.type.startsWith('image/')) {
+    alert(locale.value === 'km' ? 'សូមជ្រើសរើសឯកសាររូបភាព (PNG, JPEG, WebP)' : 'Please select an image file (PNG, JPEG, WebP).')
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = (evt) => {
+    const imageDataUrl = evt.target?.result
+    const fileName = file.name.replace(/\.[^/.]+$/, '')
+
+    const newTpl = {
+      id: 'tpl-custom-' + Date.now(),
+      format: activeTab.value,
+      nameKm: fileName || (activeTab.value === 'new' ? 'គំរូថ្មីពីកុំព្យូទ័រ' : 'គំរូចាស់ពីកុំព្យូទ័រ'),
+      nameEn: fileName || (activeTab.value === 'new' ? 'Custom Modern Upload' : 'Custom Historical Upload'),
+      descriptionKm: `គំរូទម្រង់ឯកសារផ្ទុកឡើងពីកុំព្យូទ័រ (${file.name}) សម្រាប់កំណត់ទីតាំងប្រអប់ Bounding Box OCR។`,
+      descriptionEn: `Template uploaded from computer (${file.name}) ready for custom OCR bounding box configuration.`,
+      updatedAt: new Date().toISOString().slice(0, 10),
+      aspectRatio: '4/5',
+      customImage: imageDataUrl,
+      boxes: [
+        { id: 'b_' + Date.now() + '_1', key: 'full_name_km', x: 25.0, y: 30.0, width: 50.0, height: 7.0 },
+        { id: 'b_' + Date.now() + '_2', key: 'certificate_no', x: 12.0, y: 14.0, width: 35.0, height: 6.0 }
+      ]
+    }
+
+    editingTemplate.value = newTpl
+    selectedBoxId.value = newTpl.boxes[0].id
+    customImagePreview.value = imageDataUrl
+    studioMode.value = 'draw'
+    studioZoom.value = 1.0
+    showStudio.value = true
+    showToast(locale.value === 'km' ? 'បានផ្ទុកឡើងរូបភាពគំរូពីកុំព្យូទ័ររួចរាល់' : 'Loaded template image from computer')
+  }
+  reader.readAsDataURL(file)
+}
+
 // Load from LocalStorage or seed defaults
 onMounted(() => {
   try {
@@ -148,6 +216,11 @@ onMounted(() => {
   } catch (e) {
     templates.value = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES))
   }
+  document.addEventListener('click', handleDocumentClick)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleDocumentClick)
 })
 
 function saveTemplates() {
@@ -497,17 +570,95 @@ function removeCustomImage() {
           </button>
         </div>
 
-        <!-- Right: Button "Add New Template" at the end of line of New and Old -->
-        <button
-          type="button"
-          @click="handleAddNewTemplate"
-          class="h-11 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm hover:shadow-gov-md transition-all duration-150 inline-flex items-center justify-center gap-2 whitespace-nowrap select-none self-end sm:self-center"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-          </svg>
-          <span>{{ t('templates.btn_add') }}</span>
-        </button>
+        <!-- Right: Button with two choices (Use Existing & Add from Computer) -->
+        <div class="relative self-end sm:self-center" ref="addMenuRef">
+          <button
+            type="button"
+            @click="toggleAddMenu"
+            class="h-11 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm hover:shadow-gov-md transition-all duration-150 inline-flex items-center justify-center gap-2.5 whitespace-nowrap select-none"
+            aria-haspopup="true"
+            :aria-expanded="isAddMenuOpen"
+          >
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>{{ t('templates.btn_add') }}</span>
+            <svg
+              :class="['w-4 h-4 transition-transform duration-200 opacity-80', isAddMenuOpen ? 'rotate-180' : '']"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <!-- Dropdown Menu: Two Choices -->
+          <transition
+            enter-active-class="transition duration-150 ease-out"
+            enter-from-class="transform scale-95 opacity-0 -translate-y-1"
+            enter-to-class="transform scale-100 opacity-100 translate-y-0"
+            leave-active-class="transition duration-100 ease-in"
+            leave-from-class="transform scale-100 opacity-100 translate-y-0"
+            leave-to-class="transform scale-95 opacity-0 -translate-y-1"
+          >
+            <div
+              v-if="isAddMenuOpen"
+              class="absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-white border border-gov-border shadow-2xl p-2 z-30 space-y-1"
+            >
+              <!-- Choice 1: Use Existing Template -->
+              <button
+                type="button"
+                @click="handleCreateFromExisting"
+                class="w-full text-left p-3 rounded-xl hover:bg-blue-50/70 border border-transparent hover:border-blue-100 transition-colors flex items-start gap-3 group"
+              >
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-gov-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-gov-primary">
+                    {{ t('templates.choice_existing') }}
+                  </div>
+                  <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                    {{ t('templates.choice_existing_desc') }}
+                  </div>
+                </div>
+              </button>
+
+              <!-- Choice 2: Add New Template from Computer -->
+              <button
+                type="button"
+                @click="triggerComputerUpload"
+                class="w-full text-left p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-100 transition-colors flex items-start gap-3 group"
+              >
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-700">
+                    {{ t('templates.choice_computer') }}
+                  </div>
+                  <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                    {{ t('templates.choice_computer_desc') }}
+                  </div>
+                </div>
+              </button>
+            </div>
+          </transition>
+
+          <!-- Hidden Native File Input for Uploading from Computer -->
+          <input
+            ref="computerFileInputRef"
+            type="file"
+            accept="image/*"
+            class="hidden"
+            @change="handleComputerFileSelected"
+          />
+        </div>
       </div>
 
       <!-- TEMPLATE LIST GRID -->
@@ -573,8 +724,31 @@ function removeCustomImage() {
 
             <!-- Mini Preview of Certificate Sheet with Real Bounding Box Overlays -->
             <div class="relative w-full aspect-[4/3] bg-slate-50 rounded-xl border border-slate-200 overflow-hidden mb-5 flex items-center justify-center p-3 select-none">
-              <!-- Background Document Graphic Mock -->
+              <!-- Custom Uploaded Image Preview from Computer if available -->
+              <div v-if="tpl.customImage" class="w-full h-full relative overflow-hidden rounded border border-slate-200 bg-white">
+                <img :src="tpl.customImage" alt="Custom Template Preview" class="w-full h-full object-contain pointer-events-none" />
+                <!-- Bounding Boxes Miniature Overlay on Custom Image -->
+                <div
+                  v-for="b in tpl.boxes"
+                  :key="b.id"
+                  :style="{
+                    left: `${b.x}%`,
+                    top: `${b.y}%`,
+                    width: `${b.width}%`,
+                    height: `${b.height}%`
+                  }"
+                  :class="[
+                    'absolute border border-dashed rounded-[2px] pointer-events-none flex items-center justify-center text-[7px] font-sans font-bold px-0.5 truncate',
+                    getFieldDef(b.key).color
+                  ]"
+                >
+                  <span class="truncate">{{ getFieldLabel(b.key) }}</span>
+                </div>
+              </div>
+
+              <!-- Default Document Graphic Mock if no custom image -->
               <div
+                v-else
                 :class="[
                   'w-full h-full rounded shadow-inner border p-3 flex flex-col justify-between text-[8px] font-serif relative overflow-hidden',
                   tpl.format === 'new'
@@ -678,16 +852,31 @@ function removeCustomImage() {
         <p class="text-xs sm:text-sm text-slate-500 mb-6 max-w-md mx-auto">
           {{ t('templates.empty_desc') }}
         </p>
-        <button
-          type="button"
-          @click="handleAddNewTemplate"
-          class="h-11 px-6 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm transition-all inline-flex items-center gap-2"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-          </svg>
-          <span>{{ t('templates.btn_add') }}</span>
-        </button>
+        <div class="inline-flex flex-wrap items-center justify-center gap-3">
+          <!-- Choice 1: Use Existing Template -->
+          <button
+            type="button"
+            @click="handleCreateFromExisting"
+            class="h-11 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm transition-all inline-flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>{{ t('templates.choice_existing') }}</span>
+          </button>
+
+          <!-- Choice 2: Add New Template from Computer -->
+          <button
+            type="button"
+            @click="triggerComputerUpload"
+            class="h-11 px-5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-sm border border-slate-300 shadow-gov-sm transition-all inline-flex items-center gap-2"
+          >
+            <svg class="w-5 h-5 text-gov-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span>{{ t('templates.choice_computer') }}</span>
+          </button>
+        </div>
       </div>
 
     </div>
