@@ -41,7 +41,6 @@
     }
   },
   "about_page": {
-    "badge": "Administrative System & Architecture Profile",
     "title": "About OCRBC Scan Portal",
     "subtitle": "Official district-level administrative platform for secure, transparent civil status digitization and automated document verification.",
     "tabs": {

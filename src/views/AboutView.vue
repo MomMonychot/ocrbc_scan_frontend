@@ -44,9 +44,6 @@ watch(() => route.query.section, (newSection) => {
       <!-- Top Header Navigation & Breadcrumb -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-gov-border gap-4">
         <div>
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-gov-primary border border-blue-200 mb-2">
-            {{ t('about_page.badge') }}
-          </span>
           <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
             {{ t('about_page.title') }}
           </h1>
