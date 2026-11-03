@@ -14,7 +14,8 @@ const tabs = [
   { id: 'goal', key: 'about_page.tabs.goal', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
   { id: 'vision', key: 'about_page.tabs.vision', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' },
   { id: 'mission', key: 'about_page.tabs.mission', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
-  { id: 'policies_rules', key: 'about_page.tabs.policies_rules', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' }
+  { id: 'policies', key: 'about_page.tabs.policies', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+  { id: 'rules', key: 'about_page.tabs.rules', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' }
 ]
 
 function switchTab(id) {
@@ -240,8 +241,47 @@ watch(() => route.query.section, (newSection) => {
         </div>
       </section>
 
-      <!-- Tab 5: Policies & Rules -->
-      <section v-if="activeTab === 'policies_rules'" class="space-y-8 animate-fadeIn">
+      <!-- Tab 5: Policies -->
+      <section v-if="activeTab === 'policies'" class="space-y-8 animate-fadeIn">
+        <div class="bg-white rounded-2xl border border-gov-border shadow-gov-sm p-6 sm:p-10 space-y-6">
+          <div class="flex items-center gap-4 border-b border-slate-100 pb-5">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-gov-primary flex items-center justify-center font-bold text-xl shadow-sm shrink-0">
+              <svg class="w-6 h-6 text-gov-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
+                {{ t('about_page.policies.title') }}
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-500">Foundational Governance & Privacy Principles</p>
+            </div>
+          </div>
+
+          <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
+            {{ t('about_page.policies.desc') }}
+          </p>
+
+          <div class="space-y-4 pt-2">
+            <div
+              v-for="(item, idx) in tm('about_page.policies.items')"
+              :key="idx"
+              class="p-5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2 hover:bg-slate-100/60 transition-colors"
+            >
+              <div class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-gov-primary shrink-0"></span>
+                <span>{{ item.name }}</span>
+              </div>
+              <p class="text-sm text-slate-600 leading-relaxed pl-4 border-l-2 border-blue-300">
+                {{ item.detail }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 6: Rules -->
+      <section v-if="activeTab === 'rules'" class="space-y-8 animate-fadeIn">
         <div class="bg-white rounded-2xl border border-gov-border shadow-gov-sm p-6 sm:p-10 space-y-6">
           <div class="flex items-center gap-4 border-b border-slate-100 pb-5">
             <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xl shadow-sm shrink-0">
@@ -251,27 +291,27 @@ watch(() => route.query.section, (newSection) => {
             </div>
             <div>
               <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
-                {{ t('about_page.policies_rules.title') }}
+                {{ t('about_page.rules.title') }}
               </h2>
-              <p class="text-xs sm:text-sm text-slate-500">Statutory Directives & Security Protocol</p>
+              <p class="text-xs sm:text-sm text-slate-500">Mandatory Technical Directives & Officer Instructions</p>
             </div>
           </div>
 
-          <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
-            {{ t('about_page.policies_rules.desc') }}
+          <p class="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
+            {{ t('about_page.rules.desc') }}
           </p>
 
           <div class="space-y-4 pt-2">
             <div
-              v-for="(rule, idx) in tm('about_page.policies_rules.rules')"
+              v-for="(rule, idx) in tm('about_page.rules.items')"
               :key="idx"
-              class="p-5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2"
+              class="p-5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2 hover:bg-slate-100/60 transition-colors"
             >
               <div class="text-base font-bold text-slate-900 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0"></span>
                 <span>{{ rule.name }}</span>
               </div>
-              <p class="text-sm text-slate-600 leading-relaxed pl-4 border-l-2 border-slate-200">
+              <p class="text-sm text-slate-600 leading-relaxed pl-4 border-l-2 border-rose-300">
                 {{ rule.detail }}
               </p>
             </div>

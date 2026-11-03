@@ -13,7 +13,8 @@
     "goal": "Goal",
     "vision": "Vision",
     "mission": "Mission",
-    "policies_rules": "Policies & Rules",
+    "policies": "Policies",
+    "rules": "Rules",
     "standards": "Security Standards",
     "guidelines": "User Guide"
   },
@@ -48,7 +49,8 @@
       "goal": "Goal",
       "vision": "Vision",
       "mission": "Mission",
-      "policies_rules": "Policies & Rules"
+      "policies": "Policies",
+      "rules": "Rules"
     },
     "overview": {
       "title": "About OCRBC Scan",
@@ -83,25 +85,47 @@
         "Deliver an interactive bounding-box workspace enabling officers to inspect, audit, and approve records with human-in-the-loop oversight."
       ]
     },
-    "policies_rules": {
-      "title": "Policies & Rules (Policies & Rules)",
-      "desc": "All system operations are strictly governed by statutory regulations and digital security directives:",
+    "policies": {
+      "title": "Institutional Policies (Policies)",
+      "desc": "Foundational governance principles ensuring public trust and citizen privacy:",
+      "items": [
+        {
+          "name": "Zero-Data-Retention Policy (ZDR Principle)",
+          "detail": "Documents ingested into the system are never stored on persistent hard drives. Processing occurs strictly in volatile RAM to completely eradicate citizen identity data breach vectors."
+        },
+        {
+          "name": "Citizen Identity Privacy Protection Policy",
+          "detail": "Personally Identifiable Information (PII) is never shared with third-party vendors or external cloud endpoints. All data cross-referencing occurs strictly within secure municipal boundaries."
+        },
+        {
+          "name": "Public Transparency & Accountability Policy",
+          "detail": "Every extracted value and cross-reference outcome provides transparent confidence scoring directly to presiding administrative officers without obfuscation."
+        },
+        {
+          "name": "Cryptographic Integrity Policy",
+          "detail": "Every verified document is stamped with a deterministic SHA-256 cryptographic audit fingerprint to certify authenticity and detect tampering."
+        }
+      ]
+    },
+    "rules": {
+      "title": "Operational Rules & Directives (Rules)",
+      "desc": "Mandatory operational rules enforced for civil registry officers and system processes:",
       "rules": [
         {
-          "name": "1. Mandatory Zero-Data-Retention (ZDR Directive)",
-          "detail": "All uploaded documents reside exclusively in ephemeral RAM during active processing. Upon export completion or session termination, memory buffers are cryptographically zeroized (Crypto-Wipe) without writing artifacts to disk."
+          "name": "1. Mandatory Review Rule for Scores Below 85%",
+          "detail": "Any bounding box or extracted field scoring below 85% confidence mandates visual inspection and manual correction by the presiding officer before approval."
         },
         {
-          "name": "2. Citizen Identity Privacy Protection",
-          "detail": "Personally Identifiable Information (PII) is never transmitted to unverified third-party endpoints or external cloud vendors. Cross-referencing occurs strictly within authenticated government boundaries."
+          "name": "2. Immediate Volatile Buffer Purge Rule (Crypto-Wipe)",
+          "detail": "Upon verification completion, receipt export, or session termination, all transient document memory buffers are cryptographically zeroized in volatile RAM within 0 seconds."
         },
         {
-          "name": "3. Cryptographic Tamper-Evident Verification (SHA-256)",
-          "detail": "Every processed document generates a deterministic SHA-256 audit fingerprint, allowing verification officers to immediately detect alterations, forged stamps, or illicit revisions."
+          "name": "3. Permitted File Format & Size Rule",
+          "detail": "The portal strictly accepts PNG, JPEG, WebP, and PDF files not exceeding 15 MB. Files outside these specifications are rejected by the pre-flight gate."
         },
         {
-          "name": "4. Officer Accountability & Manual Override Standards",
-          "detail": "OCR and automated models serve solely as assistive accelerators. The presiding civil registry officer retains final authority, actively validating bounding-box alignments before official approval."
+          "name": "4. Presiding Officer Authorization Rule",
+          "detail": "OCR and machine learning models serve solely as efficiency accelerators. The designated One-Window Service officer retains full statutory responsibility for certifying civil records."
         }
       ]
     }
