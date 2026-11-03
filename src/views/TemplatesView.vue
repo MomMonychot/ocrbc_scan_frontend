@@ -7,7 +7,8 @@ const { t, locale } = useI18n()
 const router = useRouter()
 
 // Storage key for persistence
-const STORAGE_KEY = 'district_ocr_templates_v1'
+const STORAGE_KEY = 'district_ocr_templates_v2'
+const OLD_STORAGE_KEY = 'district_ocr_templates_v1'
 
 // Available Field Options for Birth Certificate Bounding Boxes
 const FIELD_DEFINITIONS = [
@@ -26,15 +27,15 @@ const FIELD_DEFINITIONS = [
   { key: 'custom', labelKm: 'វាលកំណត់ផ្សេងៗ', labelEn: 'Custom Field', color: 'border-gray-500 bg-gray-500/15 text-gray-700' },
 ]
 
-// Default seed templates
+// Default seed templates: Categorized into 'new' (សេចក្តីចម្លងសំបុត្រកំណើត - no បញ្ជាក់) and 'old' (សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត)
 const DEFAULT_TEMPLATES = [
   {
-    id: 'tpl-new-std-2024',
-    format: 'new', // 'new' | 'old'
-    nameKm: 'សំបុត្រកំណើតឌីជីថលស្ដង់ដារ ២០២៤',
-    nameEn: 'Standard Digital Birth Certificate 2024',
-    descriptionKm: 'ទម្រង់សំបុត្រកំណើតស្ដង់ដារថ្មី មានកូដ QR លេខកូដសម្គាល់ជាតិ និងអក្សរឡាតាំងសម្រាប់រដ្ឋបាលក្រុង-ស្រុក-ខណ្ឌ។',
-    descriptionEn: 'Modern civil registry certificate with QR verification code, national ID, and bilingual Latin fields.',
+    id: 'tpl-std-digital',
+    format: 'new', // សេចក្តីចម្លងសំបុត្រកំណើត (គ្មានពាក្យបញ្ជាក់)
+    nameKm: 'សេចក្តីចម្លងសំបុត្រកំណើត (ឌីជីថលស្ដង់ដារ)',
+    nameEn: 'Copy of Birth Certificate (Digital Standard)',
+    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើត (គ្មានពាក្យបញ្ជាក់) មានកូដ QR លេខកូដសម្គាល់ជាតិ និងអក្សរឡាតាំង។',
+    descriptionEn: 'Official standard copy of birth certificate without certification clause, with QR and national ID.',
     updatedAt: '2024-11-01',
     aspectRatio: '4/5',
     boxes: [
@@ -50,12 +51,12 @@ const DEFAULT_TEMPLATES = [
     ]
   },
   {
-    id: 'tpl-new-bilingual-2023',
-    format: 'new',
-    nameKm: 'សំបុត្រកំណើតទ្វេភាសា ក្រសួងមហាផ្ទៃ',
-    nameEn: 'Ministry Bilingual Civil Certificate',
-    descriptionKm: 'ទម្រង់កំណែទ្វេភាសាខ្មែរ-អង់គ្លេស ប្រើប្រាស់សម្រាប់នាយកដ្ឋានអត្រានុកូលដ្ឋាន និងការផ្ទៀងផ្ទាត់អន្តរជាតិ។',
-    descriptionEn: 'Bilingual civil status form with expanded metadata fields for district civil status registries.',
+    id: 'tpl-std-bilingual',
+    format: 'new', // សេចក្តីចម្លងសំបុត្រកំណើត (គ្មានពាក្យបញ្ជាក់)
+    nameKm: 'សេចក្តីចម្លងសំបុត្រកំណើត (ទ្វេភាសា ក្រសួងមហាផ្ទៃ)',
+    nameEn: 'Copy of Birth Certificate (Bilingual MOI)',
+    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើតទ្វេភាសាខ្មែរ-អង់គ្លេស សម្រាប់រដ្ឋបាលក្រុង-ស្រុក-ខណ្ឌ។',
+    descriptionEn: 'Bilingual copy of birth certificate format with dual Khmer and English fields.',
     updatedAt: '2024-08-15',
     aspectRatio: '4/5',
     boxes: [
@@ -71,12 +72,12 @@ const DEFAULT_TEMPLATES = [
     ]
   },
   {
-    id: 'tpl-old-classic-1993',
-    format: 'old', // 'new' | 'old'
-    nameKm: 'សំបុត្រកំណើតទម្រង់ចាស់ (១៩៩៣ - ២០០៥)',
-    nameEn: 'Historical Civil Registry Form (1993 - 2005)',
-    descriptionKm: 'ទម្រង់សំបុត្រកំណើតបែបប្រពៃណី វាយអត្ថបទដោយអង្គុលីលេខ ឬសរសេរដៃ គ្មានកូដ QR ប្រើប្រាស់សៀវភៅបញ្ជីកាលពីមុន។',
-    descriptionEn: 'Traditional typewriter or hand-written legacy certificate without QR codes, referencing archival ledger volumes.',
+    id: 'tpl-cert-official',
+    format: 'old', // សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត
+    nameKm: 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ស្តង់ដាររដ្ឋបាល)',
+    nameEn: 'Certified Copy of Birth Certificate (Administrative)',
+    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតផ្លូវការ (មានពាក្យបញ្ជាក់កំណើត) របស់ក្រសួងមហាផ្ទៃ។',
+    descriptionEn: 'Official certified copy of birth certificate with certification endorsement.',
     updatedAt: '2024-05-10',
     aspectRatio: '4/5',
     boxes: [
@@ -91,12 +92,12 @@ const DEFAULT_TEMPLATES = [
     ]
   },
   {
-    id: 'tpl-old-vintage-1980',
-    format: 'old',
-    nameKm: 'សំបុត្របញ្ជាក់កំណើតបុរាណ (ក្រដាសលឿង)',
-    nameEn: 'Vintage Archival Civil Record (Pre-1993)',
-    descriptionKm: 'ទម្រង់បុរាណប្រើប្រាស់ក្នុងបណ្ណសារដ្ឋានខេត្តក្រុង មានតែត្រាមូលពណ៌ក្រហម និងហត្ថលេខាមេឃុំ-ចៅសង្កាត់។',
-    descriptionEn: 'Historical district record with vintage paper tint, red wax/ink seals, and manual clerk signatures.',
+    id: 'tpl-cert-archival',
+    format: 'old', // សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត
+    nameKm: 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ទម្រង់បុរាណ ក្រដាសលឿង)',
+    nameEn: 'Certified Copy of Birth Certificate (Archival Vintage)',
+    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតបែបបណ្ណសារ មានត្រាមូលក្រហម។',
+    descriptionEn: 'Archival certified copy of birth certificate with red seal stamp.',
     updatedAt: '2024-03-22',
     aspectRatio: '4/5',
     boxes: [
@@ -175,13 +176,14 @@ function handleComputerFileSelected(e) {
   reader.onload = (evt) => {
     const imageDataUrl = evt.target?.result
     const fileName = file.name.replace(/\.[^/.]+$/, '')
+    const isCertified = activeTab.value === 'old'
 
     const newTpl = {
       id: 'tpl-custom-' + Date.now(),
       format: activeTab.value,
-      nameKm: fileName || (activeTab.value === 'new' ? 'គំរូថ្មីពីកុំព្យូទ័រ' : 'គំរូចាស់ពីកុំព្យូទ័រ'),
-      nameEn: fileName || (activeTab.value === 'new' ? 'Custom Modern Upload' : 'Custom Historical Upload'),
-      descriptionKm: `គំរូទម្រង់ឯកសារផ្ទុកឡើងពីកុំព្យូទ័រ (${file.name}) សម្រាប់កំណត់ទីតាំងប្រអប់ Bounding Box OCR។`,
+      nameKm: fileName || (isCertified ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតពីកុំព្យូទ័រ' : 'សេចក្តីចម្លងសំបុត្រកំណើតពីកុំព្យូទ័រ'),
+      nameEn: fileName || (isCertified ? 'Certified Copy of Birth Certificate Upload' : 'Copy of Birth Certificate Upload'),
+      descriptionKm: `គំរូទម្រង់ ${isCertified ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'សេចក្តីចម្លងសំបុត្រកំណើត'} ផ្ទុកឡើងពីកុំព្យូទ័រ (${file.name})។`,
       descriptionEn: `Template uploaded from computer (${file.name}) ready for custom OCR bounding box configuration.`,
       updatedAt: new Date().toISOString().slice(0, 10),
       aspectRatio: '4/5',
@@ -203,14 +205,21 @@ function handleComputerFileSelected(e) {
   reader.readAsDataURL(file)
 }
 
-// Load from LocalStorage or seed defaults
+// Load from LocalStorage or seed defaults (with v1 -> v2 automatic migration)
 onMounted(() => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
       templates.value = JSON.parse(raw)
     } else {
-      templates.value = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES))
+      const oldRaw = localStorage.getItem(OLD_STORAGE_KEY)
+      if (oldRaw) {
+        const oldList = JSON.parse(oldRaw)
+        const customItems = oldList.filter(t => t.id && t.id.startsWith('tpl-custom'))
+        templates.value = [...JSON.parse(JSON.stringify(DEFAULT_TEMPLATES)), ...customItems]
+      } else {
+        templates.value = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES))
+      }
       saveTemplates()
     }
   } catch (e) {
@@ -302,13 +311,18 @@ function openStudioForEdit(template) {
 }
 
 function handleAddNewTemplate() {
+  const isCertified = activeTab.value === 'old'
   const newTpl = {
     id: 'tpl-custom-' + Date.now(),
-    format: activeTab.value, // creates in current tab
-    nameKm: activeTab.value === 'new' ? 'គំរូទម្រង់ថ្មីផ្ទាល់ខ្លួន' : 'គំរូទម្រង់ចាស់ផ្ទាល់ខ្លួន',
-    nameEn: activeTab.value === 'new' ? 'Custom Modern Template' : 'Custom Historical Template',
-    descriptionKm: 'គំរូទម្រង់ដែលបានបង្កើតដោយមន្ត្រីអត្រានុកូលដ្ឋាន ដោយមានការកំណត់ Bounding Box ផ្ទាល់ខ្លួន។',
-    descriptionEn: 'Custom template configured with officer-defined OCR extraction coordinates.',
+    format: activeTab.value, // creates in current tab ('new' = no បញ្ជាក់, 'old' = មានបញ្ជាក់)
+    nameKm: isCertified ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតថ្មី' : 'សេចក្តីចម្លងសំបុត្រកំណើតថ្មី',
+    nameEn: isCertified ? 'New Certified Copy of Birth Certificate' : 'New Copy of Birth Certificate',
+    descriptionKm: isCertified
+      ? 'ទម្រង់សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត សម្រាប់កំណត់ទីតាំង OCR Bounding Box។'
+      : 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើត (គ្មានពាក្យបញ្ជាក់) សម្រាប់កំណត់ទីតាំង OCR Bounding Box។',
+    descriptionEn: isCertified
+      ? 'Certified copy of birth certificate template for OCR bounding box alignment.'
+      : 'Copy of birth certificate template for OCR bounding box alignment.',
     updatedAt: new Date().toISOString().slice(0, 10),
     aspectRatio: '4/5',
     boxes: [
@@ -544,7 +558,7 @@ function removeCustomImage() {
             </span>
           </button>
 
-          <!-- Tab 2: Old Format -->
+          <!-- Tab 2: Certified Copy (សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត) -->
           <button
             type="button"
             @click="activeTab = 'old'"
@@ -556,7 +570,7 @@ function removeCustomImage() {
             ]"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
             <span>{{ t('templates.tabs.old') }}</span>
             <span
@@ -761,7 +775,7 @@ function removeCustomImage() {
                   <div class="font-bold">{{ locale === 'km' ? 'ព្រះរាជាណាចក្រកម្ពុជា' : 'KINGDOM OF CAMBODIA' }}</div>
                   <div class="text-[7px]">{{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}</div>
                   <div class="font-sans font-bold text-gov-primary pt-0.5">
-                    {{ tpl.format === 'new' ? (locale === 'km' ? 'សំបុត្រកំណើត' : 'BIRTH CERTIFICATE') : (locale === 'km' ? 'សំបុត្របញ្ជាក់កំណើត' : 'CIVIL BIRTH EXTRACT') }}
+                    {{ tpl.format === 'new' ? (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'COPY OF BIRTH CERTIFICATE') : (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'CERTIFIED COPY OF BIRTH CERTIFICATE') }}
                   </div>
                 </div>
 
@@ -1072,7 +1086,7 @@ function removeCustomImage() {
                         {{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}
                       </div>
                       <div class="text-xs font-extrabold text-gov-primary font-sans pt-1">
-                        {{ editingTemplate.format === 'new' ? (locale === 'km' ? 'សំបុត្រកំណើត' : 'BIRTH CERTIFICATE') : (locale === 'km' ? 'សំបុត្រកំណើតទម្រង់ចាស់' : 'ARCHIVAL CIVIL RECORD') }}
+                        {{ editingTemplate.format === 'new' ? (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'COPY OF BIRTH CERTIFICATE') : (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'CERTIFIED COPY OF BIRTH CERTIFICATE') }}
                       </div>
                     </div>
 

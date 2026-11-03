@@ -19,6 +19,8 @@ const exportNotification = ref(null)
 const canvasZoom = ref(1.0)
 const isAdvancedMode = ref(false)
 const selectedFieldKey = ref('full_name_km')
+// Document type: 'standard' (សេចក្តីចម្លងសំបុត្រកំណើត - no បញ្ជាក់) vs 'certified' (សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត)
+const selectedDocType = ref('standard')
 
 // Bounding box definitions (relative percentage coordinates for responsive scaling)
 const boundingBoxes = ref([
@@ -343,6 +345,30 @@ onMounted(() => {
 
               <!-- Controls: Zoom & Mode Toggle -->
               <div class="flex items-center gap-2">
+                <!-- Document Type Switcher (Standard vs Certified) -->
+                <div class="hidden sm:inline-flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs h-8">
+                  <button
+                    type="button"
+                    @click="selectedDocType = 'standard'"
+                    :class="[
+                      'h-7 px-2.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap select-none',
+                      selectedDocType === 'standard' ? 'bg-white text-gov-primary shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    ]"
+                  >
+                    {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'Birth Certificate Copy' }}
+                  </button>
+                  <button
+                    type="button"
+                    @click="selectedDocType = 'certified'"
+                    :class="[
+                      'h-7 px-2.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap select-none',
+                      selectedDocType === 'certified' ? 'bg-white text-gov-primary shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    ]"
+                  >
+                    {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'Certified Copy' }}
+                  </button>
+                </div>
+
                 <div class="inline-flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs h-8">
                   <button
                     @click="zoomOut"
@@ -422,7 +448,9 @@ onMounted(() => {
                       {{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}
                     </div>
                     <div class="text-xs font-extrabold text-gov-primary font-sans pt-1">
-                      {{ locale === 'km' ? 'សំបុត្រកំណើត' : 'BIRTH CERTIFICATE' }}
+                      {{ selectedDocType === 'certified'
+                          ? (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'CERTIFIED COPY OF BIRTH CERTIFICATE')
+                          : (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'COPY OF BIRTH CERTIFICATE') }}
                     </div>
                   </div>
 
