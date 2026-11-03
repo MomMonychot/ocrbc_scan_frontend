@@ -521,14 +521,14 @@ function removeCustomImage() {
           </button>
         </div>
 
-        <!-- Right: Button "+ Add New Template" at the end of line of New and Old -->
+        <!-- Right: Button "Add New Template" at the end of line of New and Old -->
         <button
           type="button"
           @click="handleAddNewTemplate"
           class="h-11 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm hover:shadow-gov-md transition-all duration-150 inline-flex items-center justify-center gap-2 whitespace-nowrap select-none self-end sm:self-center"
         >
-          <svg class="w-4 h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
           </svg>
           <span>{{ t('templates.btn_add') }}</span>
         </button>
@@ -707,8 +707,8 @@ function removeCustomImage() {
           @click="handleAddNewTemplate"
           class="h-11 px-6 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm transition-all inline-flex items-center gap-2"
         >
-          <svg class="w-4 h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
           </svg>
           <span>{{ t('templates.btn_add') }}</span>
         </button>
