@@ -9,8 +9,102 @@
   "nav": {
     "home": "Overview",
     "verify": "Document Verification",
+    "about": "About Us",
+    "goal": "Goal",
+    "vision": "Vision",
+    "mission": "Mission",
+    "policies_rules": "Policies & Rules",
     "standards": "Security Standards",
     "guidelines": "User Guide"
+  },
+  "functions": {
+    "title": "System Functions",
+    "subtitle": "Select an administrative function below to start processing civil registration records",
+    "birth_certificate": {
+      "badge": "Active Service",
+      "title": "Verify Birth Certificate",
+      "desc": "Scan and verify birth certificates with dual-script Khmer & Latin OCR extraction and real-time municipal registry cross-referencing.",
+      "action": "Start Verification"
+    },
+    "quality_gate": {
+      "badge": "Quality Gate",
+      "title": "Pre-Flight Document Quality Inspection",
+      "desc": "Pre-screen document sharpness, lighting, exposure, and orientation in volatile RAM before proceeding to OCR extraction.",
+      "action": "Inspect Document"
+    },
+    "audit_hash": {
+      "badge": "Tamper-Evident",
+      "title": "Cryptographic Integrity Audit (SHA-256)",
+      "desc": "Verify ephemeral cryptographic fingerprints in volatile RAM to guarantee document authenticity and prevent falsification.",
+      "action": "Audit Integrity"
+    }
+  },
+  "about_page": {
+    "badge": "Administrative System & Architecture Profile",
+    "title": "About OCRBC Scan Portal",
+    "subtitle": "Official district-level administrative platform for secure, transparent civil status digitization and automated document verification.",
+    "tabs": {
+      "overview": "About Us",
+      "goal": "Goal",
+      "vision": "Vision",
+      "mission": "Mission",
+      "policies_rules": "Policies & Rules"
+    },
+    "overview": {
+      "title": "About OCRBC Scan",
+      "p1": "OCRBC Scan is the official digital administration platform engineered for District One-Window Services (OWSU) and municipal civil status offices. Its primary mandate is to eliminate bureaucratic backlogs and expedite the accurate extraction and validation of civil registration documents, focusing on Birth Certificates (BC).",
+      "p2": "The system combines high-fidelity dual-script Khmer and Latin OCR artificial intelligence with an absolute Zero-Data-Retention (ZDR) baseline, guaranteeing citizen privacy and statutory compliance above all else."
+    },
+    "goal": {
+      "title": "Core Goals (Goal)",
+      "desc": "Eliminate error-prone manual typing and compress document verification cycles to under 1.8 seconds per civil certificate.",
+      "items": [
+        "Accelerate public service delivery at municipal and commune administrative counters.",
+        "Maintain 99.4% extraction accuracy across Khmer administrative typography and certificate codes.",
+        "Prevent clerical spelling and date discrepancies through automated cross-referencing with municipal records.",
+        "Completely eliminate citizen identity leak vectors via pure in-memory execution (RAM Only)."
+      ]
+    },
+    "vision": {
+      "title": "Strategic Vision (Vision)",
+      "desc": "Serve as the foundational blueprint for smart, trustworthy digital governance in Cambodia, establishing uncompromised privacy and operational transparency.",
+      "items": [
+        "Transition district civil status administration into modern, streamlined, paperless governance.",
+        "Foster public trust through cryptographically tamper-evident, verifiable civil records.",
+        "Elevate Khmer computational linguistics (Khmer NLP & OCR) to world-class government benchmarks."
+      ]
+    },
+    "mission": {
+      "title": "Platform Mission (Mission)",
+      "desc": "Empower civil registry officers with intuitive, robust AI-driven tools to verify documents instantaneously with complete statutory accuracy.",
+      "items": [
+        "Deploy specialized OCR models fine-tuned on Cambodian administrative typefaces (Kantumruy Pro).",
+        "Enforce strict Zero-Data-Retention architecture, prohibiting image or identity caching on persistent storage.",
+        "Deliver an interactive bounding-box workspace enabling officers to inspect, audit, and approve records with human-in-the-loop oversight."
+      ]
+    },
+    "policies_rules": {
+      "title": "Policies & Rules (Policies & Rules)",
+      "desc": "All system operations are strictly governed by statutory regulations and digital security directives:",
+      "rules": [
+        {
+          "name": "1. Mandatory Zero-Data-Retention (ZDR Directive)",
+          "detail": "All uploaded documents reside exclusively in ephemeral RAM during active processing. Upon export completion or session termination, memory buffers are cryptographically zeroized (Crypto-Wipe) without writing artifacts to disk."
+        },
+        {
+          "name": "2. Citizen Identity Privacy Protection",
+          "detail": "Personally Identifiable Information (PII) is never transmitted to unverified third-party endpoints or external cloud vendors. Cross-referencing occurs strictly within authenticated government boundaries."
+        },
+        {
+          "name": "3. Cryptographic Tamper-Evident Verification (SHA-256)",
+          "detail": "Every processed document generates a deterministic SHA-256 audit fingerprint, allowing verification officers to immediately detect alterations, forged stamps, or illicit revisions."
+        },
+        {
+          "name": "4. Officer Accountability & Manual Override Standards",
+          "detail": "OCR and automated models serve solely as assistive accelerators. The presiding civil registry officer retains final authority, actively validating bounding-box alignments before official approval."
+        }
+      ]
+    }
   },
   "home": {
     "badge": "District Governance • Secure OCR Architecture v1.0",

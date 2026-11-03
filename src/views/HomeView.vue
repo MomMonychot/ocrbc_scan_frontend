@@ -198,6 +198,151 @@ onMounted(() => {
         </div>
       </div>
 
+      <!-- Core Administrative Functions Block Section -->
+      <section id="functions" class="mt-14 pt-10 border-t border-gov-border">
+        <div class="mb-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-gov-primary border border-blue-200 mb-2">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            <span>{{ t('functions.title') }}</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            {{ t('functions.title') }}
+          </h2>
+          <p class="text-sm sm:text-base text-gov-text-secondary mt-1">
+            {{ t('functions.subtitle') }}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+          <!-- Function 1: Verify Birth Certificate (Primary Active Action) -->
+          <div
+            @click="handleStartProcessing"
+            class="group bg-white rounded-2xl border-2 border-gov-primary/30 hover:border-gov-primary p-6 sm:p-7 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden ring-4 ring-transparent hover:ring-blue-100 hover:-translate-y-1"
+          >
+            <!-- Decorative Subtle Corner Accent -->
+            <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
+
+            <div class="space-y-4 relative z-10">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-xl bg-gov-primary text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                  {{ t('functions.birth_certificate.badge') }}
+                </span>
+              </div>
+
+              <div>
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
+                  {{ t('functions.birth_certificate.title') }}
+                </h3>
+                <p class="text-xs sm:text-sm text-gov-text-secondary mt-2 leading-relaxed">
+                  {{ t('functions.birth_certificate.desc') }}
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 relative z-10 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
+                Birth Certificate (BC)
+              </span>
+              <div class="h-9 px-4 rounded-xl bg-gov-primary text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-sm group-hover:bg-gov-primary-hover group-hover:translate-x-1 transition-all whitespace-nowrap">
+                <span>{{ t('functions.birth_certificate.action') }}</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Function 2: Pre-Flight Document Quality Inspection -->
+          <div
+            @click="handleStartProcessing"
+            class="group bg-white rounded-2xl border border-gov-border hover:border-gov-primary p-6 sm:p-7 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-1"
+          >
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-gov-primary border border-blue-200">
+                  {{ t('functions.quality_gate.badge') }}
+                </span>
+              </div>
+
+              <div>
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
+                  {{ t('functions.quality_gate.title') }}
+                </h3>
+                <p class="text-xs sm:text-sm text-gov-text-secondary mt-2 leading-relaxed">
+                  {{ t('functions.quality_gate.desc') }}
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
+                Pre-Flight Inspection
+              </span>
+              <div class="h-9 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-all group-hover:translate-x-1 whitespace-nowrap">
+                <span>{{ t('functions.quality_gate.action') }}</span>
+                <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Function 3: Cryptographic Document Audit -->
+          <div
+            @click="handleStartProcessing"
+            class="group bg-white rounded-2xl border border-gov-border hover:border-gov-primary p-6 sm:p-7 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-1"
+          >
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                  {{ t('functions.audit_hash.badge') }}
+                </span>
+              </div>
+
+              <div>
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
+                  {{ t('functions.audit_hash.title') }}
+                </h3>
+                <p class="text-xs sm:text-sm text-gov-text-secondary mt-2 leading-relaxed">
+                  {{ t('functions.audit_hash.desc') }}
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
+                SHA-256 Fingerprint
+              </span>
+              <div class="h-9 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-all group-hover:translate-x-1 whitespace-nowrap">
+                <span>{{ t('functions.audit_hash.action') }}</span>
+                <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Government Architecture Pillars & Security Baseline -->
       <section id="security-architecture" class="mt-20 pt-10 border-t border-gov-border">
         <div class="mb-10 text-center max-w-3xl mx-auto space-y-2">

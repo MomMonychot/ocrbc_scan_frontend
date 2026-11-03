@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import VerificationView from '../views/VerificationView.vue'
+import AboutView from '../views/AboutView.vue'
 
 const routes = [
   {
@@ -17,6 +18,14 @@ const routes = [
     component: VerificationView,
     meta: {
       title: 'Civil Registration Verification'
+    }
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: AboutView,
+    meta: {
+      title: 'About OCRBC Scan - District Administration'
     }
   },
   // Fallback redirect to home
