@@ -240,9 +240,6 @@ onMounted(() => {
       <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-gov-border gap-4 sm:min-h-[88px]">
         <div class="min-w-0">
           <div class="flex items-center gap-2 mb-1">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-gov-primary border border-blue-200">
-              {{ t('home.badge') }}
-            </span>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
               ZDR-RAM Active

@@ -46,24 +46,6 @@ onMounted(() => {
   <main class="min-h-screen bg-gov-surface flex flex-col justify-between">
     <!-- Hero & Dashboard Container -->
     <div class="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-14 w-full">
-      
-      <!-- Top Action & Info Bar for Mobile/Tablet -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-8 mb-8 border-b border-gov-border gap-4">
-        <div class="inline-flex items-center gap-2">
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-gov-primary border border-blue-200">
-            <svg class="w-3.5 h-3.5 mr-1 text-gov-primary" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v4a1 1 0 102 0V7z" clip-rule="evenodd" />
-            </svg>
-            {{ t('home.badge') }}
-          </span>
-          
-          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-            Zero-Data-Retention Enforced
-          </span>
-        </div>
-      </div>
-
       <!-- Main Portal Hero Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
         
