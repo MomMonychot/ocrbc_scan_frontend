@@ -236,32 +236,16 @@ onMounted(() => {
   <div class="min-h-screen bg-gov-surface py-6 sm:py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-8">
       
-      <!-- Top Title & Navigation Ribbon with deterministic min-height -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-gov-border gap-4 sm:min-h-[88px]">
+      <!-- Top Title & Navigation Ribbon -->
+      <div class="flex items-center justify-between pb-6 mb-6 border-b border-gov-border gap-4 min-h-[52px]">
         <div class="min-w-0">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
-              ZDR-RAM Active
-            </span>
-          </div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight truncate">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-gov-primary tracking-tight truncate">
             {{ t('verification.title') }}
           </h1>
-          <p class="text-xs sm:text-sm text-gov-text-secondary mt-0.5 truncate">
-            {{ t('verification.subtitle') }}
-          </p>
         </div>
 
-        <div class="flex items-center gap-3 shrink-0">
-          <router-link
-            to="/"
-            class="h-9 px-4 rounded-xl text-xs font-semibold text-slate-600 bg-white hover:bg-slate-50 border border-gov-border shadow-gov-sm transition-all inline-flex items-center justify-center whitespace-nowrap select-none w-auto"
-          >
-            ← {{ t('nav.home') }}
-          </router-link>
+        <div v-if="uploadedFile" class="flex items-center gap-3 shrink-0">
           <button
-            v-if="uploadedFile"
             @click="handleUploadNewDocument"
             class="h-9 px-4 rounded-xl text-xs font-semibold text-gov-primary bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all inline-flex items-center justify-center whitespace-nowrap select-none w-auto"
           >
