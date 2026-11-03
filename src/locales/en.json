@@ -251,8 +251,8 @@
     "title": "Birth Certificate Templates & Bounding Box Studio",
     "subtitle": "Manage and customize civil registry templates, and draw interactive bounding boxes on canvas to configure automated OCR field coordinates.",
     "tabs": {
-      "new": "Copy of Birth Certificate",
-      "old": "Certified Copy of Birth Certificate"
+      "new": "New Format",
+      "old": "Old Format"
     },
     "btn_add": "Add New Template",
     "choice_existing": "Use Existing Template",

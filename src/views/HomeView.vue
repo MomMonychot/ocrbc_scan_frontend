@@ -15,6 +15,9 @@ const healthError = ref(null)
 // Document upload modal / action placeholder
 const isModalOpen = ref(false)
 
+// Active document type working preview in block box: 'without_cert' (no បញ្ជាក់) vs 'with_cert' (សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត)
+const activeOverviewDocType = ref('without_cert')
+
 async function fetchBackendHealth() {
   isCheckingHealth.value = true
   healthError.value = null
@@ -160,21 +163,54 @@ onMounted(() => {
             <div class="absolute -top-12 -right-12 w-48 h-48 bg-blue-50 rounded-full opacity-60 pointer-events-none"></div>
 
             <div class="relative z-10 space-y-6">
+              <!-- Two Working Document Types Switcher in Block Box -->
+              <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 select-none">
+                <button
+                  type="button"
+                  @click="activeOverviewDocType = 'without_cert'"
+                  :class="[
+                    'flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all text-center leading-snug',
+                    activeOverviewDocType === 'without_cert'
+                      ? 'bg-white text-gov-primary shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  ]"
+                >
+                  {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'Copy of Birth Certificate' }}
+                </button>
+                <button
+                  type="button"
+                  @click="activeOverviewDocType = 'with_cert'"
+                  :class="[
+                    'flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all text-center leading-snug',
+                    activeOverviewDocType === 'with_cert'
+                      ? 'bg-white text-gov-primary shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  ]"
+                >
+                  {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'Certified Copy of Birth Certificate' }}
+                </button>
+              </div>
+
+              <!-- Document Header in Block Box -->
               <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
-                    BC
+                  <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0">
+                    {{ activeOverviewDocType === 'with_cert' ? 'CBC' : 'BC' }}
                   </div>
                   <div>
                     <h3 class="text-sm font-bold text-slate-900">
-                      {{ locale === 'km' ? 'សំបុត្រកំណើត' : 'Birth Certificate' }}
+                      {{ activeOverviewDocType === 'with_cert'
+                          ? (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'Certified Copy of Birth Certificate')
+                          : (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'Copy of Birth Certificate') }}
                     </h3>
                     <p class="text-xs text-slate-500">
-                      {{ locale === 'km' ? 'ទម្រង់អត្រានុកូលដ្ឋានផ្លូវការ' : 'Official Civil Registry Form' }}
+                      {{ activeOverviewDocType === 'with_cert'
+                          ? (locale === 'km' ? 'ទម្រង់ផ្លូវការ (មានបញ្ជាក់កំណើត)' : 'Official Form (Certified Copy)')
+                          : (locale === 'km' ? 'ទម្រង់ធម្មតា (គ្មានពាក្យបញ្ជាក់)' : 'Standard Form (without certification)') }}
                     </p>
                   </div>
                 </div>
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800 shrink-0">
                   {{ locale === 'km' ? 'គំរូត្រូវបានផ្ទៀងផ្ទាត់' : 'Template Verified' }}
                 </span>
               </div>
@@ -277,15 +313,25 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="pt-6 mt-6 border-t border-slate-100 relative z-10 flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
-                {{ locale === 'km' ? 'សំបុត្រកំណើត' : 'Birth Certificate' }}
-              </span>
-              <div class="h-9 px-3.5 rounded-xl bg-gov-primary text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-sm group-hover:bg-gov-primary-hover group-hover:translate-x-1 transition-all whitespace-nowrap">
-                <span>{{ t('functions.birth_certificate.action') }}</span>
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+            <div class="pt-6 mt-6 border-t border-slate-100 relative z-10 flex flex-col gap-2.5">
+              <div class="flex flex-wrap gap-1">
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-gov-primary border border-blue-100">
+                  {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'Birth Certificate Copy' }}
+                </span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-100">
+                  {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'Certified Copy' }}
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-500 group-hover:text-gov-primary transition-colors">
+                  {{ locale === 'km' ? '២ ប្រភេទផ្លូវការ' : '2 Official Types' }}
+                </span>
+                <div class="h-9 px-3.5 rounded-xl bg-gov-primary text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-sm group-hover:bg-gov-primary-hover group-hover:translate-x-1 transition-all whitespace-nowrap">
+                  <span>{{ t('functions.birth_certificate.action') }}</span>
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
