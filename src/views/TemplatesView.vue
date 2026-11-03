@@ -575,21 +575,21 @@ function removeCustomImage() {
           <button
             type="button"
             @click="toggleAddMenu"
-            class="h-11 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm hover:shadow-gov-md transition-all duration-150 inline-flex items-center justify-center gap-2.5 whitespace-nowrap select-none"
+            class="h-11 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm hover:shadow-gov-md transition-all duration-150 inline-flex items-center justify-center gap-2 whitespace-nowrap select-none"
             aria-haspopup="true"
             :aria-expanded="isAddMenuOpen"
           >
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             <span>{{ t('templates.btn_add') }}</span>
             <svg
-              :class="['w-4 h-4 transition-transform duration-200 opacity-80', isAddMenuOpen ? 'rotate-180' : '']"
+              :class="['w-3.5 h-3.5 transition-transform duration-200 opacity-80', isAddMenuOpen ? 'rotate-180' : '']"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
