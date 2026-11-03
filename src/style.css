@@ -52,4 +52,16 @@
   .gov-badge {
     @apply inline-flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide border whitespace-nowrap;
   }
+
+  /* Flag emoji alignment utility to ensure 100% geometric & optical centering */
+  .flag-icon {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
 }
