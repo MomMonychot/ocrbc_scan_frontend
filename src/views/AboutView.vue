@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, tm } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
@@ -152,7 +152,7 @@ watch(() => route.query.section, (newSection) => {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
             <div
-              v-for="(item, idx) in t('about_page.goal.items')"
+              v-for="(item, idx) in tm('about_page.goal.items')"
               :key="idx"
               class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-3"
             >
@@ -189,7 +189,7 @@ watch(() => route.query.section, (newSection) => {
 
           <div class="space-y-3 pt-2">
             <div
-              v-for="(item, idx) in t('about_page.vision.items')"
+              v-for="(item, idx) in tm('about_page.vision.items')"
               :key="idx"
               class="p-5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-3.5 hover:bg-slate-100/60 transition-colors"
             >
@@ -227,7 +227,7 @@ watch(() => route.query.section, (newSection) => {
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             <div
-              v-for="(item, idx) in t('about_page.mission.items')"
+              v-for="(item, idx) in tm('about_page.mission.items')"
               :key="idx"
               class="p-5 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between"
             >
@@ -263,7 +263,7 @@ watch(() => route.query.section, (newSection) => {
 
           <div class="space-y-4 pt-2">
             <div
-              v-for="(rule, idx) in t('about_page.policies_rules.rules')"
+              v-for="(rule, idx) in tm('about_page.policies_rules.rules')"
               :key="idx"
               class="p-5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2"
             >
