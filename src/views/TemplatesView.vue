@@ -414,37 +414,13 @@ function removeCustomImage() {
     <div class="max-w-7xl mx-auto px-4 sm:px-8">
       
       <!-- Top Navigation & Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-gov-border gap-4">
-        <div>
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
-            {{ t('templates.title') }}
-          </h1>
-          <p class="text-sm sm:text-base text-gov-text-secondary mt-1 max-w-3xl leading-relaxed">
-            {{ t('templates.subtitle') }}
-          </p>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <router-link
-            to="/verify"
-            class="h-10 px-4 rounded-xl text-xs font-semibold text-white bg-gov-primary hover:bg-gov-primary-hover shadow-gov-sm transition-all inline-flex items-center justify-center gap-2 whitespace-nowrap"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>{{ t('nav.verify') }}</span>
-          </router-link>
-
-          <router-link
-            to="/"
-            class="h-10 px-4 rounded-xl text-xs font-semibold text-slate-600 bg-white hover:bg-slate-50 border border-gov-border shadow-gov-sm transition-all inline-flex items-center justify-center gap-2 whitespace-nowrap"
-          >
-            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span>{{ t('nav.home') }}</span>
-          </router-link>
-        </div>
+      <div class="pb-6 mb-8 border-b border-gov-border">
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
+          {{ t('templates.title') }}
+        </h1>
+        <p class="text-sm sm:text-base text-gov-text-secondary mt-1 max-w-3xl leading-relaxed">
+          {{ t('templates.subtitle') }}
+        </p>
       </div>
 
       <!-- Toast Notification -->

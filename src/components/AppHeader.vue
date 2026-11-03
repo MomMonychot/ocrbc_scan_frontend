@@ -58,6 +58,25 @@ onUnmounted(() => {
         <!-- Navigation Links with Fixed Heights (Desktop) -->
         <nav class="hidden lg:flex items-center gap-1 pl-4 border-l border-slate-200 text-xs font-semibold shrink-0">
           <router-link
+            to="/"
+            active-class="bg-blue-50 text-gov-primary font-bold"
+            class="h-9 px-3.5 rounded-lg text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center whitespace-nowrap"
+            @click="closeMenus"
+          >
+            {{ t('nav.home') }}
+          </router-link>
+
+          <router-link
+            to="/verify"
+            active-class="bg-blue-50 text-gov-primary font-bold"
+            class="h-9 px-3.5 rounded-lg text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+            @click="closeMenus"
+          >
+            <span>{{ t('nav.verify') }}</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+          </router-link>
+
+          <router-link
             to="/templates"
             active-class="bg-blue-50 text-gov-primary font-bold"
             class="h-9 px-3.5 rounded-lg text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
@@ -241,6 +260,23 @@ onUnmounted(() => {
       v-if="isMobileMenuOpen"
       class="lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-3 shadow-lg"
     >
+      <router-link
+        to="/"
+        @click="closeMenus"
+        class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-800 hover:bg-slate-50"
+      >
+        {{ t('nav.home') }}
+      </router-link>
+
+      <router-link
+        to="/verify"
+        @click="closeMenus"
+        class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-800 hover:bg-slate-50 flex items-center justify-between"
+      >
+        <span>{{ t('nav.verify') }}</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      </router-link>
+
       <router-link
         to="/templates"
         @click="closeMenus"
