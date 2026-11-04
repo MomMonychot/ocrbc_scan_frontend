@@ -172,7 +172,8 @@
     "doc_certified_badge": "Certified Document",
     "doc_certified_desc": "Scan old documents and extract text using AI to update into the new certified copy template.",
     "doc_certified_tag": "Official Certified Template",
-    "btn_update_template": "Update to New Template"
+    "btn_update_template": "Update to New Template",
+    "back_to_document_types": "Back to Document Types"
   },
   "upload": {
     "title": "Document Pre-Flight Quality Gate",

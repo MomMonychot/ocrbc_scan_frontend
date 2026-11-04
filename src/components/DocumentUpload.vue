@@ -3,6 +3,13 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { inspectDocument as apiInspectDocument } from '../services/api_client'
 
+const props = defineProps({
+  hideHeader: {
+    type: Boolean,
+    default: false,
+  },
+})
+
 const emit = defineEmits(['inspected', 'proceed', 'fileSelected'])
 
 const { t } = useI18n()
@@ -116,7 +123,7 @@ function resetUpload() {
 <template>
   <div class="bg-white rounded-2xl border border-gov-border shadow-gov-md p-6 sm:p-8 max-w-3xl mx-auto">
     <!-- Header with deterministic min-height to prevent dropzone shifting -->
-    <div class="mb-6 sm:min-h-[72px] flex flex-col justify-start">
+    <div v-if="!hideHeader" class="mb-6 sm:min-h-[72px] flex flex-col justify-start">
       <div class="flex items-center gap-2 mb-2">
         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-gov-primary border border-blue-200">
           <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import DocumentUpload from '../components/DocumentUpload.vue'
 import { verifyExtractedFields } from '../services/api_client'
+import { sharedDocument, clearSharedDocument } from '../services/documentStore'
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -376,6 +377,16 @@ onMounted(() => {
     selectedDocType.value = 'certified'
   } else if (route.query.type === 'standard') {
     selectedDocType.value = 'standard'
+  }
+
+  // Preload shared document if passed from HomeView upload
+  if (sharedDocument.value.file) {
+    uploadedFile.value = sharedDocument.value.file
+    documentPreviewUrl.value = sharedDocument.value.previewUrl
+    inspectionMetadata.value = sharedDocument.value.metadata
+    if (sharedDocument.value.docType) {
+      selectedDocType.value = sharedDocument.value.docType
+    }
   }
 
   // If an initial document is available, cross-reference

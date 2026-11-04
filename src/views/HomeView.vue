@@ -1,15 +1,57 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { ref, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import DocumentUpload from '../components/DocumentUpload.vue'
+import { setSharedDocument } from '../services/documentStore'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 
-function goToVerify(type) {
-  router.push({
-    path: '/verify',
-    query: { type },
-  })
+// Selected document type: null | 'standard' | 'certified'
+const selectedDocType = ref(null)
+
+onMounted(() => {
+  if (route.query.type === 'standard' || route.query.type === 'certified') {
+    selectedDocType.value = route.query.type
+  }
+})
+
+watch(
+  () => route.query.type,
+  (newType) => {
+    if (newType === 'standard' || newType === 'certified') {
+      selectedDocType.value = newType
+    } else {
+      selectedDocType.value = null
+    }
+  }
+)
+
+function selectDocType(type) {
+  selectedDocType.value = type
+  router.push({ path: '/', query: { type } })
+}
+
+function clearDocType() {
+  selectedDocType.value = null
+  router.push({ path: '/', query: {} })
+}
+
+function handleProceedToVerification(event) {
+  setSharedDocument(event.file, event.previewUrl, event.inspectResult, selectedDocType.value)
+  router.push({ path: '/verify', query: { type: selectedDocType.value } })
+}
+
+function handleLoadSampleScan() {
+  setSharedDocument(
+    { name: 'archival_sample_birth_cert.png', size: 1024 * 720, type: 'image/png' },
+    null,
+    null,
+    selectedDocType.value
+  )
+  router.push({ path: '/verify', query: { type: selectedDocType.value } })
 }
 </script>
 
@@ -17,92 +59,171 @@ function goToVerify(type) {
   <main class="min-h-[calc(100vh-4rem)] bg-gov-surface pt-6 sm:pt-8 pb-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-8 w-full space-y-6 sm:space-y-8">
       
-      <!-- Top Title Header Moved Up Near Header -->
-      <div class="text-center max-w-2xl mx-auto space-y-2">
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
-          {{ t('home.title') }}
-        </h1>
-        <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed">
-          {{ t('home.subtitle') }}
-        </p>
-      </div>
-
-      <!-- THE TWO WORKING DOCUMENT TYPE FUNCTION BLOCKS WITH FIXED SIZES -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch">
-        
-        <!-- ============================================================= -->
-        <!-- BLOCK 1: សេចក្តីចម្លងសំបុត្រកំណើត (Copy of Birth Certificate) -->
-        <!-- ============================================================= -->
-        <div
-          @click="goToVerify('standard')"
-          class="group bg-white rounded-2xl border border-slate-200/90 hover:border-gov-primary p-7 sm:p-8 shadow-gov-sm hover:shadow-xl transition-all duration-200 cursor-pointer hover:-translate-y-1.5 relative overflow-hidden ring-4 ring-transparent hover:ring-blue-50"
-        >
-          <!-- Subtle Decorative Accent Corner -->
-          <div class="absolute top-0 right-0 w-28 h-28 bg-blue-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
-
-          <div class="space-y-4 relative z-10">
-            <!-- Icon & Status Badge -->
-            <div class="flex items-center justify-between">
-              <div class="w-13 h-13 rounded-2xl bg-blue-50 border border-blue-200 text-gov-primary flex items-center justify-center shadow-xs group-hover:bg-gov-primary group-hover:text-white transition-all duration-200 shrink-0">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-gov-primary border border-blue-200">
-                {{ t('home.doc_standard_badge') }}
-              </span>
-            </div>
-
-            <!-- Standardized Text Group with Consistent Line Spacing -->
-            <div class="space-y-2">
-              <h2 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors tracking-tight leading-snug">
-                {{ t('home.doc_standard_title') }}
-              </h2>
-              <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
-                {{ t('home.doc_standard_desc') }}
-              </p>
-            </div>
-          </div>
+      <!-- ============================================================= -->
+      <!-- VIEW 1: HOME OVERVIEW (TWO DOCUMENT TYPE BLOCKS)             -->
+      <!-- ============================================================= -->
+      <template v-if="!selectedDocType">
+        <!-- Top Title Header Moved Up Near Header -->
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
+            {{ t('home.title') }}
+          </h1>
+          <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed">
+            {{ t('home.subtitle') }}
+          </p>
         </div>
 
-        <!-- ========================================================================= -->
-        <!-- BLOCK 2: សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (Certified Copy of Birth Cert)  -->
-        <!-- ========================================================================= -->
-        <div
-          @click="goToVerify('certified')"
-          class="group bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-600 p-7 sm:p-8 shadow-gov-sm hover:shadow-xl transition-all duration-200 cursor-pointer hover:-translate-y-1.5 relative overflow-hidden ring-4 ring-transparent hover:ring-emerald-50"
-        >
-          <!-- Subtle Decorative Accent Corner -->
-          <div class="absolute top-0 right-0 w-28 h-28 bg-emerald-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
+        <!-- THE TWO WORKING DOCUMENT TYPE FUNCTION BLOCKS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch">
+          
+          <!-- BLOCK 1: សេចក្តីចម្លងសំបុត្រកំណើត -->
+          <div
+            @click="selectDocType('standard')"
+            class="group bg-white rounded-2xl border border-slate-200/90 hover:border-gov-primary p-7 sm:p-8 shadow-gov-sm hover:shadow-xl transition-all duration-200 cursor-pointer hover:-translate-y-1.5 relative overflow-hidden ring-4 ring-transparent hover:ring-blue-50"
+          >
+            <!-- Subtle Decorative Accent Corner -->
+            <div class="absolute top-0 right-0 w-28 h-28 bg-blue-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
 
-          <div class="space-y-4 relative z-10">
-            <!-- Icon & Status Badge -->
-            <div class="flex items-center justify-between">
-              <div class="w-13 h-13 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shadow-xs group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200 shrink-0">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
+            <div class="space-y-4 relative z-10">
+              <!-- Icon & Status Badge -->
+              <div class="flex items-center justify-between">
+                <div class="w-13 h-13 rounded-2xl bg-blue-50 border border-blue-200 text-gov-primary flex items-center justify-center shadow-xs group-hover:bg-gov-primary group-hover:text-white transition-all duration-200 shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-gov-primary border border-blue-200">
+                  {{ t('home.doc_standard_badge') }}
+                </span>
               </div>
 
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                {{ t('home.doc_certified_badge') }}
-              </span>
-            </div>
-
-            <!-- Standardized Text Group with Consistent Line Spacing -->
-            <div class="space-y-2">
-              <h2 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors tracking-tight leading-snug">
-                {{ t('home.doc_certified_title') }}
-              </h2>
-              <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
-                {{ t('home.doc_certified_desc') }}
-              </p>
+              <!-- Standardized Text Group with Consistent Line Spacing -->
+              <div class="space-y-2">
+                <h2 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors tracking-tight leading-snug">
+                  {{ t('home.doc_standard_title') }}
+                </h2>
+                <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
+                  {{ t('home.doc_standard_desc') }}
+                </p>
+              </div>
             </div>
           </div>
+
+          <!-- BLOCK 2: សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត -->
+          <div
+            @click="selectDocType('certified')"
+            class="group bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-600 p-7 sm:p-8 shadow-gov-sm hover:shadow-xl transition-all duration-200 cursor-pointer hover:-translate-y-1.5 relative overflow-hidden ring-4 ring-transparent hover:ring-emerald-50"
+          >
+            <!-- Subtle Decorative Accent Corner -->
+            <div class="absolute top-0 right-0 w-28 h-28 bg-emerald-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
+
+            <div class="space-y-4 relative z-10">
+              <!-- Icon & Status Badge -->
+              <div class="flex items-center justify-between">
+                <div class="w-13 h-13 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shadow-xs group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200 shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  {{ t('home.doc_certified_badge') }}
+                </span>
+              </div>
+
+              <!-- Standardized Text Group with Consistent Line Spacing -->
+              <div class="space-y-2">
+                <h2 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors tracking-tight leading-snug">
+                  {{ t('home.doc_certified_title') }}
+                </h2>
+                <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
+                  {{ t('home.doc_certified_desc') }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </template>
+
+      <!-- ============================================================= -->
+      <!-- VIEW 2: SELECTED DOCUMENT UPLOAD VIEW (STILL IN HOME)        -->
+      <!-- ============================================================= -->
+      <template v-else>
+        <!-- Top Title Replaced by Selected Block's Title & Description -->
+        <div class="text-center max-w-2xl mx-auto space-y-3">
+          <!-- Back button to return to Document Types -->
+          <div class="flex items-center justify-center">
+            <button
+              type="button"
+              @click="clearDocType"
+              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-gov-primary bg-white hover:bg-slate-100/80 border border-slate-200 shadow-xs transition-all cursor-pointer select-none"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>{{ t('home.back_to_document_types') }}</span>
+            </button>
+          </div>
+
+          <!-- Document Title & Badge in Place of Document Types Title -->
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
+              {{ selectedDocType === 'standard' ? t('home.doc_standard_title') : t('home.doc_certified_title') }}
+            </h1>
+            <span
+              :class="[
+                'inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border shadow-xs shrink-0',
+                selectedDocType === 'standard'
+                  ? 'bg-blue-50 text-gov-primary border-blue-200'
+                  : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              ]"
+            >
+              {{ selectedDocType === 'standard' ? t('home.doc_standard_badge') : t('home.doc_certified_badge') }}
+            </span>
+          </div>
+
+          <!-- Document Description in Place of Subtitle -->
+          <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed max-w-xl mx-auto">
+            {{ selectedDocType === 'standard' ? t('home.doc_standard_desc') : t('home.doc_certified_desc') }}
+          </p>
         </div>
 
-      </div>
+        <!-- BELOW OF THEM: UPLOAD FILE COMPONENT & SAMPLE SCAN -->
+        <div class="space-y-6">
+          <DocumentUpload
+            :hideHeader="true"
+            @proceed="handleProceedToVerification"
+          />
+
+          <!-- Fast Sample Document Testing Card -->
+          <div class="p-6 bg-white rounded-2xl border border-gov-border text-center shadow-gov-sm max-w-xl mx-auto">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-blue-50 text-gov-primary flex items-center justify-center mb-3 shadow-xs">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-bold text-slate-800 mb-1">
+              {{ t('verification.sample_doc_btn') }}
+            </h3>
+            <p class="text-xs text-slate-500 mb-4 max-w-sm mx-auto leading-relaxed">
+              {{ t('verification.sample_doc_desc') }}
+            </p>
+            <button
+              type="button"
+              @click="handleLoadSampleScan"
+              class="h-10 px-6 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white text-xs font-bold shadow-gov-sm transition-all inline-flex items-center gap-2 cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{{ t('verification.sample_doc_btn') }}</span>
+            </button>
+          </div>
+        </div>
+      </template>
 
     </div>
   </main>
