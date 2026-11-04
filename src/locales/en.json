@@ -165,11 +165,11 @@
     "title": "Document Types",
     "subtitle": "Select a birth certificate format to scan and update into a new template",
     "doc_standard_title": "Copy of Birth Certificate",
-    "doc_standard_badge": "Standard Form",
+    "doc_standard_badge": "General Document",
     "doc_standard_desc": "Scan old documents and extract text using AI to update into the new birth certificate template.",
     "doc_standard_tag": "Digital Standard Template",
     "doc_certified_title": "Certified Copy of Birth Certificate",
-    "doc_certified_badge": "Certified Form",
+    "doc_certified_badge": "Certified Document",
     "doc_certified_desc": "Scan old documents and extract text using AI to update into the new certified copy template.",
     "doc_certified_tag": "Official Certified Template",
     "btn_update_template": "Update to New Template"

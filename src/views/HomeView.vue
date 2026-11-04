@@ -35,7 +35,7 @@ function goToVerify(type) {
         <!-- ============================================================= -->
         <div
           @click="goToVerify('standard')"
-          class="group bg-white rounded-2xl border border-slate-200/90 hover:border-gov-primary p-7 sm:p-8 shadow-gov-sm hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-1.5 relative overflow-hidden ring-4 ring-transparent hover:ring-blue-50 h-[310px]"
+          class="group bg-white rounded-2xl border border-slate-200/90 hover:border-gov-primary p-7 sm:p-8 shadow-gov-sm hover:shadow-xl transition-all duration-200 cursor-pointer hover:-translate-y-1.5 relative overflow-hidden ring-4 ring-transparent hover:ring-blue-50"
         >
           <!-- Subtle Decorative Accent Corner -->
           <div class="absolute top-0 right-0 w-28 h-28 bg-blue-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
@@ -68,19 +68,6 @@ function goToVerify(type) {
               </p>
             </div>
           </div>
-
-          <!-- Bottom Action Row (Locked 40px height) -->
-          <div class="h-10 pt-3 border-t border-slate-100 relative z-10 flex items-center justify-between gap-3">
-            <span class="text-xs font-semibold text-slate-400 group-hover:text-gov-primary transition-colors truncate">
-              {{ t('home.doc_standard_tag') }}
-            </span>
-            <div class="h-9 px-4 rounded-xl bg-gov-primary text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-sm group-hover:bg-gov-primary-hover transition-all whitespace-nowrap shrink-0">
-              <span>{{ t('home.btn_update_template') }}</span>
-              <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </div>
-          </div>
         </div>
 
         <!-- ========================================================================= -->
@@ -88,7 +75,7 @@ function goToVerify(type) {
         <!-- ========================================================================= -->
         <div
           @click="goToVerify('certified')"
-          class="group bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-600 p-7 sm:p-8 shadow-gov-sm hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-1.5 relative overflow-hidden ring-4 ring-transparent hover:ring-emerald-50 h-[310px]"
+          class="group bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-600 p-7 sm:p-8 shadow-gov-sm hover:shadow-xl transition-all duration-200 cursor-pointer hover:-translate-y-1.5 relative overflow-hidden ring-4 ring-transparent hover:ring-emerald-50"
         >
           <!-- Subtle Decorative Accent Corner -->
           <div class="absolute top-0 right-0 w-28 h-28 bg-emerald-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
@@ -119,19 +106,6 @@ function goToVerify(type) {
               <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
                 {{ t('home.doc_certified_desc') }}
               </p>
-            </div>
-          </div>
-
-          <!-- Bottom Action Row (Locked 40px height) -->
-          <div class="h-10 pt-3 border-t border-slate-100 relative z-10 flex items-center justify-between gap-3">
-            <span class="text-xs font-semibold text-slate-400 group-hover:text-emerald-700 transition-colors truncate">
-              {{ t('home.doc_certified_tag') }}
-            </span>
-            <div class="h-9 px-4 rounded-xl bg-emerald-600 text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-sm group-hover:bg-emerald-700 transition-all whitespace-nowrap shrink-0">
-              <span>{{ t('home.btn_update_template') }}</span>
-              <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
             </div>
           </div>
         </div>
