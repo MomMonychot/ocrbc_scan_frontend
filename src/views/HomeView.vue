@@ -61,9 +61,9 @@ function goToVerify(type) {
               </h2>
             </div>
 
-            <!-- Description (Locked 48px height) -->
+            <!-- Description (Locked 48px height, 2 lines like in Khmer) -->
             <div class="h-12 flex items-start">
-              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed overflow-hidden">
+              <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
                 {{ t('home.doc_standard_desc') }}
               </p>
             </div>
@@ -114,9 +114,9 @@ function goToVerify(type) {
               </h2>
             </div>
 
-            <!-- Description (Locked 48px height) -->
+            <!-- Description (Locked 48px height, 2 lines like in Khmer) -->
             <div class="h-12 flex items-start">
-              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed overflow-hidden">
+              <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
                 {{ t('home.doc_certified_desc') }}
               </p>
             </div>
