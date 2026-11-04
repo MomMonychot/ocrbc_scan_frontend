@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const router = useRouter()
 
 function goToVerify(type) {
@@ -14,8 +14,8 @@ function goToVerify(type) {
 </script>
 
 <template>
-  <main class="min-h-[calc(100vh-4rem)] bg-gov-surface py-8 sm:py-12">
-    <div class="max-w-6xl mx-auto px-4 sm:px-8 space-y-8">
+  <main class="min-h-[calc(100vh-4rem)] bg-gov-surface py-10 sm:py-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-8 space-y-10">
       
       <!-- Top Title Header -->
       <div class="text-center max-w-2xl mx-auto space-y-2">
@@ -34,189 +34,142 @@ function goToVerify(type) {
         <!-- BLOCK 1: សេចក្តីចម្លងសំបុត្រកំណើត (Copy of Birth Certificate) -->
         <!-- ============================================================= -->
         <div
-          class="bg-white rounded-2xl border-2 border-slate-200 hover:border-gov-primary shadow-gov-md hover:shadow-gov-lg transition-all duration-200 p-6 sm:p-7 flex flex-col justify-between space-y-6 group"
+          @click="goToVerify('standard')"
+          class="bg-white rounded-2xl border-2 border-slate-200 hover:border-gov-primary p-7 sm:p-8 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between group hover:-translate-y-1 relative overflow-hidden"
         >
-          <div class="space-y-4">
-            <!-- Header & Badge -->
-            <div class="flex items-start justify-between gap-3">
-              <div class="space-y-1">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-gov-primary border border-blue-200">
-                  {{ t('home.doc_standard_badge') }}
-                </span>
-                <h2 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
-                  {{ t('home.doc_standard_title') }}
-                </h2>
+          <!-- Subtle Accent Corner -->
+          <div class="absolute top-0 right-0 w-28 h-28 bg-blue-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
+
+          <div class="space-y-6 relative z-10">
+            <!-- Icon & Badge Row -->
+            <div class="flex items-center justify-between">
+              <div class="w-14 h-14 rounded-2xl bg-gov-primary text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
               </div>
 
-              <div class="w-10 h-10 rounded-xl bg-blue-100 text-gov-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
-                BC
-              </div>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-gov-primary border border-blue-200">
+                {{ t('home.doc_standard_badge') }}
+              </span>
             </div>
 
-            <p class="text-xs text-slate-500 leading-relaxed">
-              {{ t('home.doc_standard_desc') }}
-            </p>
+            <!-- Title & Description -->
+            <div class="space-y-2.5">
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
+                {{ t('home.doc_standard_title') }}
+              </h2>
+              <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed">
+                {{ t('home.doc_standard_desc') }}
+              </p>
+            </div>
 
-            <!-- Authentic Document Block Box (Standard Certificate Layout Preview) -->
-            <div class="bg-slate-50 rounded-xl border border-slate-200/80 p-5 space-y-4 font-serif text-slate-800 shadow-xs relative overflow-hidden select-none">
-              <!-- Header with Coat of Arms -->
-              <div class="text-center space-y-1 pb-3 border-b border-slate-200">
-                <div class="w-9 h-9 mx-auto rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-xs">
-                  🇰🇭
-                </div>
-                <div class="text-[11px] font-bold text-slate-800 tracking-wider">
-                  {{ locale === 'km' ? 'ព្រះរាជាណាចក្រកម្ពុជា' : 'KINGDOM OF CAMBODIA' }}
-                </div>
-                <div class="text-[9px] text-slate-500 font-sans">
-                  {{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}
-                </div>
-                <div class="text-xs font-black text-gov-primary font-sans pt-1">
-                  {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'COPY OF BIRTH CERTIFICATE' }}
-                </div>
+            <!-- Feature Checklist (Like list function) -->
+            <div class="space-y-2 pt-2 text-xs font-medium text-slate-600">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ t('home.feat_extract') }}</span>
               </div>
-
-              <!-- Certificate Preview Lines -->
-              <div class="space-y-2.5 text-[11px] font-sans">
-                <div class="flex justify-between items-center text-[10px] text-slate-500 font-mono">
-                  <span>{{ locale === 'km' ? 'លេខសម្គាល់ជាតិ: ' : 'National ID: ' }}<strong class="text-slate-800">1204009821</strong></span>
-                  <span>{{ locale === 'km' ? 'សំបុត្រលេខ: ' : 'Cert No: ' }}<strong class="text-slate-800">BC-2024-009821</strong></span>
-                </div>
-                <div class="p-2 rounded-lg bg-white border border-slate-200/70">
-                  <div class="text-[9px] text-slate-400 font-bold uppercase">{{ locale === 'km' ? 'ឈ្មោះជាអក្សរខ្មែរ' : 'Khmer Name' }}</div>
-                  <div class="font-bold text-slate-900 font-khmer text-xs">សុខ ចាន់ដារា</div>
-                </div>
-                <div class="p-2 rounded-lg bg-white border border-slate-200/70">
-                  <div class="text-[9px] text-slate-400 font-bold uppercase">{{ locale === 'km' ? 'ឈ្មោះជាអក្សរឡាតាំង' : 'Latin Name' }}</div>
-                  <div class="font-bold text-slate-900 font-latin text-xs">SOK CHANDARAA</div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div class="p-2 rounded-lg bg-white border border-slate-200/70">
-                    <div class="text-[9px] text-slate-400 font-bold uppercase">{{ locale === 'km' ? 'ភេទ' : 'Gender' }}</div>
-                    <div class="font-semibold text-slate-800 text-xs">{{ locale === 'km' ? 'ប្រុស' : 'Male' }}</div>
-                  </div>
-                  <div class="p-2 rounded-lg bg-white border border-slate-200/70">
-                    <div class="text-[9px] text-slate-400 font-bold uppercase">{{ locale === 'km' ? 'ថ្ងៃខែឆ្នាំកំណើត' : 'Date of Birth' }}</div>
-                    <div class="font-semibold text-slate-800 text-xs font-mono">2000-05-15</div>
-                  </div>
-                </div>
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ t('home.feat_transfer') }}</span>
               </div>
-
-              <!-- Seal Area -->
-              <div class="pt-2 border-t border-slate-200 flex justify-between items-center text-[9px] text-slate-400 font-sans">
-                <span>{{ locale === 'km' ? 'ច្រកចេញចូលតែមួយ' : 'One Window Service' }}</span>
-                <span class="px-2 py-0.5 rounded border border-blue-200 bg-blue-50 text-gov-primary font-bold">
-                  {{ locale === 'km' ? 'ត្រាផ្លូវការ' : 'SEAL' }}
-                </span>
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ t('home.feat_editable') }}</span>
               </div>
             </div>
           </div>
 
-          <!-- Action Button -->
-          <button
-            type="button"
-            @click="goToVerify('standard')"
-            class="w-full h-12 rounded-xl bg-gov-primary hover:bg-gov-primary-hover active:scale-[0.99] text-white font-bold text-sm shadow-gov-sm hover:shadow-gov-md transition-all flex items-center justify-center gap-2 select-none"
-          >
-            <span>{{ t('home.btn_start_work') }}</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </button>
+          <!-- Action Button Row -->
+          <div class="pt-6 mt-6 border-t border-slate-100 relative z-10 flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400 group-hover:text-gov-primary transition-colors">
+              {{ t('home.doc_standard_title') }}
+            </span>
+            <div class="h-10 px-5 rounded-xl bg-gov-primary group-hover:bg-gov-primary-hover text-white text-xs font-bold inline-flex items-center justify-center gap-2 shadow-sm group-hover:shadow-md transition-all">
+              <span>{{ t('home.btn_update_template') }}</span>
+              <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         <!-- ========================================================================= -->
         <!-- BLOCK 2: សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (Certified Copy of Birth Cert)  -->
         <!-- ========================================================================= -->
         <div
-          class="bg-white rounded-2xl border-2 border-slate-200 hover:border-emerald-600 shadow-gov-md hover:shadow-gov-lg transition-all duration-200 p-6 sm:p-7 flex flex-col justify-between space-y-6 group"
+          @click="goToVerify('certified')"
+          class="bg-white rounded-2xl border-2 border-slate-200 hover:border-emerald-600 p-7 sm:p-8 shadow-gov-sm hover:shadow-gov-lg transition-all duration-200 cursor-pointer flex flex-col justify-between group hover:-translate-y-1 relative overflow-hidden"
         >
-          <div class="space-y-4">
-            <!-- Header & Badge -->
-            <div class="flex items-start justify-between gap-3">
-              <div class="space-y-1">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  {{ t('home.doc_certified_badge') }}
-                </span>
-                <h2 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
-                  {{ t('home.doc_certified_title') }}
-                </h2>
+          <!-- Subtle Accent Corner -->
+          <div class="absolute top-0 right-0 w-28 h-28 bg-emerald-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
+
+          <div class="space-y-6 relative z-10">
+            <!-- Icon & Badge Row -->
+            <div class="flex items-center justify-between">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
               </div>
 
-              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
-                CBC
-              </div>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                {{ t('home.doc_certified_badge') }}
+              </span>
             </div>
 
-            <p class="text-xs text-slate-500 leading-relaxed">
-              {{ t('home.doc_certified_desc') }}
-            </p>
+            <!-- Title & Description -->
+            <div class="space-y-2.5">
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                {{ t('home.doc_certified_title') }}
+              </h2>
+              <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed">
+                {{ t('home.doc_certified_desc') }}
+              </p>
+            </div>
 
-            <!-- Authentic Document Block Box (Certified Certificate Layout Preview) -->
-            <div class="bg-amber-50/30 rounded-xl border border-amber-200/80 p-5 space-y-4 font-serif text-slate-800 shadow-xs relative overflow-hidden select-none">
-              <!-- Header with Coat of Arms -->
-              <div class="text-center space-y-1 pb-3 border-b border-amber-200/80">
-                <div class="w-9 h-9 mx-auto rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-xs">
-                  🇰🇭
-                </div>
-                <div class="text-[11px] font-bold text-slate-800 tracking-wider">
-                  {{ locale === 'km' ? 'ព្រះរាជាណាចក្រកម្ពុជា' : 'KINGDOM OF CAMBODIA' }}
-                </div>
-                <div class="text-[9px] text-slate-500 font-sans">
-                  {{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}
-                </div>
-                <div class="text-xs font-black text-gov-primary font-sans pt-1">
-                  {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'CERTIFIED COPY OF BIRTH CERTIFICATE' }}
-                </div>
+            <!-- Feature Checklist (Like list function) -->
+            <div class="space-y-2 pt-2 text-xs font-medium text-slate-600">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ t('home.feat_extract') }}</span>
               </div>
-
-              <!-- Certificate Preview Lines -->
-              <div class="space-y-2.5 text-[11px] font-sans">
-                <div class="flex justify-between items-center text-[10px] text-slate-500 font-mono">
-                  <span>{{ locale === 'km' ? 'សៀវភៅលេខ: ' : 'Book No: ' }}<strong class="text-slate-800">12/04</strong></span>
-                  <span>{{ locale === 'km' ? 'សំបុត្រលេខ: ' : 'Cert No: ' }}<strong class="text-slate-800">BC-2024-009821</strong></span>
-                </div>
-                <div class="p-2 rounded-lg bg-white border border-amber-200/70">
-                  <div class="text-[9px] text-slate-400 font-bold uppercase">{{ locale === 'km' ? 'ឈ្មោះជាអក្សរខ្មែរ' : 'Khmer Name' }}</div>
-                  <div class="font-bold text-slate-900 font-khmer text-xs">សុខ ចាន់ដារា</div>
-                </div>
-                <div class="p-2 rounded-lg bg-white border border-amber-200/70">
-                  <div class="text-[9px] text-slate-400 font-bold uppercase">{{ locale === 'km' ? 'ឈ្មោះជាអក្សរឡាតាំង' : 'Latin Name' }}</div>
-                  <div class="font-bold text-slate-900 font-latin text-xs">SOK CHANDARAA</div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div class="p-2 rounded-lg bg-white border border-amber-200/70">
-                    <div class="text-[9px] text-slate-400 font-bold uppercase">{{ locale === 'km' ? 'ឪពុក' : 'Father' }}</div>
-                    <div class="font-semibold text-slate-800 text-xs">សុខ សុវណ្ណ</div>
-                  </div>
-                  <div class="p-2 rounded-lg bg-white border border-amber-200/70">
-                    <div class="text-[9px] text-slate-400 font-bold uppercase">{{ locale === 'km' ? 'ម្តាយ' : 'Mother' }}</div>
-                    <div class="font-semibold text-slate-800 text-xs">ចាន់ ធីតា</div>
-                  </div>
-                </div>
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ t('home.feat_transfer') }}</span>
               </div>
-
-              <!-- Official Red Seal Area -->
-              <div class="pt-2 border-t border-amber-200/80 flex justify-between items-center text-[9px] text-slate-400 font-sans">
-                <span>{{ locale === 'km' ? 'មន្ត្រីអត្រានុកូលដ្ឋាន' : 'Civil Registrar' }}</span>
-                <span class="px-2 py-0.5 rounded-full border border-red-300 bg-red-50 text-red-700 font-bold flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
-                  {{ locale === 'km' ? 'ត្រាក្រហមផ្លូវការ' : 'RED SEAL' }}
-                </span>
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ t('home.feat_editable') }}</span>
               </div>
             </div>
           </div>
 
-          <!-- Action Button -->
-          <button
-            type="button"
-            @click="goToVerify('certified')"
-            class="w-full h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm shadow-gov-sm hover:shadow-gov-md transition-all flex items-center justify-center gap-2 select-none"
-          >
-            <span>{{ t('home.btn_start_work') }}</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </button>
+          <!-- Action Button Row -->
+          <div class="pt-6 mt-6 border-t border-slate-100 relative z-10 flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400 group-hover:text-emerald-700 transition-colors">
+              {{ t('home.doc_certified_title') }}
+            </span>
+            <div class="h-10 px-5 rounded-xl bg-emerald-600 group-hover:bg-emerald-700 text-white text-xs font-bold inline-flex items-center justify-center gap-2 shadow-sm group-hover:shadow-md transition-all">
+              <span>{{ t('home.btn_update_template') }}</span>
+              <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </div>
+          </div>
         </div>
 
       </div>

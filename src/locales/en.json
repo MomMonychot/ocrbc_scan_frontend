@@ -163,14 +163,17 @@
   },
   "home": {
     "title": "Document Types",
-    "subtitle": "Select the document type to scan, extract text, and verify",
+    "subtitle": "Select document type to scan and update into a new template",
     "doc_standard_title": "Copy of Birth Certificate",
-    "doc_standard_badge": "Standard Form (Without Certification)",
-    "doc_standard_desc": "Standard copy of birth certificate format without certification clause for scanning, extraction, and verification.",
+    "doc_standard_badge": "Without Certification",
+    "doc_standard_desc": "Scan old document and extract text using AI to verify and update into the new copy of birth certificate template.",
     "doc_certified_title": "Certified Copy of Birth Certificate",
-    "doc_certified_badge": "Certified Form (With Certification)",
-    "doc_certified_desc": "Official certified copy of birth certificate format with certification endorsement for scanning, extraction, and verification.",
-    "btn_start_work": "Start Verification"
+    "doc_certified_badge": "With Certification",
+    "doc_certified_desc": "Scan old document and extract text using AI to verify and update into the new certified copy of birth certificate template.",
+    "feat_extract": "AI text extraction from old document scan",
+    "feat_transfer": "Auto-populate into new standard template",
+    "feat_editable": "Directly inline editable fields",
+    "btn_update_template": "Update to New Template"
   },
   "upload": {
     "title": "Document Pre-Flight Quality Gate",
