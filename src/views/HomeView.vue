@@ -14,7 +14,7 @@ function goToVerify(type) {
 </script>
 
 <template>
-  <main class="min-h-[calc(100vh-4rem)] bg-gov-surface py-12 sm:py-16">
+  <main class="min-h-[calc(100vh-4rem)] bg-gov-surface py-12 sm:py-16 flex flex-col justify-center">
     <div class="max-w-4xl mx-auto px-4 sm:px-8 w-full space-y-8 sm:space-y-10">
       
       <!-- Top Title Header with Deterministic Locked Heights -->
@@ -54,15 +54,15 @@ function goToVerify(type) {
               </span>
             </div>
 
-            <!-- Title (Locked 56px height, consistent font sizing) -->
-            <div class="h-14 flex items-center">
-              <h2 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors tracking-tight leading-snug">
+            <!-- Title (Standardized clean height, consistent font sizing) -->
+            <div class="h-8 flex items-center">
+              <h2 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-gov-primary transition-colors tracking-tight leading-snug">
                 {{ t('home.doc_standard_title') }}
               </h2>
             </div>
 
-            <!-- Description (Locked 48px height, 2 lines like in Khmer) -->
-            <div class="h-12 flex items-start">
+            <!-- Description (Locked height, 2 lines like in Khmer) -->
+            <div class="h-11 flex items-start">
               <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
                 {{ t('home.doc_standard_desc') }}
               </p>
@@ -94,15 +94,15 @@ function goToVerify(type) {
               </span>
             </div>
 
-            <!-- Title (Locked 56px height, consistent font sizing) -->
-            <div class="h-14 flex items-center">
-              <h2 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors tracking-tight leading-snug">
+            <!-- Title (Standardized clean height, consistent font sizing) -->
+            <div class="h-8 flex items-center">
+              <h2 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition-colors tracking-tight leading-snug">
                 {{ t('home.doc_certified_title') }}
               </h2>
             </div>
 
-            <!-- Description (Locked 48px height, 2 lines like in Khmer) -->
-            <div class="h-12 flex items-start">
+            <!-- Description (Locked height, 2 lines like in Khmer) -->
+            <div class="h-11 flex items-start">
               <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
                 {{ t('home.doc_certified_desc') }}
               </p>
