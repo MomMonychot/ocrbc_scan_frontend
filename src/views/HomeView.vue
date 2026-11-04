@@ -151,76 +151,65 @@ function handleLoadSampleScan() {
       <!-- VIEW 2: SELECTED DOCUMENT UPLOAD VIEW (STILL IN HOME)        -->
       <!-- ============================================================= -->
       <template v-else>
-        <!-- Top Title Replaced by Selected Block's Title & Description -->
-        <div class="text-center max-w-2xl mx-auto space-y-3">
-          <!-- Back button to return to Document Types -->
-          <div class="flex items-center justify-center">
-            <button
-              type="button"
-              @click="clearDocType"
-              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-gov-primary bg-white hover:bg-slate-100/80 border border-slate-200 shadow-xs transition-all cursor-pointer select-none"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              <span>{{ t('home.back_to_document_types') }}</span>
-            </button>
-          </div>
-
-          <!-- Document Title & Badge in Place of Document Types Title -->
-          <div class="flex items-center justify-center gap-3 flex-wrap">
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
-              {{ selectedDocType === 'standard' ? t('home.doc_standard_title') : t('home.doc_certified_title') }}
-            </h1>
-            <span
-              :class="[
-                'inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border shadow-xs shrink-0',
-                selectedDocType === 'standard'
-                  ? 'bg-blue-50 text-gov-primary border-blue-200'
-                  : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-              ]"
-            >
-              {{ selectedDocType === 'standard' ? t('home.doc_standard_badge') : t('home.doc_certified_badge') }}
-            </span>
-          </div>
-
-          <!-- Document Description in Place of Subtitle -->
-          <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed max-w-xl mx-auto">
-            {{ selectedDocType === 'standard' ? t('home.doc_standard_desc') : t('home.doc_certified_desc') }}
-          </p>
-        </div>
-
-        <!-- BELOW OF THEM: UPLOAD FILE COMPONENT & SAMPLE SCAN -->
-        <div class="space-y-6">
-          <DocumentUpload
-            :hideHeader="true"
-            @proceed="handleProceedToVerification"
-          />
-
-          <!-- Fast Sample Document Testing Card -->
-          <div class="p-6 bg-white rounded-2xl border border-gov-border text-center shadow-gov-sm max-w-xl mx-auto">
-            <div class="w-12 h-12 mx-auto rounded-2xl bg-blue-50 text-gov-primary flex items-center justify-center mb-3 shadow-xs">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+        <div class="max-w-3xl mx-auto space-y-6 sm:space-y-8">
+          <div class="space-y-4">
+            <!-- Back navigation button aligned to the left of upload card -->
+            <div class="flex items-center justify-start">
+              <button
+                type="button"
+                @click="clearDocType"
+                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-gov-primary bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition-all cursor-pointer select-none"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>{{ t('home.btn_back') }}</span>
+              </button>
             </div>
-            <h3 class="text-sm font-bold text-slate-800 mb-1">
-              {{ t('verification.sample_doc_btn') }}
-            </h3>
-            <p class="text-xs text-slate-500 mb-4 max-w-sm mx-auto leading-relaxed">
-              {{ t('verification.sample_doc_desc') }}
-            </p>
-            <button
-              type="button"
-              @click="handleLoadSampleScan"
-              class="h-10 px-6 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white text-xs font-bold shadow-gov-sm transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>{{ t('verification.sample_doc_btn') }}</span>
-            </button>
+
+            <!-- Top Title Replaced by Selected Block's Title & Description -->
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+              <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
+                {{ selectedDocType === 'standard' ? t('home.doc_standard_title') : t('home.doc_certified_title') }}
+              </h1>
+              <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed max-w-xl mx-auto">
+                {{ selectedDocType === 'standard' ? t('home.doc_standard_desc') : t('home.doc_certified_desc') }}
+              </p>
+            </div>
+          </div>
+
+          <!-- BELOW OF THEM: UPLOAD FILE COMPONENT & SAMPLE SCAN -->
+          <div class="space-y-6">
+            <DocumentUpload
+              :hideHeader="true"
+              @proceed="handleProceedToVerification"
+            />
+
+            <!-- Fast Sample Document Testing Card -->
+            <div class="p-6 bg-white rounded-2xl border border-gov-border text-center shadow-gov-sm max-w-xl mx-auto">
+              <div class="w-12 h-12 mx-auto rounded-2xl bg-blue-50 text-gov-primary flex items-center justify-center mb-3 shadow-xs">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 class="text-sm font-bold text-slate-800 mb-1">
+                {{ t('verification.sample_doc_btn') }}
+              </h3>
+              <p class="text-xs text-slate-500 mb-4 max-w-sm mx-auto leading-relaxed">
+                {{ t('verification.sample_doc_desc') }}
+              </p>
+              <button
+                type="button"
+                @click="handleLoadSampleScan"
+                class="h-10 px-6 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white text-xs font-bold shadow-gov-sm transition-all inline-flex items-center gap-2 cursor-pointer"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ t('verification.sample_doc_btn') }}</span>
+              </button>
+            </div>
           </div>
         </div>
       </template>
