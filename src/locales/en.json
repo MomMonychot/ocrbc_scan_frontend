@@ -163,7 +163,7 @@
   },
   "home": {
     "title": "Document Types",
-    "subtitle": "Select a birth certificate format to scan and update into a new template",
+    "subtitle": "Select a birth certificate format to upload, verify fields with interactive bounding boxes, and extract text using AI to update directly into the new standardized civil registry template.",
     "doc_standard_title": "Copy of Birth Certificate",
     "doc_standard_badge": "General Document",
     "doc_standard_desc": "Scan old documents and extract text using AI to update into the new birth certificate template.",

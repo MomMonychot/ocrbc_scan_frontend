@@ -14,15 +14,15 @@ function goToVerify(type) {
 </script>
 
 <template>
-  <main class="min-h-[calc(100vh-4rem)] bg-gov-surface py-12 sm:py-16 flex flex-col justify-center">
-    <div class="max-w-4xl mx-auto px-4 sm:px-8 w-full space-y-8 sm:space-y-10">
+  <main class="min-h-[calc(100vh-4rem)] bg-gov-surface pt-6 sm:pt-8 pb-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-8 w-full space-y-6 sm:space-y-8">
       
-      <!-- Top Title Header with Deterministic Locked Heights -->
-      <div class="text-center max-w-xl mx-auto space-y-2">
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight h-10 flex items-center justify-center">
+      <!-- Top Title Header Moved Up Near Header -->
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
           {{ t('home.title') }}
         </h1>
-        <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed h-6 flex items-center justify-center">
+        <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed">
           {{ t('home.subtitle') }}
         </p>
       </div>
