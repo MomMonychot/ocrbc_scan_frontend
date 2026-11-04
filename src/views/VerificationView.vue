@@ -1,10 +1,12 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import DocumentUpload from '../components/DocumentUpload.vue'
 import { verifyExtractedFields } from '../services/api_client'
 
 const { t, locale } = useI18n()
+const route = useRoute()
 
 // Document state
 const uploadedFile = ref(null)
@@ -370,11 +372,25 @@ function handleUploadNewDocument() {
 }
 
 onMounted(() => {
+  if (route.query.type === 'certified') {
+    selectedDocType.value = 'certified'
+  } else if (route.query.type === 'standard') {
+    selectedDocType.value = 'standard'
+  }
+
   // If an initial document is available, cross-reference
   if (uploadedFile.value) {
     triggerMunicipalCrossReference()
   }
 })
+
+watch(
+  () => route.query.type,
+  (newType) => {
+    if (newType === 'certified') selectedDocType.value = 'certified'
+    else if (newType === 'standard') selectedDocType.value = 'standard'
+  }
+)
 </script>
 
 <template>
