@@ -40,7 +40,7 @@ function goToVerify(type) {
           <!-- Subtle Decorative Accent Corner -->
           <div class="absolute top-0 right-0 w-28 h-28 bg-blue-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
 
-          <div class="space-y-4 relative z-10">
+          <div class="space-y-5 relative z-10">
             <!-- Icon & Status Badge (Locked 56px height) -->
             <div class="h-14 flex items-center justify-between">
               <div class="w-13 h-13 rounded-2xl bg-blue-50 border border-blue-200 text-gov-primary flex items-center justify-center shadow-xs group-hover:bg-gov-primary group-hover:text-white transition-all duration-200 shrink-0">
@@ -54,15 +54,11 @@ function goToVerify(type) {
               </span>
             </div>
 
-            <!-- Title (Standardized clean height, consistent font sizing) -->
-            <div class="h-8 flex items-center">
+            <!-- Standardized Text Group with Consistent Line Spacing -->
+            <div class="space-y-2">
               <h2 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-gov-primary transition-colors tracking-tight leading-snug">
                 {{ t('home.doc_standard_title') }}
               </h2>
-            </div>
-
-            <!-- Description (Locked height, 2 lines like in Khmer) -->
-            <div class="h-11 flex items-start">
               <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
                 {{ t('home.doc_standard_desc') }}
               </p>
@@ -80,7 +76,7 @@ function goToVerify(type) {
           <!-- Subtle Decorative Accent Corner -->
           <div class="absolute top-0 right-0 w-28 h-28 bg-emerald-50 rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform"></div>
 
-          <div class="space-y-4 relative z-10">
+          <div class="space-y-5 relative z-10">
             <!-- Icon & Status Badge (Locked 56px height) -->
             <div class="h-14 flex items-center justify-between">
               <div class="w-13 h-13 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shadow-xs group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200 shrink-0">
@@ -94,15 +90,11 @@ function goToVerify(type) {
               </span>
             </div>
 
-            <!-- Title (Standardized clean height, consistent font sizing) -->
-            <div class="h-8 flex items-center">
+            <!-- Standardized Text Group with Consistent Line Spacing -->
+            <div class="space-y-2">
               <h2 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition-colors tracking-tight leading-snug">
                 {{ t('home.doc_certified_title') }}
               </h2>
-            </div>
-
-            <!-- Description (Locked height, 2 lines like in Khmer) -->
-            <div class="h-11 flex items-start">
               <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed overflow-hidden">
                 {{ t('home.doc_certified_desc') }}
               </p>
