@@ -15,85 +15,213 @@ const verificationResult = ref(null)
 const verificationError = ref(null)
 const exportNotification = ref(null)
 
-// Canvas state
+// AI Processing & Feedback State
+const isProcessingAi = ref(false)
+const aiExtractionCompleted = ref(false)
+const aiExtractionToast = ref(null)
+const editedFields = ref(new Set())
+
+// Canvas & Zoom state
 const canvasZoom = ref(1.0)
 const isAdvancedMode = ref(false)
 const selectedFieldKey = ref('full_name_km')
+const canvasContainerRef = ref(null)
+
 // Document type: 'standard' (សេចក្តីចម្លងសំបុត្រកំណើត - no បញ្ជាក់) vs 'certified' (សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត)
 const selectedDocType = ref('standard')
 
 // Bounding box definitions (relative percentage coordinates for responsive scaling)
 const boundingBoxes = ref([
   {
-    key: 'national_id',
-    labelKey: 'verification.fields.national_id',
-    x: 62.0,
-    y: 12.0,
-    width: 28.0,
-    height: 5.5,
-    color: 'border-blue-500 bg-blue-500/10 text-blue-700',
-  },
-  {
     key: 'certificate_no',
     labelKey: 'verification.fields.certificate_no',
     x: 10.0,
-    y: 12.0,
+    y: 11.0,
+    width: 32.0,
+    height: 5.5,
+    color: 'border-indigo-500 bg-indigo-500/15 text-indigo-700',
+  },
+  {
+    key: 'national_id',
+    labelKey: 'verification.fields.national_id',
+    x: 60.0,
+    y: 11.0,
     width: 30.0,
     height: 5.5,
-    color: 'border-indigo-500 bg-indigo-500/10 text-indigo-700',
+    color: 'border-blue-500 bg-blue-500/15 text-blue-700',
   },
   {
     key: 'full_name_km',
     labelKey: 'verification.fields.full_name_km',
-    x: 25.0,
-    y: 28.0,
-    width: 48.0,
+    x: 24.0,
+    y: 25.0,
+    width: 52.0,
     height: 6.5,
-    color: 'border-emerald-500 bg-emerald-500/10 text-emerald-700',
+    color: 'border-emerald-500 bg-emerald-500/15 text-emerald-700',
   },
   {
     key: 'full_name_en',
     labelKey: 'verification.fields.full_name_en',
-    x: 25.0,
-    y: 36.5,
-    width: 48.0,
+    x: 24.0,
+    y: 33.5,
+    width: 52.0,
     height: 6.0,
-    color: 'border-teal-500 bg-teal-500/10 text-teal-700',
+    color: 'border-teal-500 bg-teal-500/15 text-teal-700',
+  },
+  {
+    key: 'gender',
+    labelKey: 'verification.fields.gender',
+    x: 78.0,
+    y: 33.5,
+    width: 14.0,
+    height: 6.0,
+    color: 'border-cyan-500 bg-cyan-500/15 text-cyan-700',
   },
   {
     key: 'birth_date',
     labelKey: 'verification.fields.birth_date',
-    x: 25.0,
-    y: 45.0,
-    width: 35.0,
+    x: 24.0,
+    y: 41.5,
+    width: 38.0,
     height: 5.5,
-    color: 'border-amber-500 bg-amber-500/10 text-amber-700',
+    color: 'border-amber-500 bg-amber-500/15 text-amber-700',
+  },
+  {
+    key: 'birth_place',
+    labelKey: 'verification.fields.birth_place',
+    x: 24.0,
+    y: 49.0,
+    width: 66.0,
+    height: 6.0,
+    color: 'border-orange-500 bg-orange-500/15 text-orange-700',
+  },
+  {
+    key: 'father_name',
+    labelKey: 'verification.fields.father_name',
+    x: 24.0,
+    y: 57.0,
+    width: 46.0,
+    height: 6.0,
+    color: 'border-violet-500 bg-violet-500/15 text-violet-700',
+  },
+  {
+    key: 'mother_name',
+    labelKey: 'verification.fields.mother_name',
+    x: 24.0,
+    y: 65.0,
+    width: 46.0,
+    height: 6.0,
+    color: 'border-pink-500 bg-pink-500/15 text-pink-700',
   },
   {
     key: 'district_office',
     labelKey: 'verification.fields.district_office',
-    x: 25.0,
-    y: 53.0,
-    width: 50.0,
+    x: 24.0,
+    y: 73.0,
+    width: 54.0,
     height: 6.0,
-    color: 'border-purple-500 bg-purple-500/10 text-purple-700',
+    color: 'border-purple-500 bg-purple-500/15 text-purple-700',
   },
 ])
 
-// Editable OCR Extracted Form Model
+// Editable Form Model for New Template
 const extractedFields = ref({
   national_id: '1204009821',
   certificate_no: 'BC-2024-009821',
   full_name_km: 'សុខ ចាន់ដារា',
   full_name_en: 'SOK CHANDARAA',
+  gender: 'ប្រុស',
   birth_date: '2000-05-15',
+  birth_place: 'សង្កាត់ផ្សារថ្មីទី១ ខណ្ឌដូនពេញ រាជធានីភ្នំពេញ',
+  father_name: 'សុខ សុវណ្ណ',
+  mother_name: 'ចាន់ ធីតា',
   district_office: 'ដូនពេញ (Daun Penh)',
 })
 
-// Active selected bounding box for coordinate inspector
+// Active selected bounding box for inspector
 const selectedBox = computed(() => {
   return boundingBoxes.value.find((b) => b.key === selectedFieldKey.value) || boundingBoxes.value[0]
 })
+
+// -------------------------------------------------------------
+// Interactive Bounding Box Drag-to-Move Logic
+// -------------------------------------------------------------
+const isMovingBox = ref(false)
+const movingBoxKey = ref(null)
+const moveStart = ref({ x: 0, y: 0 })
+const initialBoxPos = ref({ x: 0, y: 0 })
+
+function getRelativePercentCoords(e) {
+  if (!canvasContainerRef.value) return { x: 0, y: 0 }
+  const rect = canvasContainerRef.value.getBoundingClientRect()
+  const rawX = ((e.clientX - rect.left) / rect.width) * 100
+  const rawY = ((e.clientY - rect.top) / rect.height) * 100
+  const x = Math.max(0, Math.min(100, Math.round(rawX * 10) / 10))
+  const y = Math.max(0, Math.min(100, Math.round(rawY * 10) / 10))
+  return { x, y }
+}
+
+function handleBoxMouseDown(e, box) {
+  e.stopPropagation()
+  selectedFieldKey.value = box.key
+  isMovingBox.value = true
+  movingBoxKey.value = box.key
+  const coords = getRelativePercentCoords(e)
+  moveStart.value = coords
+  initialBoxPos.value = { x: box.x, y: box.y }
+}
+
+function handleCanvasMouseMove(e) {
+  if (!isMovingBox.value || !movingBoxKey.value) return
+  const box = boundingBoxes.value.find((b) => b.key === movingBoxKey.value)
+  if (!box) return
+  const coords = getRelativePercentCoords(e)
+  const dx = coords.x - moveStart.value.x
+  const dy = coords.y - moveStart.value.y
+  box.x = Math.max(0, Math.min(100 - box.width, Math.round((initialBoxPos.value.x + dx) * 10) / 10))
+  box.y = Math.max(0, Math.min(100 - box.height, Math.round((initialBoxPos.value.y + dy) * 10) / 10))
+}
+
+function handleCanvasMouseUp() {
+  if (isMovingBox.value) {
+    isMovingBox.value = false
+    movingBoxKey.value = null
+  }
+}
+
+// -------------------------------------------------------------
+// AI Extraction Process & Municipal Verification
+// -------------------------------------------------------------
+async function handleProcessAiExtraction() {
+  isProcessingAi.value = true
+  aiExtractionToast.value = null
+
+  try {
+    // Simulate AI model reading textual pixels in bounding box regions
+    await new Promise((resolve) => setTimeout(resolve, 700))
+
+    // Call municipal verification cross-reference API
+    await triggerMunicipalCrossReference()
+
+    aiExtractionCompleted.value = true
+    aiExtractionToast.value = t('verification.process_success')
+    setTimeout(() => {
+      aiExtractionToast.value = null
+    }, 5500)
+  } catch (err) {
+    console.error('Error executing AI extraction:', err)
+  } finally {
+    isProcessingAi.value = false
+  }
+}
+
+function onFieldInput(key) {
+  editedFields.value.add(key)
+}
+
+function isFieldEdited(key) {
+  return editedFields.value.has(key)
+}
 
 // Match status classifier for field color-coding
 function getFieldMatchStatus(key) {
@@ -164,6 +292,17 @@ function onProceedToVerification({ file, inspectResult, previewUrl }) {
   triggerMunicipalCrossReference()
 }
 
+// Fast sample loader for instant testing
+function loadSampleScan() {
+  uploadedFile.value = {
+    name: 'archival_sample_birth_cert.png',
+    size: 1024 * 720,
+    type: 'image/png',
+  }
+  documentPreviewUrl.value = null // renders simulated vintage scan canvas
+  triggerMunicipalCrossReference()
+}
+
 // Call backend API /api/v1/documents/verify
 async function triggerMunicipalCrossReference() {
   isVerifying.value = true
@@ -189,15 +328,15 @@ function handleApproveAndExport() {
       security_protocol: 'Zero-Data-Retention (ZDR-RAM-v1)',
       export_timestamp_utc: new Date().toISOString(),
       officer_approval_status: 'APPROVED',
+      certificate_type: selectedDocType.value === 'certified' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'សេចក្តីចម្លងសំបុត្រកំណើត',
       audit_hash: verificationResult.value?.audit_hash || 'none',
       confidence_level: verificationResult.value?.confidence_level || 100.0,
-      requires_manual_review: verificationResult.value?.requires_manual_review || false,
-      approved_fields: {
+      approved_new_template_fields: {
         ...extractedFields.value,
-        ...(verificationResult.value?.verified_fields || {}),
       },
+      officer_manually_edited_fields: Array.from(editedFields.value),
       matched_municipal_record: verificationResult.value?.matched_records?.[0] || null,
-      bounding_box_coordinates: boundingBoxes.value,
+      aligned_bounding_boxes: boundingBoxes.value,
     }
 
     // Trigger local client-side file download
@@ -205,7 +344,7 @@ function handleApproveAndExport() {
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')
     anchor.href = url
-    anchor.download = `civil_verification_approved_${extractedFields.value.national_id || 'cert'}.json`
+    anchor.download = `civil_birth_certificate_new_template_${extractedFields.value.national_id || 'approved'}.json`
     document.body.appendChild(anchor)
     anchor.click()
     document.body.removeChild(anchor)
@@ -226,11 +365,15 @@ function handleUploadNewDocument() {
   }
   verificationResult.value = null
   inspectionMetadata.value = null
+  aiExtractionCompleted.value = false
+  editedFields.value.clear()
 }
 
 onMounted(() => {
-  // Initial cross-referencing on mount
-  triggerMunicipalCrossReference()
+  // If an initial document is available, cross-reference
+  if (uploadedFile.value) {
+    triggerMunicipalCrossReference()
+  }
 })
 </script>
 
@@ -244,6 +387,9 @@ onMounted(() => {
           <h1 class="text-2xl sm:text-3xl font-extrabold text-gov-primary tracking-tight truncate">
             {{ t('verification.title') }}
           </h1>
+          <p class="text-xs sm:text-sm text-gov-text-secondary mt-1 truncate">
+            {{ t('verification.subtitle') }}
+          </p>
         </div>
 
         <div v-if="uploadedFile" class="flex items-center gap-3 shrink-0">
@@ -257,17 +403,43 @@ onMounted(() => {
       </div>
 
       <!-- State 1: Upload Dropzone if no file uploaded yet -->
-      <div v-if="!uploadedFile" class="my-8">
+      <div v-if="!uploadedFile" class="my-8 space-y-6">
         <DocumentUpload
           @inspected="onDocumentInspected"
           @proceed="onProceedToVerification"
         />
+
+        <!-- Instant Sample Scan Option -->
+        <div class="p-6 bg-white rounded-2xl border border-gov-border text-center shadow-gov-sm max-w-xl mx-auto">
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-blue-50 text-gov-primary flex items-center justify-center mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 class="text-sm font-bold text-slate-800 mb-1">
+            {{ t('verification.sample_doc_btn') }}
+          </h3>
+          <p class="text-xs text-slate-500 mb-4 max-w-sm mx-auto">
+            {{ t('verification.sample_doc_desc') }}
+          </p>
+          <button
+            type="button"
+            @click="loadSampleScan"
+            class="h-10 px-6 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white text-xs font-bold shadow-gov-sm transition-all inline-flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{{ t('verification.sample_doc_btn') }}</span>
+          </button>
+        </div>
       </div>
 
       <!-- State 2: Side-by-Side Interactive Verification Workspace -->
       <div v-else class="space-y-6">
         
-        <!-- Status Notification Banner with deterministic min-height -->
+        <!-- Status Notification Banner -->
         <div
           v-if="verificationResult"
           :class="[
@@ -324,51 +496,53 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Main Workspace Grid: Left Canvas, Right Cross-Reference Form -->
+        <!-- AI Extraction Success Toast Banner -->
+        <transition
+          enter-active-class="transform ease-out duration-300 transition"
+          enter-from-class="-translate-y-2 opacity-0"
+          enter-to-class="translate-y-0 opacity-100"
+          leave-active-class="transition ease-in duration-200"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
+        >
+          <div
+            v-if="aiExtractionToast"
+            class="p-4 rounded-2xl bg-emerald-600 text-white shadow-xl flex items-center justify-between gap-3 text-xs sm:text-sm font-semibold border border-emerald-500"
+          >
+            <div class="flex items-center gap-2.5">
+              <span class="w-3 h-3 rounded-full bg-white animate-ping"></span>
+              <span>{{ aiExtractionToast }}</span>
+            </div>
+            <button @click="aiExtractionToast = null" class="text-emerald-100 hover:text-white font-bold px-2">
+              ✕
+            </button>
+          </div>
+        </transition>
+
+        <!-- Main Workspace Grid: Left Old Scan (Movable Boxes) + Process AI Button, Right New Target Template (Editable) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           <!-- ================================================================= -->
-          <!-- LEFT PANE: Interactive Bounding Box Alignment Canvas (Col 6)     -->
+          <!-- LEFT PANE: Old Uploaded Scan with Movable Bounding Boxes (Col 6)  -->
           <!-- ================================================================= -->
           <div class="lg:col-span-6 bg-white rounded-2xl border border-gov-border shadow-gov-md p-5 flex flex-col space-y-4">
             
-            <!-- Canvas Toolbar with deterministic height -->
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100 h-11">
-              <div class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-gov-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <h2 class="text-sm font-bold text-slate-900 whitespace-nowrap">
-                  {{ t('verification.canvas_header') }}
-                </h2>
+            <!-- Pane Header & Toolbar -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></div>
+                  <h2 class="text-sm font-bold text-slate-900 truncate">
+                    {{ t('verification.left_pane_title') }}
+                  </h2>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                  {{ t('verification.left_pane_hint') }}
+                </p>
               </div>
 
               <!-- Controls: Zoom & Mode Toggle -->
-              <div class="flex items-center gap-2">
-                <!-- Document Type Switcher (Standard vs Certified) -->
-                <div class="hidden sm:inline-flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs h-8">
-                  <button
-                    type="button"
-                    @click="selectedDocType = 'standard'"
-                    :class="[
-                      'h-7 px-2.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap select-none',
-                      selectedDocType === 'standard' ? 'bg-white text-gov-primary shadow-sm' : 'text-slate-600 hover:text-slate-900'
-                    ]"
-                  >
-                    {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'Birth Certificate Copy' }}
-                  </button>
-                  <button
-                    type="button"
-                    @click="selectedDocType = 'certified'"
-                    :class="[
-                      'h-7 px-2.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap select-none',
-                      selectedDocType === 'certified' ? 'bg-white text-gov-primary shadow-sm' : 'text-slate-600 hover:text-slate-900'
-                    ]"
-                  >
-                    {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'Certified Copy' }}
-                  </button>
-                </div>
-
+              <div class="flex items-center gap-1.5 shrink-0">
                 <div class="inline-flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs h-8">
                   <button
                     @click="zoomOut"
@@ -379,7 +553,7 @@ onMounted(() => {
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
                     </svg>
                   </button>
-                  <span class="px-2 font-mono text-[11px] font-semibold text-slate-700">
+                  <span class="px-1.5 font-mono text-[11px] font-semibold text-slate-700">
                     {{ Math.round(canvasZoom * 100) }}%
                   </span>
                   <button
@@ -393,7 +567,7 @@ onMounted(() => {
                   </button>
                   <button
                     @click="resetZoom"
-                    class="h-7 px-2 text-[10px] text-slate-500 hover:text-slate-900 border-l border-slate-200 inline-flex items-center justify-center whitespace-nowrap select-none font-medium transition-colors"
+                    class="h-7 px-2 text-[10px] text-slate-500 hover:text-slate-900 border-l border-slate-200 inline-flex items-center justify-center font-medium transition-colors"
                   >
                     {{ t('verification.reset_view') }}
                   </button>
@@ -404,41 +578,51 @@ onMounted(() => {
                   type="button"
                   @click="isAdvancedMode = !isAdvancedMode"
                   :class="[
-                    'h-8 px-3 rounded-lg text-xs font-semibold border transition-all inline-flex items-center justify-center whitespace-nowrap select-none',
+                    'h-8 px-2.5 rounded-lg text-xs font-semibold border transition-all inline-flex items-center justify-center whitespace-nowrap select-none',
                     isAdvancedMode
                       ? 'bg-gov-primary text-white border-gov-primary shadow-sm'
                       : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                   ]"
                 >
-                  {{ isAdvancedMode ? t('verification.advanced_mode') : t('verification.standard_mode') }}
+                  {{ isAdvancedMode ? 'XY' : 'XY' }}
                 </button>
               </div>
             </div>
 
             <!-- Viewport & Canvas Overlay Container -->
-            <div class="relative w-full aspect-[4/5] bg-slate-100 rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center select-none">
-              
+            <div
+              ref="canvasContainerRef"
+              @mousemove="handleCanvasMouseMove"
+              @mouseup="handleCanvasMouseUp"
+              @mouseleave="handleCanvasMouseUp"
+              class="relative w-full aspect-[4/5] bg-slate-100 rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center select-none"
+            >
               <!-- Zoom Transform Layer -->
               <div
                 class="relative transition-transform duration-100 ease-out origin-center"
                 :style="{ transform: `scale(${canvasZoom})` }"
               >
-                <!-- Rendered Image or Document Mock -->
+                <!-- Rendered Image if available -->
                 <img
                   v-if="documentPreviewUrl"
                   :src="documentPreviewUrl"
-                  alt="Document Preview"
+                  alt="Uploaded Document"
                   class="max-w-full max-h-[520px] object-contain rounded shadow-sm pointer-events-none"
                 />
 
-                <!-- Simulated Government Civil Registry Certificate Canvas Background if no preview -->
+                <!-- Simulated Government Archival Scan Document Canvas if no raw image -->
                 <div
                   v-else
-                  class="w-[380px] h-[480px] bg-white rounded-lg shadow-md border border-slate-300 p-6 flex flex-col justify-between font-serif relative"
+                  class="w-[380px] h-[490px] bg-[#fffdfa] rounded-lg shadow-md border border-amber-200/80 p-6 flex flex-col justify-between font-serif relative overflow-hidden"
                 >
-                  <!-- National Emblem Graphic Placeholder -->
-                  <div class="text-center space-y-1">
-                    <div class="w-10 h-10 mx-auto rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-gov-primary font-bold text-xs">
+                  <!-- Background Watermark / Seal -->
+                  <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+                    <div class="w-64 h-64 rounded-full border-[16px] border-slate-900"></div>
+                  </div>
+
+                  <!-- Header Area -->
+                  <div class="text-center space-y-1 relative z-10">
+                    <div class="w-10 h-10 mx-auto rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-gov-primary font-bold text-xs shadow-sm">
                       🇰🇭
                     </div>
                     <div class="text-[11px] font-bold text-slate-800 tracking-wider">
@@ -449,37 +633,45 @@ onMounted(() => {
                     </div>
                     <div class="text-xs font-extrabold text-gov-primary font-sans pt-1">
                       {{ selectedDocType === 'certified'
-                          ? (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'CERTIFIED COPY OF BIRTH CERTIFICATE')
-                          : (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'COPY OF BIRTH CERTIFICATE') }}
+                          ? (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ឯកសារដើម)' : 'CERTIFIED COPY OF BIRTH CERTIFICATE (ORIGINAL)')
+                          : (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត (ឯកសារដើម)' : 'COPY OF BIRTH CERTIFICATE (ORIGINAL)') }}
                     </div>
                   </div>
 
-                  <div class="space-y-4 text-[10px] text-slate-600 border-t border-b border-slate-200 py-3 font-sans">
-                    <div class="flex justify-between">
-                      <span>{{ locale === 'km' ? 'លេខកូដសម្គាល់ជាតិ: 1204009821' : 'National ID Code: 1204009821' }}</span>
-                      <span>{{ locale === 'km' ? 'សំបុត្រលេខ: BC-2024-009821' : 'Certificate No: BC-2024-009821' }}</span>
+                  <!-- Body Lines simulating old typewriter/stamped scan -->
+                  <div class="space-y-3.5 text-[10px] text-slate-700 border-t border-b border-amber-200/60 py-3 font-sans relative z-10">
+                    <div class="flex justify-between font-mono text-[9px] text-slate-500">
+                      <span>{{ locale === 'km' ? 'លេខសម្គាល់: ' : 'ID: ' }} <span class="font-bold text-slate-900">1204009821</span></span>
+                      <span>{{ locale === 'km' ? 'សំបុត្រលេខ: ' : 'No: ' }} <span class="font-bold text-slate-900">BC-2024-009821</span></span>
                     </div>
-                    <div>{{ locale === 'km' ? 'ឈ្មោះខ្មែរ:' : 'Khmer Name:' }} <span class="font-bold text-slate-900 font-khmer">សុខ ចាន់ដារ៉ា</span></div>
-                    <div>{{ locale === 'km' ? 'ឈ្មោះឡាតាំង:' : 'Latin Name:' }} <span class="font-bold text-slate-900 font-latin">SOK CHANDARA</span></div>
-                    <div>{{ locale === 'km' ? 'ថ្ងៃខែឆ្នាំកំណើត: ១៥ ឧសភា ២០០០' : 'Date of Birth: 15 May 2000' }}</div>
-                    <div>{{ locale === 'km' ? 'រដ្ឋបាលខណ្ឌ: ដូនពេញ • រាជធានីភ្នំពេញ' : 'District: Daun Penh • Phnom Penh' }}</div>
+                    <div>{{ locale === 'km' ? 'ឈ្មោះខ្មែរ:' : 'Khmer Name:' }} <span class="font-bold text-slate-900 font-khmer text-[11px]">សុខ ចាន់ដារា</span></div>
+                    <div>{{ locale === 'km' ? 'ឈ្មោះឡាតាំង:' : 'Latin Name:' }} <span class="font-bold text-slate-900 font-latin text-[11px]">SOK CHANDARAA</span></div>
+                    <div>{{ locale === 'km' ? 'ភេទ:' : 'Gender:' }} <span class="font-semibold text-slate-900">ប្រុស</span></div>
+                    <div>{{ locale === 'km' ? 'ថ្ងៃខែឆ្នាំកំណើត:' : 'Date of Birth:' }} <span class="font-semibold text-slate-900">១៥ ឧសភា ២០០០ (2000-05-15)</span></div>
+                    <div>{{ locale === 'km' ? 'ទីកន្លែងកំណើត:' : 'Birth Place:' }} <span class="font-semibold text-slate-900">សង្កាត់ផ្សារថ្មីទី១ ខណ្ឌដូនពេញ រាជធានីភ្នំពេញ</span></div>
+                    <div>{{ locale === 'km' ? 'ឪពុក:' : 'Father:' }} <span class="font-semibold text-slate-900">សុខ សុវណ្ណ</span></div>
+                    <div>{{ locale === 'km' ? 'ម្តាយ:' : 'Mother:' }} <span class="font-semibold text-slate-900">ចាន់ ធីតា</span></div>
+                    <div>{{ locale === 'km' ? 'រដ្ឋបាលខណ្ឌ:' : 'District:' }} <span class="font-semibold text-slate-900">ដូនពេញ • រាជធានីភ្នំពេញ</span></div>
                   </div>
 
-                  <div class="flex justify-between items-end text-[9px] text-slate-400">
-                    <div>{{ locale === 'km' ? 'ច្រកចេញចូលតែមួយ' : 'One Window Service' }}</div>
+                  <!-- Footer Stamp Section -->
+                  <div class="flex justify-between items-end text-[9px] text-slate-500 relative z-10">
+                    <div>{{ locale === 'km' ? 'ការិយាល័យច្រកចេញចូលតែមួយ' : 'One Window Service' }}</div>
                     <div class="text-center">
-                      <div class="w-12 h-12 rounded-full border border-red-300 bg-red-50 text-red-700 flex items-center justify-center text-[8px] font-bold">
-                        {{ locale === 'km' ? 'ត្រា' : 'SEAL' }}
+                      <div class="w-12 h-12 rounded-full border-2 border-red-400 bg-red-50 text-red-700 flex items-center justify-center text-[8px] font-bold shadow-sm">
+                        {{ locale === 'km' ? 'ត្រាផ្លូវការ' : 'SEAL' }}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- OVERLAY BOUNDING BOXES -->
+                <!-- ============================================================= -->
+                <!-- INTERACTIVE MOVABLE BOUNDING BOXES OVERLAY                     -->
+                <!-- ============================================================= -->
                 <div
                   v-for="box in boundingBoxes"
                   :key="box.key"
-                  @click="selectField(box.key)"
+                  @mousedown="handleBoxMouseDown($event, box)"
                   :style="{
                     left: `${box.x}%`,
                     top: `${box.y}%`,
@@ -487,34 +679,35 @@ onMounted(() => {
                     height: `${box.height}%`,
                   }"
                   :class="[
-                    'absolute border-2 rounded transition-all cursor-pointer group flex items-center justify-between px-1.5',
+                    'absolute border-2 rounded transition-shadow cursor-move flex items-center justify-between px-1.5 select-none',
                     selectedFieldKey === box.key
-                      ? 'ring-4 ring-gov-primary/30 border-gov-primary z-30 shadow-md'
-                      : `${box.color} hover:ring-2 hover:ring-slate-300 z-20`
+                      ? 'ring-4 ring-gov-primary/40 border-gov-primary bg-gov-primary/20 z-30 shadow-lg'
+                      : `${box.color} hover:ring-2 hover:ring-slate-400 z-20`
                   ]"
+                  :title="`Drag to reposition ${box.key}`"
                 >
-                  <span class="text-[9px] font-bold truncate tracking-tight uppercase">
-                    {{ box.key.replace('_', ' ') }}
+                  <span class="text-[9px] font-bold truncate tracking-tight uppercase pointer-events-none drop-shadow-sm">
+                    {{ t(box.labelKey) }}
                   </span>
                   
                   <span
                     v-if="selectedFieldKey === box.key"
-                    class="w-2 h-2 rounded-full bg-gov-primary animate-ping"
+                    class="w-2 h-2 rounded-full bg-gov-primary animate-ping shrink-0"
                   ></span>
                 </div>
               </div>
             </div>
 
-            <!-- Advanced Coordinates Editor Panel (Drawer) -->
+            <!-- Advanced Coordinates Panel (Optional Drawer) -->
             <div
               v-if="isAdvancedMode"
-              class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2.5"
+              class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2"
             >
               <div class="flex items-center justify-between">
                 <span class="font-bold text-slate-800">
-                  Active Bounding Box: <span class="text-gov-primary">{{ selectedBox.key }}</span>
+                  {{ t(selectedBox.labelKey) }} (<span class="text-gov-primary font-mono">{{ selectedBox.key }}</span>)
                 </span>
-                <span class="text-[10px] text-slate-400">Relative % bounds</span>
+                <span class="text-[10px] text-slate-400 font-mono">X: {{ selectedBox.x }}% | Y: {{ selectedBox.y }}%</span>
               </div>
 
               <div class="grid grid-cols-4 gap-2">
@@ -572,7 +765,7 @@ onMounted(() => {
                 :key="b.key"
                 @click="selectField(b.key)"
                 :class="[
-                  'h-7 px-2.5 rounded-lg text-[11px] font-semibold border transition-all inline-flex items-center justify-center whitespace-nowrap select-none',
+                  'h-6 px-2 rounded-lg text-[10px] font-semibold border transition-all inline-flex items-center justify-center whitespace-nowrap select-none',
                   selectedFieldKey === b.key
                     ? 'bg-gov-primary text-white border-gov-primary shadow-sm'
                     : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
@@ -581,121 +774,350 @@ onMounted(() => {
                 {{ t(b.labelKey) }}
               </button>
             </div>
+
+            <!-- ============================================================= -->
+            <!-- PROMINENT ACTION: PROCESS / EXTRACT WITH AI BUTTON             -->
+            <!-- ============================================================= -->
+            <div class="pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                @click="handleProcessAiExtraction"
+                :disabled="isProcessingAi"
+                class="w-full h-12 rounded-xl bg-gov-primary hover:bg-gov-primary-hover active:scale-[0.99] text-white font-bold text-sm shadow-gov-md hover:shadow-gov-lg transition-all flex items-center justify-center gap-2.5 select-none disabled:opacity-60"
+              >
+                <svg v-if="!isProcessingAi" class="w-5 h-5 text-amber-300 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                </svg>
+                <svg v-else class="w-5 h-5 animate-spin text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                <span class="tracking-wide">
+                  {{ isProcessingAi ? t('verification.btn_processing') : t('verification.btn_process_ai') }}
+                </span>
+              </button>
+            </div>
+
           </div>
 
           <!-- ================================================================= -->
-          <!-- RIGHT PANE: Side-by-Side Extracted Text vs Municipal DB (Col 6)  -->
+          <!-- RIGHT PANE: NEW TEMPLATE (AUTO-POPULATED & DIRECTLY EDITABLE) (Col 6)-->
           <!-- ================================================================= -->
-          <div class="lg:col-span-6 bg-white rounded-2xl border border-gov-border shadow-gov-md p-5 flex flex-col justify-between space-y-6">
+          <div class="lg:col-span-6 bg-white rounded-2xl border border-gov-border shadow-gov-md p-5 flex flex-col justify-between space-y-5">
             
             <div class="space-y-4">
-              <!-- Pane Header with deterministic height matching Canvas Toolbar -->
-              <div class="flex items-center justify-between pb-3 border-b border-slate-100 h-11">
-                <div class="flex items-center gap-2">
-                  <svg class="w-4 h-4 text-gov-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <h2 class="text-sm font-bold text-slate-900 whitespace-nowrap">
-                    {{ t('verification.cross_reference_header') }}
-                  </h2>
+              <!-- Pane Header & Controls -->
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></div>
+                    <h2 class="text-sm font-bold text-slate-900 truncate">
+                      {{ t('verification.right_pane_title') }}
+                    </h2>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                    {{ t('verification.right_pane_hint') }}
+                  </p>
                 </div>
 
-                <button
-                  type="button"
-                  @click="triggerMunicipalCrossReference"
-                  :disabled="isVerifying"
-                  class="h-7 px-2 inline-flex items-center gap-1.5 text-xs text-gov-primary hover:underline font-semibold disabled:opacity-50 whitespace-nowrap select-none"
-                >
-                  <svg :class="['w-3.5 h-3.5', isVerifying ? 'animate-spin' : '']" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  {{ t('verification.actions.re_run_verify') }}
-                </button>
+                <!-- Document Type Switcher (Standard vs Certified) -->
+                <div class="inline-flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs h-8 shrink-0">
+                  <button
+                    type="button"
+                    @click="selectedDocType = 'standard'"
+                    :class="[
+                      'h-7 px-2.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap select-none',
+                      selectedDocType === 'standard' ? 'bg-white text-gov-primary shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    ]"
+                  >
+                    {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'Birth Certificate' }}
+                  </button>
+                  <button
+                    type="button"
+                    @click="selectedDocType = 'certified'"
+                    :class="[
+                      'h-7 px-2.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap select-none',
+                      selectedDocType === 'certified' ? 'bg-white text-gov-primary shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    ]"
+                  >
+                    {{ locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'Certified Copy' }}
+                  </button>
+                </div>
               </div>
 
-              <!-- Field Comparison Form List with strictly locked card heights -->
-              <div class="space-y-3">
-                <div
-                  v-for="box in boundingBoxes"
-                  :key="box.key"
-                  @click="selectField(box.key)"
-                  :class="[
-                    'p-3 rounded-xl border transition-all cursor-pointer',
-                    selectedFieldKey === box.key ? 'ring-2 ring-gov-primary/20 shadow-sm' : '',
-                    getFieldMatchStatus(box.key).color
-                  ]"
-                >
-                  <!-- Field Header with fixed height -->
-                  <div class="flex items-center justify-between mb-1.5 h-6">
-                    <div class="flex items-center gap-2 min-w-0">
-                      <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
-                      <span class="text-xs font-bold text-slate-900 truncate">
-                        {{ t(box.labelKey) }}
-                      </span>
-                    </div>
-
-                    <!-- Match Status Badge with fixed height -->
-                    <div class="flex items-center gap-2 shrink-0">
-                      <span
-                        v-if="verificationResult"
-                        :class="[
-                          'h-5 px-2 rounded-full text-[10px] font-bold border inline-flex items-center justify-center whitespace-nowrap',
-                          getFieldMatchStatus(box.key).badgeColor
-                        ]"
-                      >
-                        {{
-                          getFieldMatchStatus(box.key).status === 'verified'
-                            ? t('verification.status_labels.verified')
-                            : getFieldMatchStatus(box.key).status === 'corrected'
-                            ? t('verification.status_labels.corrected')
-                            : t('verification.status_labels.review_required')
-                        }}
-                      </span>
-                      <span class="text-[11px] font-mono font-bold">
-                        {{ getFieldMatchStatus(box.key).score }}%
-                      </span>
-                    </div>
+              <!-- ============================================================= -->
+              <!-- THE NEW TEMPLATE CERTIFICATE SHEET (INLINE EDITABLE)          -->
+              <!-- ============================================================= -->
+              <div class="bg-white rounded-2xl border-2 border-slate-200 p-6 sm:p-7 shadow-sm space-y-5 font-serif relative">
+                
+                <!-- Certificate Top Header with Emblem -->
+                <div class="text-center space-y-1.5 pb-3 border-b border-slate-200">
+                  <div class="w-12 h-12 mx-auto rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-gov-primary text-base shadow-sm">
+                    🇰🇭
                   </div>
+                  <div class="text-xs sm:text-sm font-bold text-slate-900 tracking-wider">
+                    {{ t('verification.official_emblem_title') }}
+                  </div>
+                  <div class="text-[10px] text-slate-500 font-sans tracking-wide">
+                    {{ t('verification.official_emblem_sub') }}
+                  </div>
+                  <div class="text-xs sm:text-sm font-black text-gov-primary font-sans pt-1">
+                    {{ selectedDocType === 'certified'
+                        ? (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'CERTIFIED COPY OF BIRTH CERTIFICATE')
+                        : (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'COPY OF BIRTH CERTIFICATE') }}
+                  </div>
+                </div>
 
-                  <!-- Side-by-Side Values Grid with fixed box height to prevent jumping -->
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    <!-- Extracted OCR Input (Editable) -->
-                    <div class="bg-white/90 p-2 rounded-lg border border-slate-200 h-14 flex flex-col justify-between">
-                      <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">
-                        {{ t('verification.field_headers.extracted_ocr') }}
-                      </label>
+                <!-- Editable Instruction Indicator -->
+                <div class="flex items-center justify-between text-[11px] font-sans px-2.5 py-1.5 rounded-lg bg-blue-50/70 border border-blue-200/60 text-blue-900">
+                  <div class="flex items-center gap-1.5 font-medium">
+                    <svg class="w-3.5 h-3.5 text-gov-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    <span>{{ t('verification.editable_hint') }}</span>
+                  </div>
+                  <span class="text-[10px] font-bold text-gov-primary bg-white px-2 py-0.5 rounded shadow-xs shrink-0">
+                    {{ t('verification.editable_badge') }}
+                  </span>
+                </div>
+
+                <!-- Form Fields Grid: Standardized Cambodian Civil Certificate Format -->
+                <div class="space-y-3 font-sans text-xs">
+                  
+                  <!-- Top Row: Certificate No & National ID -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                      <div class="flex justify-between items-center mb-1">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                          {{ t('verification.fields.certificate_no') }}
+                        </label>
+                        <span v-if="isFieldEdited('certificate_no')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                          {{ t('verification.edited_badge') }}
+                        </span>
+                      </div>
                       <input
-                        v-model="extractedFields[box.key]"
+                        v-model="extractedFields.certificate_no"
+                        @input="onFieldInput('certificate_no')"
                         type="text"
-                        class="w-full text-xs font-bold text-slate-900 bg-transparent focus:outline-none focus:ring-1 focus:ring-gov-primary rounded px-1 h-6"
-                        @blur="triggerMunicipalCrossReference"
+                        class="w-full text-xs font-bold text-slate-900 bg-transparent focus:outline-none"
                       />
                     </div>
 
-                    <!-- Official Reference (Read-Only) -->
-                    <div class="bg-slate-100/90 p-2 rounded-lg border border-slate-200 h-14 flex flex-col justify-between">
-                      <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">
-                        {{ t('verification.field_headers.municipal_ref') }}
+                    <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                      <div class="flex justify-between items-center mb-1">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                          {{ t('verification.fields.national_id') }}
+                        </label>
+                        <span v-if="isFieldEdited('national_id')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                          {{ t('verification.edited_badge') }}
+                        </span>
+                      </div>
+                      <input
+                        v-model="extractedFields.national_id"
+                        @input="onFieldInput('national_id')"
+                        type="text"
+                        class="w-full text-xs font-bold font-mono text-gov-primary bg-transparent focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Name in Khmer -->
+                  <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                    <div class="flex justify-between items-center mb-1">
+                      <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                        {{ t('verification.fields.full_name_km') }}
                       </label>
-                      <div class="text-xs font-bold text-slate-800 truncate px-1 h-6 flex items-center">
-                        {{ getFieldMatchStatus(box.key).refValue || '—' }}
+                      <span v-if="isFieldEdited('full_name_km')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                        {{ t('verification.edited_badge') }}
+                      </span>
+                    </div>
+                    <input
+                      v-model="extractedFields.full_name_km"
+                      @input="onFieldInput('full_name_km')"
+                      type="text"
+                      class="w-full text-xs font-bold font-khmer text-slate-900 bg-transparent focus:outline-none"
+                    />
+                  </div>
+
+                  <!-- Name in Latin & Gender -->
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="sm:col-span-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                      <div class="flex justify-between items-center mb-1">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                          {{ t('verification.fields.full_name_en') }}
+                        </label>
+                        <span v-if="isFieldEdited('full_name_en')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                          {{ t('verification.edited_badge') }}
+                        </span>
+                      </div>
+                      <input
+                        v-model="extractedFields.full_name_en"
+                        @input="onFieldInput('full_name_en')"
+                        type="text"
+                        class="w-full text-xs font-bold font-latin uppercase text-slate-900 bg-transparent focus:outline-none"
+                      />
+                    </div>
+
+                    <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                      <div class="flex justify-between items-center mb-1">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                          {{ t('verification.fields.gender') }}
+                        </label>
+                        <span v-if="isFieldEdited('gender')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                          {{ t('verification.edited_badge') }}
+                        </span>
+                      </div>
+                      <input
+                        v-model="extractedFields.gender"
+                        @input="onFieldInput('gender')"
+                        type="text"
+                        class="w-full text-xs font-bold text-slate-900 bg-transparent focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Date of Birth -->
+                  <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                    <div class="flex justify-between items-center mb-1">
+                      <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                        {{ t('verification.fields.birth_date') }}
+                      </label>
+                      <span v-if="isFieldEdited('birth_date')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                        {{ t('verification.edited_badge') }}
+                      </span>
+                    </div>
+                    <input
+                      v-model="extractedFields.birth_date"
+                      @input="onFieldInput('birth_date')"
+                      type="text"
+                      class="w-full text-xs font-bold font-mono text-slate-900 bg-transparent focus:outline-none"
+                    />
+                  </div>
+
+                  <!-- Place of Birth -->
+                  <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                    <div class="flex justify-between items-center mb-1">
+                      <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                        {{ t('verification.fields.birth_place') }}
+                      </label>
+                      <span v-if="isFieldEdited('birth_place')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                        {{ t('verification.edited_badge') }}
+                      </span>
+                    </div>
+                    <input
+                      v-model="extractedFields.birth_place"
+                      @input="onFieldInput('birth_place')"
+                      type="text"
+                      class="w-full text-xs font-semibold text-slate-900 bg-transparent focus:outline-none"
+                    />
+                  </div>
+
+                  <!-- Father & Mother Names -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                      <div class="flex justify-between items-center mb-1">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                          {{ t('verification.fields.father_name') }}
+                        </label>
+                        <span v-if="isFieldEdited('father_name')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                          {{ t('verification.edited_badge') }}
+                        </span>
+                      </div>
+                      <input
+                        v-model="extractedFields.father_name"
+                        @input="onFieldInput('father_name')"
+                        type="text"
+                        class="w-full text-xs font-bold text-slate-900 bg-transparent focus:outline-none"
+                      />
+                    </div>
+
+                    <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                      <div class="flex justify-between items-center mb-1">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                          {{ t('verification.fields.mother_name') }}
+                        </label>
+                        <span v-if="isFieldEdited('mother_name')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                          {{ t('verification.edited_badge') }}
+                        </span>
+                      </div>
+                      <input
+                        v-model="extractedFields.mother_name"
+                        @input="onFieldInput('mother_name')"
+                        type="text"
+                        class="w-full text-xs font-bold text-slate-900 bg-transparent focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- District Office -->
+                  <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-gov-primary/30 transition-all">
+                    <div class="flex justify-between items-center mb-1">
+                      <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                        {{ t('verification.fields.district_office') }}
+                      </label>
+                      <span v-if="isFieldEdited('district_office')" class="text-[9px] font-bold px-1.5 rounded bg-blue-100 text-blue-800">
+                        {{ t('verification.edited_badge') }}
+                      </span>
+                    </div>
+                    <input
+                      v-model="extractedFields.district_office"
+                      @input="onFieldInput('district_office')"
+                      type="text"
+                      class="w-full text-xs font-semibold text-slate-900 bg-transparent focus:outline-none"
+                    />
+                  </div>
+
+                </div>
+
+                <!-- Certificate Bottom Elements: QR Code & Official Registrar Seal -->
+                <div class="pt-4 border-t border-slate-200 flex items-center justify-between font-sans">
+                  <!-- Digital QR Code -->
+                  <div class="flex items-center gap-3">
+                    <div class="w-14 h-14 bg-white border border-slate-300 rounded-lg p-1 shadow-xs flex items-center justify-center">
+                      <!-- SVG representation of QR Authenticity code -->
+                      <svg class="w-12 h-12 text-slate-800" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h4v2h-4v-2zm-4 0h2v4h-2v-4zm2 4h2v4h-2v-4zm2 2h4v2h-4v-2zm0-4h2v2h-2v-2zm-4 4h2v2h-2v-2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="text-[10px] font-bold text-slate-800">
+                        {{ t('verification.digital_qr_mark') }}
+                      </div>
+                      <div class="text-[9px] text-slate-500 font-mono">
+                        HASH: {{ verificationResult?.audit_hash ? verificationResult.audit_hash.slice(0, 14) + '...' : 'AUTHENTIC' }}
+                      </div>
+                      <div class="text-[9px] text-slate-400">
+                        {{ t('verification.one_window_office') }}
                       </div>
                     </div>
                   </div>
+
+                  <!-- Civil Status Registrar Seal -->
+                  <div class="text-center">
+                    <div class="w-14 h-14 rounded-full border-2 border-red-500 bg-red-50/80 text-red-700 flex flex-col items-center justify-center text-[7px] font-bold shadow-xs">
+                      <span>{{ locale === 'km' ? 'ក្រសួងមហាផ្ទៃ' : 'MOI' }}</span>
+                      <span class="text-[9px]">🇰🇭</span>
+                      <span>{{ locale === 'km' ? 'ត្រាផ្លូវការ' : 'SEAL' }}</span>
+                    </div>
+                    <div class="text-[9px] font-semibold text-slate-600 mt-1">
+                      {{ t('verification.registrar_seal') }}
+                    </div>
+                  </div>
                 </div>
+
               </div>
 
-              <!-- Database Connection & Audit Hash Telemetry -->
-              <div v-if="verificationResult" class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-[11px] space-y-1 h-16 flex flex-col justify-center">
+              <!-- Database Connection & Audit Telemetry -->
+              <div v-if="verificationResult" class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-[11px] space-y-1">
                 <div class="flex justify-between items-center text-slate-600">
-                  <span class="font-medium truncate">Master Registry Record:</span>
+                  <span class="font-medium truncate">Master Registry Match:</span>
                   <span class="font-bold text-slate-800 shrink-0">
-                    {{ verificationResult.matched_records?.[0]?.national_id ? 'Authenticated (1 match)' : 'No exact record' }}
+                    {{ verificationResult.matched_records?.[0]?.national_id ? 'Authenticated (1 exact record)' : 'Simulated Record Reference' }}
                   </span>
                 </div>
                 <div class="flex justify-between items-center text-slate-500 font-mono text-[10px]">
-                  <span class="shrink-0">SHA-256 Audit:</span>
-                  <span class="truncate max-w-[200px]" :title="verificationResult.audit_hash">
+                  <span class="shrink-0">Audit Hash:</span>
+                  <span class="truncate max-w-[240px]" :title="verificationResult.audit_hash">
                     {{ verificationResult.audit_hash }}
                   </span>
                 </div>
@@ -711,15 +1133,15 @@ onMounted(() => {
                 <span>{{ exportNotification }}</span>
               </div>
 
-              <div class="flex items-center justify-between gap-4 h-12">
-                <div class="text-xs text-slate-500 truncate">
-                  Zero Data Retention: Results are rendered locally without disk retention.
+              <div class="flex items-center justify-between gap-4">
+                <div class="text-[11px] text-slate-500">
+                  Zero Data Retention: Processed locally in memory.
                 </div>
 
                 <button
                   type="button"
                   @click="handleApproveAndExport"
-                  class="h-12 min-h-[48px] px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-emerald-200 inline-flex items-center justify-center gap-2 shrink-0 whitespace-nowrap select-none w-auto"
+                  class="h-12 min-h-[48px] px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-emerald-200 inline-flex items-center justify-center gap-2 shrink-0 whitespace-nowrap select-none"
                 >
                   <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />

@@ -151,17 +151,36 @@ function handleDocumentClick(e) {
   }
 }
 
-function handleCreateFromExisting() {
+// Modal for selecting Old or New format when creating a template
+const showFormatChoiceModal = ref(false)
+const pendingCreationType = ref('existing') // 'existing' | 'computer'
+const selectedCreationFormat = ref('old') // 'old' = សម្រាប់ស្កេន និងស្រង់ទិន្នន័យ, 'new' = សម្រាប់ទទួលទិន្នន័យ
+
+function openFormatChoiceModal(type) {
   isAddMenuOpen.value = false
-  handleAddNewTemplate()
+  pendingCreationType.value = type
+  selectedCreationFormat.value = activeTab.value || 'old'
+  showFormatChoiceModal.value = true
+}
+
+function handleConfirmFormatChoice() {
+  showFormatChoiceModal.value = false
+  if (pendingCreationType.value === 'existing') {
+    handleAddNewTemplate(selectedCreationFormat.value)
+  } else if (pendingCreationType.value === 'computer') {
+    if (computerFileInputRef.value) {
+      computerFileInputRef.value.value = ''
+      computerFileInputRef.value.click()
+    }
+  }
+}
+
+function handleCreateFromExisting() {
+  openFormatChoiceModal('existing')
 }
 
 function triggerComputerUpload() {
-  isAddMenuOpen.value = false
-  if (computerFileInputRef.value) {
-    computerFileInputRef.value.value = ''
-    computerFileInputRef.value.click()
-  }
+  openFormatChoiceModal('computer')
 }
 
 function handleComputerFileSelected(e) {
@@ -176,15 +195,20 @@ function handleComputerFileSelected(e) {
   reader.onload = (evt) => {
     const imageDataUrl = evt.target?.result
     const fileName = file.name.replace(/\.[^/.]+$/, '')
-    const isCertified = activeTab.value === 'old'
+    const chosenFormat = selectedCreationFormat.value || activeTab.value
+    const isCertified = chosenFormat === 'old'
 
     const newTpl = {
       id: 'tpl-custom-' + Date.now(),
-      format: activeTab.value,
+      format: chosenFormat,
       nameKm: fileName || (isCertified ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតពីកុំព្យូទ័រ' : 'សេចក្តីចម្លងសំបុត្រកំណើតពីកុំព្យូទ័រ'),
       nameEn: fileName || (isCertified ? 'Certified Copy of Birth Certificate Upload' : 'Copy of Birth Certificate Upload'),
-      descriptionKm: `គំរូទម្រង់ ${isCertified ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'សេចក្តីចម្លងសំបុត្រកំណើត'} ផ្ទុកឡើងពីកុំព្យូទ័រ (${file.name})។`,
-      descriptionEn: `Template uploaded from computer (${file.name}) ready for custom OCR bounding box configuration.`,
+      descriptionKm: isCertified
+        ? `គំរូទម្រង់ចាស់ផ្ទុកឡើងពីកុំព្យូទ័រ (${file.name}) សម្រាប់គូសប្រអប់ Bounding Box ស្រង់ទិន្នន័យ។`
+        : `គំរូទម្រង់ថ្មីផ្ទុកឡើងពីកុំព្យូទ័រ (${file.name}) សម្រាប់ទទួលទិន្នន័យឌីជីថលស្តង់ដារ។`,
+      descriptionEn: isCertified
+        ? `Old format template uploaded from computer (${file.name}) for bounding box text extraction.`
+        : `New format template uploaded from computer (${file.name}) for receiving extracted data.`,
       updatedAt: new Date().toISOString().slice(0, 10),
       aspectRatio: '4/5',
       customImage: imageDataUrl,
@@ -310,19 +334,19 @@ function openStudioForEdit(template) {
   showStudio.value = true
 }
 
-function handleAddNewTemplate() {
-  const isCertified = activeTab.value === 'old'
+function handleAddNewTemplate(chosenFormat = activeTab.value) {
+  const isCertified = chosenFormat === 'old'
   const newTpl = {
     id: 'tpl-custom-' + Date.now(),
-    format: activeTab.value, // creates in current tab ('new' = no បញ្ជាក់, 'old' = មានបញ្ជាក់)
+    format: chosenFormat, // 'old' = សម្រាប់ស្កេន និងស្រង់ទិន្នន័យ, 'new' = សម្រាប់ទទួលទិន្នន័យ
     nameKm: isCertified ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតថ្មី' : 'សេចក្តីចម្លងសំបុត្រកំណើតថ្មី',
     nameEn: isCertified ? 'New Certified Copy of Birth Certificate' : 'New Copy of Birth Certificate',
     descriptionKm: isCertified
-      ? 'ទម្រង់សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត សម្រាប់កំណត់ទីតាំង OCR Bounding Box។'
-      : 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើត (គ្មានពាក្យបញ្ជាក់) សម្រាប់កំណត់ទីតាំង OCR Bounding Box។',
+      ? 'ទម្រង់សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ទម្រង់ចាស់) សម្រាប់កំណត់ទីតាំង OCR Bounding Box ស្រង់ទិន្នន័យ។'
+      : 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើត (ទម្រង់ថ្មី) សម្រាប់ទទួលទិន្នន័យឌីជីថលស្តង់ដារ។',
     descriptionEn: isCertified
-      ? 'Certified copy of birth certificate template for OCR bounding box alignment.'
-      : 'Copy of birth certificate template for OCR bounding box alignment.',
+      ? 'Certified copy of birth certificate template (Old format) for OCR bounding box extraction.'
+      : 'Standard copy of birth certificate template (New format) for receiving extracted data.',
     updatedAt: new Date().toISOString().slice(0, 10),
     aspectRatio: '4/5',
     boxes: [
@@ -893,6 +917,124 @@ function removeCustomImage() {
         </div>
       </div>
 
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TEMPLATE TYPE SELECTION MODAL (OLD FORMAT VS NEW FORMAT)             -->
+    <!-- =================================================================== -->
+    <div
+      v-if="showFormatChoiceModal"
+      class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+    >
+      <div class="bg-white rounded-2xl border border-gov-border shadow-2xl w-full max-w-lg p-6 space-y-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">
+              {{ t('templates.format_modal.title') }}
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              {{ t('templates.format_modal.subtitle') }}
+            </p>
+          </div>
+          <button
+            type="button"
+            @click="showFormatChoiceModal = false"
+            class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Choice Cards -->
+        <div class="space-y-3">
+          <!-- Option 1: Old Format (Scan & Extraction) -->
+          <div
+            @click="selectedCreationFormat = 'old'"
+            :class="[
+              'p-4 rounded-xl border-2 cursor-pointer transition-all flex items-start gap-3.5',
+              selectedCreationFormat === 'old'
+                ? 'border-gov-primary bg-blue-50/50 shadow-sm'
+                : 'border-slate-200 hover:border-slate-300 bg-white'
+            ]"
+          >
+            <div class="mt-0.5">
+              <input
+                type="radio"
+                name="formatChoice"
+                value="old"
+                v-model="selectedCreationFormat"
+                class="w-4 h-4 text-gov-primary focus:ring-gov-primary"
+              />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="text-xs sm:text-sm font-bold text-slate-900">
+                  {{ t('templates.format_modal.old_title') }}
+                </span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">
+                  {{ t('templates.tabs.old') }}
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                {{ t('templates.format_modal.old_desc') }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Option 2: New Format (Standard Target Template) -->
+          <div
+            @click="selectedCreationFormat = 'new'"
+            :class="[
+              'p-4 rounded-xl border-2 cursor-pointer transition-all flex items-start gap-3.5',
+              selectedCreationFormat === 'new'
+                ? 'border-gov-primary bg-blue-50/50 shadow-sm'
+                : 'border-slate-200 hover:border-slate-300 bg-white'
+            ]"
+          >
+            <div class="mt-0.5">
+              <input
+                type="radio"
+                name="formatChoice"
+                value="new"
+                v-model="selectedCreationFormat"
+                class="w-4 h-4 text-gov-primary focus:ring-gov-primary"
+              />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="text-xs sm:text-sm font-bold text-slate-900">
+                  {{ t('templates.format_modal.new_title') }}
+                </span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">
+                  {{ t('templates.tabs.new') }}
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                {{ t('templates.format_modal.new_desc') }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button
+            type="button"
+            @click="showFormatChoiceModal = false"
+            class="h-9 px-4 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
+          >
+            {{ t('common.cancel') }}
+          </button>
+          <button
+            type="button"
+            @click="handleConfirmFormatChoice"
+            class="h-9 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white text-xs font-bold shadow-sm"
+          >
+            {{ t('templates.format_modal.btn_continue') }}
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- =================================================================== -->

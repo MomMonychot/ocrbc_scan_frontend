@@ -207,6 +207,17 @@
   "verification": {
     "title": "Civil Registration Document Verification & Alignment",
     "subtitle": "Interactive bounding box alignment and side-by-side municipal database cross-referencing.",
+    "left_pane_title": "Uploaded Document (Move Bounding Boxes)",
+    "left_pane_hint": "You can drag and move any bounding box on the scan above to align with text, then click Process below.",
+    "btn_process_ai": "Process AI Extraction",
+    "btn_processing": "Processing AI extraction...",
+    "process_success": "AI successfully extracted text! Data transferred into the New Standard Template.",
+    "right_pane_title": "New Standard Template (Auto-Populated)",
+    "right_pane_hint": "Data from bounding boxes is extracted into this new template. You can click to edit any text directly.",
+    "editable_badge": "Directly editable fields",
+    "editable_hint": "You can click and edit any incorrect text directly on this new template.",
+    "sample_doc_btn": "Test with Sample Scan Document",
+    "sample_doc_desc": "Use a sample birth certificate scan to test movable bounding boxes and AI extraction",
     "canvas_header": "Document Preview & Bounding Boxes",
     "advanced_mode": "Advanced Coordinate Editing",
     "standard_mode": "Standard Alignment",
@@ -218,6 +229,12 @@
     "verified_banner": "Identity Authenticated Against Municipal Reference",
     "manual_review_warning": "One or more fields have discrepancies or similarity below 85%. Please review and verify each highlighted field before approval.",
     "verified_success": "All extracted fields match municipal civil registry records (confidence >= 85%). Minor OCR misreadings have been auto-corrected.",
+    "official_emblem_title": "KINGDOM OF CAMBODIA",
+    "official_emblem_sub": "NATION RELIGION KING",
+    "one_window_office": "One Window Service Office",
+    "registrar_seal": "Civil Registrar Official Seal & Signature",
+    "digital_qr_mark": "Digital Authenticity QR Code",
+    "edited_badge": "Edited",
     "field_headers": {
       "field_name": "Field",
       "extracted_ocr": "Extracted OCR Text",
@@ -230,8 +247,12 @@
       "certificate_no": "Certificate Number",
       "full_name_km": "Full Name (Khmer)",
       "full_name_en": "Full Name (Latin)",
-      "district_office": "District Administration Office",
-      "birth_date": "Date of Birth"
+      "gender": "Gender",
+      "birth_date": "Date of Birth",
+      "birth_place": "Place of Birth",
+      "father_name": "Father's Name",
+      "mother_name": "Mother's Name",
+      "district_office": "District Administration Office"
     },
     "status_labels": {
       "verified": "Verified (>=85%)",
@@ -241,7 +262,7 @@
     },
     "actions": {
       "re_run_verify": "Re-Cross Reference",
-      "approve_export": "Approve and Export Record",
+      "approve_export": "Approve and Export New Template",
       "back_to_upload": "Upload New Document",
       "export_success": "Document successfully approved! Local verification report downloaded.",
       "export_downloading": "Generating official tamper-evident receipt..."
@@ -253,6 +274,15 @@
     "tabs": {
       "new": "New Format",
       "old": "Old Format"
+    },
+    "format_modal": {
+      "title": "Select Template Type",
+      "subtitle": "Define the template purpose before configuring bounding boxes",
+      "old_title": "Old Format (Scan & Extraction)",
+      "old_desc": "For legacy or scanned archival documents. Draw bounding boxes to define OCR fields for extracting into new templates.",
+      "new_title": "New Format (Standard Target Template)",
+      "new_desc": "For standardized modern digital templates that receive the extracted text and allow editing.",
+      "btn_continue": "Continue to Studio"
     },
     "btn_add": "Add New Template",
     "choice_existing": "Use Existing Template",
