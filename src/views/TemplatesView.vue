@@ -6,294 +6,229 @@ import { useRouter } from 'vue-router'
 const { t, locale } = useI18n()
 const router = useRouter()
 
-// Storage key for persistence
-const STORAGE_KEY = 'district_ocr_templates_v2'
-const OLD_STORAGE_KEY = 'district_ocr_templates_v1'
+// Local storage key for persistence
+const STORAGE_KEY = 'district_ocr_templates_v3'
 
-// Available Field Options for Birth Certificate Bounding Boxes
-const FIELD_DEFINITIONS = [
-  { key: 'national_id', labelKm: 'លេខកូដសម្គាល់ជាតិ', labelEn: 'National ID', color: 'border-blue-500 bg-blue-500/15 text-blue-700' },
-  { key: 'certificate_no', labelKm: 'សៀវភៅលេខ ឬសំបុត្រលេខ', labelEn: 'Certificate No.', color: 'border-indigo-500 bg-indigo-500/15 text-indigo-700' },
-  { key: 'full_name_km', labelKm: 'ឈ្មោះជាអក្សរខ្មែរ', labelEn: 'Khmer Full Name', color: 'border-emerald-500 bg-emerald-500/15 text-emerald-700' },
-  { key: 'full_name_en', labelKm: 'ឈ្មោះជាអក្សរឡាតាំង', labelEn: 'Latin Full Name', color: 'border-teal-500 bg-teal-500/15 text-teal-700' },
-  { key: 'gender', labelKm: 'ភេទ', labelEn: 'Gender', color: 'border-cyan-500 bg-cyan-500/15 text-cyan-700' },
-  { key: 'birth_date', labelKm: 'ថ្ងៃខែឆ្នាំកំណើត', labelEn: 'Date of Birth', color: 'border-amber-500 bg-amber-500/15 text-amber-700' },
-  { key: 'birth_place', labelKm: 'ទីកន្លែងកំណើត', labelEn: 'Place of Birth', color: 'border-orange-500 bg-orange-500/15 text-orange-700' },
-  { key: 'father_name', labelKm: 'ឈ្មោះឪពុក', labelEn: "Father's Name", color: 'border-violet-500 bg-violet-500/15 text-violet-700' },
-  { key: 'mother_name', labelKm: 'ឈ្មោះម្តាយ', labelEn: "Mother's Name", color: 'border-pink-500 bg-pink-500/15 text-pink-700' },
-  { key: 'district_office', labelKm: 'សាលាក្រុង ស្រុក ខណ្ឌ', labelEn: 'District Office', color: 'border-purple-500 bg-purple-500/15 text-purple-700' },
-  { key: 'official_stamp', labelKm: 'ត្រា និងហត្ថលេខា', labelEn: 'Official Seal & Signature', color: 'border-rose-500 bg-rose-500/15 text-rose-700' },
-  { key: 'qr_code', labelKm: 'កូដ QR ឬបាកូដ', labelEn: 'QR Code or Barcode', color: 'border-slate-800 bg-slate-800/15 text-slate-900' },
-  { key: 'custom', labelKm: 'វាលកំណត់ផ្សេងៗ', labelEn: 'Custom Field', color: 'border-gray-500 bg-gray-500/15 text-gray-700' },
+// -------------------------------------------------------------
+// Typography Options (Khmer Fonts requested by user)
+// -------------------------------------------------------------
+const FONT_OPTIONS = [
+  {
+    id: 'moul',
+    nameKm: 'Khmer OS Moul Light (អក្សរមូលស្រាល)',
+    nameEn: 'Khmer OS Moul Light',
+    cssClass: 'font-khmer-moul',
+    descKm: 'សម្រាប់ចំណងជើងរដ្ឋបាលផ្លូវការ និងឈ្មោះស្ថាប័នជាតិ',
+    descEn: 'For official ministry titles, headers, and national insignias'
+  },
+  {
+    id: 'siemreap',
+    nameKm: 'Khmer OS Siemreap (អក្សរសៀមរាប)',
+    nameEn: 'Khmer OS Siemreap',
+    cssClass: 'font-khmer-siemreap',
+    descKm: 'សម្រាប់ខ្លឹមសារព័ត៌មានលម្អិត និងកថាខណ្ឌរដ្ឋបាល',
+    descEn: 'For administrative body copy and field descriptions'
+  },
+  {
+    id: 'battambang',
+    nameKm: 'Khmer OS Battambang (អក្សរបាត់ដំបង)',
+    nameEn: 'Khmer OS Battambang',
+    cssClass: 'font-khmer-battambang',
+    descKm: 'សម្រាប់ទិន្នន័យស្ដង់ដារ តួលេខ និងឈ្មោះសាមីខ្លួន',
+    descEn: 'For standard document values, numbers, and citizen names'
+  },
+  {
+    id: 'bokor',
+    nameKm: 'Khmer OS Bokor (អក្សរបូកគោ)',
+    nameEn: 'Khmer OS Bokor',
+    cssClass: 'font-khmer-bokor',
+    descKm: 'សម្រាប់ចំណងជើងរង និងអនុក្រឹត្យ',
+    descEn: 'For decorative subheadings and decree numbers'
+  },
+  {
+    id: 'kantumruy',
+    nameKm: 'Kantumruy Pro (កាន់ទុំរុយ ប្រូ)',
+    nameEn: 'Kantumruy Pro',
+    cssClass: 'font-khmer-sans',
+    descKm: 'សម្រាប់ទម្រង់ឌីជីថលទំនើប មានភាពច្បាស់ខ្ពស់',
+    descEn: 'For modern high-legibility digital registry interfaces'
+  },
+  {
+    id: 'serif',
+    nameKm: 'Noto Serif Khmer (អក្សរខ្នាតមានជើង)',
+    nameEn: 'Noto Serif Khmer',
+    cssClass: 'font-khmer-serif',
+    descKm: 'សម្រាប់ប័ណ្ណសារគតិយុត្តបុរាណ និងច្បាប់ចម្លងប្រវត្តិសាស្ត្រ',
+    descEn: 'For historical legal archives and certified copies'
+  }
 ]
 
-// Default seed templates: Categorized into 'new' (សេចក្តីចម្លងសំបុត្រកំណើត - no បញ្ជាក់) and 'old' (សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត)
+// Available Field Definitions for Birth Certificates
+const FIELD_DEFINITIONS = [
+  { key: 'national_header', labelKm: 'ចំណងជើងជាតិ និងបាវចនា', labelEn: 'National Header & Motto', defaultFont: 'moul', defaultSize: 15, defaultWeight: 'bold', defaultColor: '#1E3A8A' },
+  { key: 'certificate_title', labelKm: 'ចំណងជើងសំបុត្រកំណើត', labelEn: 'Certificate Title', defaultFont: 'moul', defaultSize: 18, defaultWeight: 'bold', defaultColor: '#1E3A8A' },
+  { key: 'certificate_no', labelKm: 'សៀវភៅលេខ ឬសំបុត្រលេខ', labelEn: 'Certificate / Book No.', defaultFont: 'battambang', defaultSize: 12, defaultWeight: 'semibold', defaultColor: '#0F172A' },
+  { key: 'national_id', labelKm: 'លេខកូដសម្គាល់ជាតិ (NID)', labelEn: 'National ID (NID)', defaultFont: 'battambang', defaultSize: 13, defaultWeight: 'bold', defaultColor: '#1E3A8A' },
+  { key: 'full_name_km', labelKm: 'ឈ្មោះសាមីខ្លួន (អក្សរខ្មែរ)', labelEn: 'Citizen Full Name (Khmer)', defaultFont: 'moul', defaultSize: 14, defaultWeight: 'bold', defaultColor: '#0F172A' },
+  { key: 'full_name_en', labelKm: 'ឈ្មោះជាអក្សរឡាតាំង', labelEn: 'Full Name (Latin)', defaultFont: 'battambang', defaultSize: 13, defaultWeight: 'bold', defaultColor: '#0F172A' },
+  { key: 'gender', labelKm: 'ភេទ', labelEn: 'Gender', defaultFont: 'siemreap', defaultSize: 12, defaultWeight: 'semibold', defaultColor: '#0F172A' },
+  { key: 'birth_date', labelKm: 'ថ្ងៃខែឆ្នាំកំណើត', labelEn: 'Date of Birth', defaultFont: 'siemreap', defaultSize: 12, defaultWeight: 'medium', defaultColor: '#0F172A' },
+  { key: 'birth_place', labelKm: 'ទីកន្លែងកំណើត (ភូមិ-ឃុំ-ស្រុក-ខេត្ត)', labelEn: 'Place of Birth', defaultFont: 'siemreap', defaultSize: 12, defaultWeight: 'medium', defaultColor: '#0F172A' },
+  { key: 'father_details', labelKm: 'ព័ត៌មានឪពុក (ឈ្មោះ និងសញ្ជាតិ)', labelEn: "Father's Details", defaultFont: 'siemreap', defaultSize: 12, defaultWeight: 'medium', defaultColor: '#0F172A' },
+  { key: 'mother_details', labelKm: 'ព័ត៌មានម្តាយ (ឈ្មោះ និងសញ្ជាតិ)', labelEn: "Mother's Details", defaultFont: 'siemreap', defaultSize: 12, defaultWeight: 'medium', defaultColor: '#0F172A' },
+  { key: 'district_office', labelKm: 'សាលាក្រុង-ស្រុក-ខណ្ឌ ចុះបញ្ជី', labelEn: 'Issuing Municipal Office', defaultFont: 'battambang', defaultSize: 12, defaultWeight: 'semibold', defaultColor: '#1E3A8A' },
+  { key: 'official_stamp', labelKm: 'ត្រា និងហត្ថលេខាមន្ត្រី', labelEn: 'Official Seal & Signature', defaultFont: 'siemreap', defaultSize: 11, defaultWeight: 'semibold', defaultColor: '#BE123C' },
+  { key: 'qr_code', labelKm: 'កូដ QR សុពលភាពជាតិ', labelEn: 'Official Validation QR Code', defaultFont: 'battambang', defaultSize: 11, defaultWeight: 'medium', defaultColor: '#0F172A' }
+]
+
+// Authentic sample values extracted from birth certificates
+const SAMPLE_DOCUMENT_VALUES = {
+  national_header: 'ព្រះរាជាណាចក្រកម្ពុជា\nជាតិ សាសនា ព្រះមហាក្សត្រ',
+  certificate_title: 'សេចក្តីចម្លងសំបុត្រកំណើត\nCOPY OF BIRTH CERTIFICATE',
+  certificate_no: 'សៀវភៅលេខ: ១២ / លេខ: ០៨៤ / ឆ្នាំ: ២០២៤',
+  national_id: 'ID: ០១០២០៣០៤០៥',
+  full_name_km: 'សុខ ចាន់ដារ៉ា',
+  full_name_en: 'SOK CHANDARA',
+  gender: 'ភេទ: ប្រុស / Male',
+  birth_date: 'ថ្ងៃទី ១៥ ខែ ឧសភា ឆ្នាំ ២០០៦ (15 May 2006)',
+  birth_place: 'ភូមិអង្រ្កង ឃុំបឹងព្រះ ស្រុកបាភ្នំ ខេត្តព្រៃវែង',
+  father_details: 'ឪពុក: សុខ សំអាត, ជនជាតិ: ខ្មែរ, សញ្ជាតិ: កម្ពុជា',
+  mother_details: 'ម្តាយ: ម៉ែន ចិន្តា, ជនជាតិ: ខ្មែរ, សញ្ជាតិ: កម្ពុជា',
+  district_office: 'សាលាស្រុកបាភ្នំ ខេត្តព្រៃវែង (Ba Phnum District Office)',
+  official_stamp: 'បានបញ្ជាក់ត្រឹមត្រូវតាមច្បាប់ដើម\nមន្ត្រីអត្រានុកូលដ្ឋាន [ត្រាផ្លូវការ]',
+  qr_code: 'VERIFIED // NID:0102030405 // OWSU-BC-2024'
+}
+
+// Default Seed Templates
 const DEFAULT_TEMPLATES = [
   {
-    id: 'tpl-std-digital',
+    id: 'tpl-std-digital-2026',
     format: 'new', // សេចក្តីចម្លងសំបុត្រកំណើត (គ្មានពាក្យបញ្ជាក់)
-    nameKm: 'សេចក្តីចម្លងសំបុត្រកំណើត (ឌីជីថលស្ដង់ដារ)',
-    nameEn: 'Copy of Birth Certificate (Digital Standard)',
-    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើត (គ្មានពាក្យបញ្ជាក់) មានកូដ QR លេខកូដសម្គាល់ជាតិ និងអក្សរឡាតាំង។',
-    descriptionEn: 'Official standard copy of birth certificate without certification clause, with QR and national ID.',
-    updatedAt: '2024-11-01',
-    aspectRatio: '4/5',
+    nameKm: 'សេចក្តីចម្លងសំបុត្រកំណើត (ឌីជីថលស្ដង់ដារជាតិ)',
+    nameEn: 'Copy of Birth Certificate (National Digital Standard)',
+    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើតផ្លូវការ (គ្មានពាក្យបញ្ជាក់) មានកូដ QR លេខកូដជាតិ និងអក្សរឡាតាំង។',
+    descriptionEn: 'Official national digital standard without certification clause, with QR and bilingual fields.',
+    updatedAt: '2026-11-05',
+    typographyPreset: 'royal',
     boxes: [
-      { id: 'b1', key: 'certificate_no', x: 10.0, y: 13.0, width: 32.0, height: 5.5 },
-      { id: 'b2', key: 'national_id', x: 60.0, y: 13.0, width: 30.0, height: 5.5 },
-      { id: 'b3', key: 'full_name_km', x: 25.0, y: 28.0, width: 50.0, height: 6.5 },
-      { id: 'b4', key: 'full_name_en', x: 25.0, y: 36.5, width: 50.0, height: 6.0 },
-      { id: 'b5', key: 'gender', x: 78.0, y: 36.5, width: 14.0, height: 6.0 },
-      { id: 'b6', key: 'birth_date', x: 25.0, y: 45.0, width: 35.0, height: 5.5 },
-      { id: 'b7', key: 'district_office', x: 25.0, y: 53.0, width: 50.0, height: 6.0 },
-      { id: 'b8', key: 'qr_code', x: 10.0, y: 73.0, width: 18.0, height: 18.0 },
-      { id: 'b9', key: 'official_stamp', x: 68.0, y: 73.0, width: 22.0, height: 18.0 },
+      { id: 'b1', key: 'national_header', x: 20.0, y: 3.5, width: 60.0, height: 6.5, font: 'moul', size: 14, weight: 'bold', color: '#1E3A8A', align: 'center', bg: 'transparent', opacity: 100, borderStyle: 'none', borderWidth: 0, borderColor: '#CBD5E1', radius: 'none', padding: 'tight' },
+      { id: 'b2', key: 'certificate_title', x: 15.0, y: 12.0, width: 70.0, height: 7.0, font: 'moul', size: 16, weight: 'bold', color: '#1E3A8A', align: 'center', bg: 'transparent', opacity: 100, borderStyle: 'none', borderWidth: 0, borderColor: '#CBD5E1', radius: 'none', padding: 'tight' },
+      { id: 'b3', key: 'certificate_no', x: 8.0, y: 20.5, width: 42.0, height: 5.5, font: 'battambang', size: 12, weight: 'semibold', color: '#0F172A', align: 'left', bg: '#F8FAFC', opacity: 80, borderStyle: 'solid', borderWidth: 1, borderColor: '#E2E8F0', radius: 'lg', padding: 'normal' },
+      { id: 'b4', key: 'national_id', x: 55.0, y: 20.5, width: 37.0, height: 5.5, font: 'battambang', size: 12, weight: 'bold', color: '#1E3A8A', align: 'right', bg: '#F8FAFC', opacity: 80, borderStyle: 'solid', borderWidth: 1, borderColor: '#E2E8F0', radius: 'lg', padding: 'normal' },
+      { id: 'b5', key: 'full_name_km', x: 8.0, y: 28.0, width: 84.0, height: 6.5, font: 'moul', size: 15, weight: 'bold', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'solid', borderWidth: 1, borderColor: '#CBD5E1', radius: 'xl', padding: 'normal' },
+      { id: 'b6', key: 'full_name_en', x: 8.0, y: 36.0, width: 55.0, height: 5.5, font: 'battambang', size: 13, weight: 'bold', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'solid', borderWidth: 1, borderColor: '#E2E8F0', radius: 'lg', padding: 'normal' },
+      { id: 'b7', key: 'gender', x: 65.0, y: 36.0, width: 27.0, height: 5.5, font: 'siemreap', size: 12, weight: 'semibold', color: '#0F172A', align: 'center', bg: '#FFFFFF', opacity: 100, borderStyle: 'solid', borderWidth: 1, borderColor: '#E2E8F0', radius: 'lg', padding: 'normal' },
+      { id: 'b8', key: 'birth_date', x: 8.0, y: 43.5, width: 84.0, height: 5.5, font: 'siemreap', size: 12, weight: 'medium', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'solid', borderWidth: 1, borderColor: '#E2E8F0', radius: 'lg', padding: 'normal' },
+      { id: 'b9', key: 'birth_place', x: 8.0, y: 51.0, width: 84.0, height: 7.0, font: 'siemreap', size: 12, weight: 'medium', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'solid', borderWidth: 1, borderColor: '#E2E8F0', radius: 'lg', padding: 'normal' },
+      { id: 'b10', key: 'father_details', x: 8.0, y: 60.0, width: 84.0, height: 5.5, font: 'siemreap', size: 12, weight: 'medium', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'none', borderWidth: 0, borderColor: '#E2E8F0', radius: 'none', padding: 'tight' },
+      { id: 'b11', key: 'mother_details', x: 8.0, y: 67.0, width: 84.0, height: 5.5, font: 'siemreap', size: 12, weight: 'medium', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'none', borderWidth: 0, borderColor: '#E2E8F0', radius: 'none', padding: 'tight' },
+      { id: 'b12', key: 'qr_code', x: 8.0, y: 76.5, width: 22.0, height: 18.0, font: 'battambang', size: 10, weight: 'medium', color: '#0F172A', align: 'center', bg: '#F8FAFC', opacity: 90, borderStyle: 'solid', borderWidth: 1, borderColor: '#CBD5E1', radius: 'xl', padding: 'tight' },
+      { id: 'b13', key: 'official_stamp', x: 50.0, y: 76.5, width: 42.0, height: 18.0, font: 'siemreap', size: 11, weight: 'semibold', color: '#BE123C', align: 'center', bg: '#FFF1F2', opacity: 70, borderStyle: 'dashed', borderWidth: 1, borderColor: '#FDA4AF', radius: 'xl', padding: 'normal' }
     ]
   },
   {
-    id: 'tpl-std-bilingual',
-    format: 'new', // សេចក្តីចម្លងសំបុត្រកំណើត (គ្មានពាក្យបញ្ជាក់)
-    nameKm: 'សេចក្តីចម្លងសំបុត្រកំណើត (ទ្វេភាសា ក្រសួងមហាផ្ទៃ)',
-    nameEn: 'Copy of Birth Certificate (Bilingual MOI)',
-    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើតទ្វេភាសាខ្មែរ-អង់គ្លេស សម្រាប់រដ្ឋបាលក្រុង-ស្រុក-ខណ្ឌ។',
-    descriptionEn: 'Bilingual copy of birth certificate format with dual Khmer and English fields.',
-    updatedAt: '2024-08-15',
-    aspectRatio: '4/5',
+    id: 'tpl-std-certified-copy',
+    format: 'old', // សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ទម្រង់ចាស់)
+    nameKm: 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ទម្រង់ច្បាប់ដើមអត្រានុកូលដ្ឋាន)',
+    nameEn: 'Certified Copy of Birth Certificate (Official Archive)',
+    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ទម្រង់ចាស់មានពាក្យបញ្ជាក់) សម្រាប់ស្កេន ស្រង់ទិន្នន័យ និងផ្ទៀងផ្ទាត់។',
+    descriptionEn: 'Certified copy of birth certificate format for legacy archives and OCR text extraction.',
+    updatedAt: '2026-11-04',
+    typographyPreset: 'archive',
     boxes: [
-      { id: 'b10', key: 'certificate_no', x: 12.0, y: 11.5, width: 30.0, height: 5.0 },
-      { id: 'b11', key: 'national_id', x: 62.0, y: 11.5, width: 28.0, height: 5.0 },
-      { id: 'b12', key: 'full_name_km', x: 22.0, y: 26.0, width: 56.0, height: 6.0 },
-      { id: 'b13', key: 'full_name_en', x: 22.0, y: 34.0, width: 56.0, height: 6.0 },
-      { id: 'b14', key: 'birth_date', x: 22.0, y: 43.0, width: 40.0, height: 5.5 },
-      { id: 'b15', key: 'birth_place', x: 22.0, y: 51.0, width: 68.0, height: 6.0 },
-      { id: 'b16', key: 'district_office', x: 22.0, y: 60.0, width: 55.0, height: 5.5 },
-      { id: 'b17', key: 'qr_code', x: 10.0, y: 75.0, width: 16.0, height: 16.0 },
-      { id: 'b18', key: 'official_stamp', x: 66.0, y: 72.0, width: 24.0, height: 20.0 },
-    ]
-  },
-  {
-    id: 'tpl-cert-official',
-    format: 'old', // សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត
-    nameKm: 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ស្តង់ដាររដ្ឋបាល)',
-    nameEn: 'Certified Copy of Birth Certificate (Administrative)',
-    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតផ្លូវការ (មានពាក្យបញ្ជាក់កំណើត) របស់ក្រសួងមហាផ្ទៃ។',
-    descriptionEn: 'Official certified copy of birth certificate with certification endorsement.',
-    updatedAt: '2024-05-10',
-    aspectRatio: '4/5',
-    boxes: [
-      { id: 'b20', key: 'certificate_no', x: 10.0, y: 14.0, width: 35.0, height: 6.0 },
-      { id: 'b21', key: 'full_name_km', x: 20.0, y: 28.0, width: 60.0, height: 7.0 },
-      { id: 'b22', key: 'gender', x: 20.0, y: 38.0, width: 25.0, height: 6.0 },
-      { id: 'b23', key: 'birth_date', x: 48.0, y: 38.0, width: 42.0, height: 6.0 },
-      { id: 'b24', key: 'birth_place', x: 20.0, y: 47.0, width: 70.0, height: 7.0 },
-      { id: 'b25', key: 'father_name', x: 20.0, y: 57.0, width: 45.0, height: 6.0 },
-      { id: 'b26', key: 'mother_name', x: 20.0, y: 65.0, width: 45.0, height: 6.0 },
-      { id: 'b27', key: 'official_stamp', x: 55.0, y: 74.0, width: 35.0, height: 20.0 },
-    ]
-  },
-  {
-    id: 'tpl-cert-archival',
-    format: 'old', // សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត
-    nameKm: 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ទម្រង់បុរាណ ក្រដាសលឿង)',
-    nameEn: 'Certified Copy of Birth Certificate (Archival Vintage)',
-    descriptionKm: 'ទម្រង់សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតបែបបណ្ណសារ មានត្រាមូលក្រហម។',
-    descriptionEn: 'Archival certified copy of birth certificate with red seal stamp.',
-    updatedAt: '2024-03-22',
-    aspectRatio: '4/5',
-    boxes: [
-      { id: 'b30', key: 'certificate_no', x: 12.0, y: 15.0, width: 38.0, height: 6.5 },
-      { id: 'b31', key: 'full_name_km', x: 18.0, y: 29.0, width: 64.0, height: 7.5 },
-      { id: 'b32', key: 'birth_date', x: 18.0, y: 40.0, width: 55.0, height: 6.5 },
-      { id: 'b33', key: 'birth_place', x: 18.0, y: 50.0, width: 72.0, height: 7.0 },
-      { id: 'b34', key: 'father_name', x: 18.0, y: 60.0, width: 48.0, height: 6.0 },
-      { id: 'b35', key: 'mother_name', x: 18.0, y: 68.0, width: 48.0, height: 6.0 },
-      { id: 'b36', key: 'official_stamp', x: 50.0, y: 76.0, width: 40.0, height: 18.0 },
+      { id: 'ob1', key: 'national_header', x: 20.0, y: 4.0, width: 60.0, height: 6.5, font: 'moul', size: 14, weight: 'bold', color: '#1E3A8A', align: 'center', bg: 'transparent', opacity: 100, borderStyle: 'none', borderWidth: 0, borderColor: '#CBD5E1', radius: 'none', padding: 'tight' },
+      { id: 'ob2', key: 'certificate_title', x: 10.0, y: 13.0, width: 80.0, height: 7.0, font: 'moul', size: 16, weight: 'bold', color: '#1E3A8A', align: 'center', bg: 'transparent', opacity: 100, borderStyle: 'none', borderWidth: 0, borderColor: '#CBD5E1', radius: 'none', padding: 'tight' },
+      { id: 'ob3', key: 'certificate_no', x: 8.0, y: 22.0, width: 40.0, height: 6.0, font: 'battambang', size: 12, weight: 'semibold', color: '#0F172A', align: 'left', bg: '#F8FAFC', opacity: 100, borderStyle: 'solid', borderWidth: 1, borderColor: '#CBD5E1', radius: 'lg', padding: 'normal' },
+      { id: 'ob4', key: 'full_name_km', x: 8.0, y: 30.0, width: 84.0, height: 6.5, font: 'moul', size: 14, weight: 'bold', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'solid', borderWidth: 1, borderColor: '#CBD5E1', radius: 'lg', padding: 'normal' },
+      { id: 'ob5', key: 'birth_date', x: 8.0, y: 39.0, width: 84.0, height: 6.0, font: 'siemreap', size: 12, weight: 'medium', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'solid', borderWidth: 1, borderColor: '#E2E8F0', radius: 'lg', padding: 'normal' },
+      { id: 'ob6', key: 'birth_place', x: 8.0, y: 47.0, width: 84.0, height: 7.0, font: 'siemreap', size: 12, weight: 'medium', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'solid', borderWidth: 1, borderColor: '#E2E8F0', radius: 'lg', padding: 'normal' },
+      { id: 'ob7', key: 'father_details', x: 8.0, y: 56.0, width: 84.0, height: 6.0, font: 'siemreap', size: 12, weight: 'medium', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'none', borderWidth: 0, borderColor: '#E2E8F0', radius: 'none', padding: 'tight' },
+      { id: 'ob8', key: 'mother_details', x: 8.0, y: 64.0, width: 84.0, height: 6.0, font: 'siemreap', size: 12, weight: 'medium', color: '#0F172A', align: 'left', bg: '#FFFFFF', opacity: 100, borderStyle: 'none', borderWidth: 0, borderColor: '#E2E8F0', radius: 'none', padding: 'tight' },
+      { id: 'ob9', key: 'official_stamp', x: 50.0, y: 74.0, width: 42.0, height: 20.0, font: 'siemreap', size: 11, weight: 'bold', color: '#BE123C', align: 'center', bg: '#FFF1F2', opacity: 80, borderStyle: 'solid', borderWidth: 1, borderColor: '#F43F5E', radius: 'xl', padding: 'normal' }
     ]
   }
 ]
 
-// State
-const activeTab = ref('new') // 'new' | 'old'
+// -------------------------------------------------------------
+// Component State
+// -------------------------------------------------------------
 const templates = ref([])
+const activeFormatTab = ref('all') // 'all' | 'new' | 'old'
 const showStudio = ref(false)
 const editingTemplate = ref(null)
 const selectedBoxId = ref(null)
-const studioMode = ref('draw') // 'draw' | 'select'
-const studioZoom = ref(1.0)
+const studioActiveTab = ref('typography') // 'typography' | 'appearance' | 'geometry' | 'presets'
+const previewMode = ref('sample') // 'sample' (real data) | 'wireframe' (field keys)
+const zoomLevel = ref(100) // 75 | 100 | 125
+const isAddDropdownOpen = ref(false)
 const notification = ref(null)
 
-// Dragging / Drawing state on canvas
-const canvasContainerRef = ref(null)
-const isDrawing = ref(false)
-const drawStart = ref({ x: 0, y: 0 })
-const drawCurrent = ref({ x: 0, y: 0 })
+// Format choice modal
+const showFormatModal = ref(false)
+const creationSource = ref('blank') // 'blank' | 'computer'
 
-// Dragging existing box
-const isMovingBox = ref(false)
-const moveStart = ref({ x: 0, y: 0 })
-const initialBoxPos = ref({ x: 0, y: 0 })
+// Document canvas container ref for mouse positioning
+const canvasRef = ref(null)
 
-// Upload custom template image
-const customImagePreview = ref(null)
-
-// Add Template Dropdown Menu State (Two Choices: Existing or Computer)
-const isAddMenuOpen = ref(false)
-const addMenuRef = ref(null)
-const computerFileInputRef = ref(null)
-
-function toggleAddMenu() {
-  isAddMenuOpen.value = !isAddMenuOpen.value
-}
-
-function handleDocumentClick(e) {
-  if (addMenuRef.value && !addMenuRef.value.contains(e.target)) {
-    isAddMenuOpen.value = false
-  }
-}
-
-// Modal for selecting Old or New format when creating a template
-const showFormatChoiceModal = ref(false)
-const pendingCreationType = ref('existing') // 'existing' | 'computer'
-const selectedCreationFormat = ref('old') // 'old' = សម្រាប់ស្កេន និងស្រង់ទិន្នន័យ, 'new' = សម្រាប់ទទួលទិន្នន័យ
-
-function openFormatChoiceModal(type) {
-  isAddMenuOpen.value = false
-  pendingCreationType.value = type
-  selectedCreationFormat.value = activeTab.value || 'old'
-  showFormatChoiceModal.value = true
-}
-
-function handleConfirmFormatChoice() {
-  showFormatChoiceModal.value = false
-  if (pendingCreationType.value === 'existing') {
-    handleAddNewTemplate(selectedCreationFormat.value)
-  } else if (pendingCreationType.value === 'computer') {
-    if (computerFileInputRef.value) {
-      computerFileInputRef.value.value = ''
-      computerFileInputRef.value.click()
-    }
-  }
-}
-
-function handleCreateFromExisting() {
-  openFormatChoiceModal('existing')
-}
-
-function triggerComputerUpload() {
-  openFormatChoiceModal('computer')
-}
-
-function handleComputerFileSelected(e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  if (!file.type.startsWith('image/')) {
-    alert(locale.value === 'km' ? 'សូមជ្រើសរើសឯកសាររូបភាព (PNG, JPEG, WebP)' : 'Please select an image file (PNG, JPEG, WebP).')
-    return
-  }
-
-  const reader = new FileReader()
-  reader.onload = (evt) => {
-    const imageDataUrl = evt.target?.result
-    const fileName = file.name.replace(/\.[^/.]+$/, '')
-    const chosenFormat = selectedCreationFormat.value || activeTab.value
-    const isCertified = chosenFormat === 'old'
-
-    const newTpl = {
-      id: 'tpl-custom-' + Date.now(),
-      format: chosenFormat,
-      nameKm: fileName || (isCertified ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតពីកុំព្យូទ័រ' : 'សេចក្តីចម្លងសំបុត្រកំណើតពីកុំព្យូទ័រ'),
-      nameEn: fileName || (isCertified ? 'Certified Copy of Birth Certificate Upload' : 'Copy of Birth Certificate Upload'),
-      descriptionKm: isCertified
-        ? `គំរូទម្រង់ចាស់ផ្ទុកឡើងពីកុំព្យូទ័រ (${file.name}) សម្រាប់គូសប្រអប់ Bounding Box ស្រង់ទិន្នន័យ។`
-        : `គំរូទម្រង់ថ្មីផ្ទុកឡើងពីកុំព្យូទ័រ (${file.name}) សម្រាប់ទទួលទិន្នន័យឌីជីថលស្តង់ដារ។`,
-      descriptionEn: isCertified
-        ? `Old format template uploaded from computer (${file.name}) for bounding box text extraction.`
-        : `New format template uploaded from computer (${file.name}) for receiving extracted data.`,
-      updatedAt: new Date().toISOString().slice(0, 10),
-      aspectRatio: '4/5',
-      customImage: imageDataUrl,
-      boxes: [
-        { id: 'b_' + Date.now() + '_1', key: 'full_name_km', x: 25.0, y: 30.0, width: 50.0, height: 7.0 },
-        { id: 'b_' + Date.now() + '_2', key: 'certificate_no', x: 12.0, y: 14.0, width: 35.0, height: 6.0 }
-      ]
-    }
-
-    editingTemplate.value = newTpl
-    selectedBoxId.value = newTpl.boxes[0].id
-    customImagePreview.value = imageDataUrl
-    studioMode.value = 'draw'
-    studioZoom.value = 1.0
-    showStudio.value = true
-    showToast(locale.value === 'km' ? 'បានផ្ទុកឡើងរូបភាពគំរូពីកុំព្យូទ័ររួចរាល់' : 'Loaded template image from computer')
-  }
-  reader.readAsDataURL(file)
-}
-
-// Load from LocalStorage or seed defaults (with v1 -> v2 automatic migration)
-onMounted(() => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      templates.value = JSON.parse(raw)
-    } else {
-      const oldRaw = localStorage.getItem(OLD_STORAGE_KEY)
-      if (oldRaw) {
-        const oldList = JSON.parse(oldRaw)
-        const customItems = oldList.filter(t => t.id && t.id.startsWith('tpl-custom'))
-        templates.value = [...JSON.parse(JSON.stringify(DEFAULT_TEMPLATES)), ...customItems]
-      } else {
-        templates.value = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES))
-      }
-      saveTemplates()
-    }
-  } catch (e) {
-    templates.value = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES))
-  }
-  document.addEventListener('click', handleDocumentClick)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleDocumentClick)
-})
-
-function saveTemplates() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(templates.value))
-  } catch (e) {
-    console.error('Failed to save templates to localStorage:', e)
-  }
-}
-
-function showToast(msg) {
-  notification.value = msg
+// Toast notification trigger
+function showNotification(text, type = 'success') {
+  notification.value = { text, type }
   setTimeout(() => {
     notification.value = null
   }, 3500)
 }
 
-// Filtered templates by active tab
-const filteredTemplates = computed(() => {
-  return templates.value.filter(t => t.format === activeTab.value)
+// -------------------------------------------------------------
+// Lifecycle & Persistence
+// -------------------------------------------------------------
+onMounted(() => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      templates.value = JSON.parse(stored)
+    } else {
+      templates.value = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES))
+      saveTemplates()
+    }
+  } catch (err) {
+    console.error('Error loading templates:', err)
+    templates.value = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES))
+  }
 })
 
-// Counts for tabs
-const newCount = computed(() => templates.value.filter(t => t.format === 'new').length)
-const oldCount = computed(() => templates.value.filter(t => t.format === 'old').length)
+function saveTemplates() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(templates.value))
+  } catch (err) {
+    console.error('Failed to save templates to localStorage:', err)
+  }
+}
 
-// Active selected box object
+// Counts for top metric cards
+const totalTemplatesCount = computed(() => templates.value.length)
+const newTemplatesCount = computed(() => templates.value.filter(t => t.format === 'new').length)
+const oldTemplatesCount = computed(() => templates.value.filter(t => t.format === 'old').length)
+
+// Filtered templates list for the enterprise table
+const filteredTemplates = computed(() => {
+  if (activeFormatTab.value === 'new') {
+    return templates.value.filter(t => t.format === 'new')
+  }
+  if (activeFormatTab.value === 'old') {
+    return templates.value.filter(t => t.format === 'old')
+  }
+  return templates.value
+})
+
+// Active box computed helper
 const activeBox = computed(() => {
   if (!editingTemplate.value || !selectedBoxId.value) return null
   return editingTemplate.value.boxes.find(b => b.id === selectedBoxId.value) || null
 })
 
-// Field definition lookup helper
+// Helper to get field definition
 function getFieldDef(key) {
-  return FIELD_DEFINITIONS.find(f => f.key === key) || {
-    key,
-    labelKm: key,
-    labelEn: key,
-    color: 'border-slate-500 bg-slate-500/15 text-slate-700'
-  }
+  return FIELD_DEFINITIONS.find(f => f.key === key) || { key, labelKm: key, labelEn: key, defaultFont: 'siemreap', defaultSize: 12, defaultWeight: 'medium', defaultColor: '#0F172A' }
 }
 
 function getFieldLabel(key) {
@@ -301,69 +236,171 @@ function getFieldLabel(key) {
   return locale.value === 'km' ? def.labelKm : def.labelEn
 }
 
-function getTemplateName(tpl) {
-  if (!tpl) return ''
-  return locale.value === 'km' ? (tpl.nameKm || tpl.nameEn) : (tpl.nameEn || tpl.nameKm)
+function getFontDef(fontId) {
+  return FONT_OPTIONS.find(f => f.id === fontId) || FONT_OPTIONS[1]
 }
 
-function getTemplateDesc(tpl) {
-  if (!tpl) return ''
-  return locale.value === 'km' ? (tpl.descriptionKm || tpl.descriptionEn) : (tpl.descriptionEn || tpl.descriptionKm)
+function getFontCssClass(fontId) {
+  return getFontDef(fontId).cssClass
 }
 
-// Temporary preview rectangle while user drags mouse to draw
-const previewRect = computed(() => {
-  if (!isDrawing.value) return null
-  const x = Math.min(drawStart.value.x, drawCurrent.value.x)
-  const y = Math.min(drawStart.value.y, drawCurrent.value.y)
-  const width = Math.abs(drawCurrent.value.x - drawStart.value.x)
-  const height = Math.abs(drawCurrent.value.y - drawStart.value.y)
-  return { x, y, width, height }
-})
-
 // -------------------------------------------------------------
-// Studio & Template Actions
+// Studio Actions & Box Typography Controls
 // -------------------------------------------------------------
 
-function openStudioForEdit(template) {
+function openStudio(template) {
   editingTemplate.value = JSON.parse(JSON.stringify(template))
-  selectedBoxId.value = editingTemplate.value.boxes[0]?.id || null
-  customImagePreview.value = editingTemplate.value.customImage || null
-  studioMode.value = 'draw'
-  studioZoom.value = 1.0
+  // Default to selecting the child name or first box
+  const targetBox = editingTemplate.value.boxes.find(b => b.key === 'full_name_km') || editingTemplate.value.boxes[0]
+  selectedBoxId.value = targetBox ? targetBox.id : null
+  studioActiveTab.value = 'typography'
+  zoomLevel.value = 100
   showStudio.value = true
 }
 
-function handleAddNewTemplate(chosenFormat = activeTab.value) {
-  const isCertified = chosenFormat === 'old'
-  const newTpl = {
-    id: 'tpl-custom-' + Date.now(),
-    format: chosenFormat, // 'old' = សម្រាប់ស្កេន និងស្រង់ទិន្នន័យ, 'new' = សម្រាប់ទទួលទិន្នន័យ
-    nameKm: isCertified ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតថ្មី' : 'សេចក្តីចម្លងសំបុត្រកំណើតថ្មី',
-    nameEn: isCertified ? 'New Certified Copy of Birth Certificate' : 'New Copy of Birth Certificate',
-    descriptionKm: isCertified
-      ? 'ទម្រង់សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត (ទម្រង់ចាស់) សម្រាប់កំណត់ទីតាំង OCR Bounding Box ស្រង់ទិន្នន័យ។'
-      : 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើត (ទម្រង់ថ្មី) សម្រាប់ទទួលទិន្នន័យឌីជីថលស្តង់ដារ។',
-    descriptionEn: isCertified
-      ? 'Certified copy of birth certificate template (Old format) for OCR bounding box extraction.'
-      : 'Standard copy of birth certificate template (New format) for receiving extracted data.',
-    updatedAt: new Date().toISOString().slice(0, 10),
-    aspectRatio: '4/5',
-    boxes: [
-      { id: 'b_' + Date.now() + '_1', key: 'full_name_km', x: 25.0, y: 30.0, width: 50.0, height: 7.0 },
-      { id: 'b_' + Date.now() + '_2', key: 'certificate_no', x: 12.0, y: 14.0, width: 35.0, height: 6.0 }
-    ]
+function closeStudio() {
+  showStudio.value = false
+  editingTemplate.value = null
+  selectedBoxId.value = null
+}
+
+function saveStudioChanges() {
+  if (!editingTemplate.value) return
+  editingTemplate.value.updatedAt = new Date().toISOString().slice(0, 10)
+  
+  const idx = templates.value.findIndex(t => t.id === editingTemplate.value.id)
+  if (idx >= 0) {
+    templates.value[idx] = JSON.parse(JSON.stringify(editingTemplate.value))
+  } else {
+    templates.value.unshift(JSON.parse(JSON.stringify(editingTemplate.value)))
   }
-
-  editingTemplate.value = newTpl
-  selectedBoxId.value = newTpl.boxes[0].id
-  customImagePreview.value = null
-  studioMode.value = 'draw'
-  studioZoom.value = 1.0
-  showStudio.value = true
+  saveTemplates()
+  showNotification(t('templates.toast_saved'))
 }
 
-function handleDuplicateTemplate(template) {
+// Select a box by ID
+function selectBox(boxId) {
+  selectedBoxId.value = boxId
+}
+
+// Select a box by Field Key
+function selectBoxByKey(key) {
+  if (!editingTemplate.value) return
+  const box = editingTemplate.value.boxes.find(b => b.key === key)
+  if (box) {
+    selectedBoxId.value = box.id
+  }
+}
+
+// Apply font to active box
+function setBoxFont(fontId) {
+  if (!activeBox.value) return
+  activeBox.value.font = fontId
+}
+
+// Apply font weight
+function setBoxWeight(weight) {
+  if (!activeBox.value) return
+  activeBox.value.weight = weight
+}
+
+// Apply text alignment
+function setBoxAlign(align) {
+  if (!activeBox.value) return
+  activeBox.value.align = align
+}
+
+// Apply text color
+function setBoxColor(color) {
+  if (!activeBox.value) return
+  activeBox.value.color = color
+}
+
+// Apply border style
+function setBoxBorderStyle(style) {
+  if (!activeBox.value) return
+  activeBox.value.borderStyle = style
+  if (style !== 'none' && (!activeBox.value.borderWidth || activeBox.value.borderWidth === 0)) {
+    activeBox.value.borderWidth = 1
+  }
+}
+
+// Apply background fill
+function setBoxBackground(bg) {
+  if (!activeBox.value) return
+  activeBox.value.bg = bg
+}
+
+// Batch action: Apply current font to all boxes in template
+function applyFontToAllBoxes(fontId) {
+  if (!editingTemplate.value) return
+  const chosenFont = fontId || (activeBox.value ? activeBox.value.font : 'siemreap')
+  editingTemplate.value.boxes.forEach(b => {
+    b.font = chosenFont
+  })
+  const fontName = getFontDef(chosenFont).nameKm
+  showNotification(`បានកំណត់ពុម្ពអក្សរ "${fontName}" ទៅគ្រប់ប្រអប់ទាំងអស់!`)
+}
+
+// Preset Theme Application
+function applyPresetTheme(presetKey) {
+  if (!editingTemplate.value) return
+  
+  if (presetKey === 'royal') {
+    editingTemplate.value.boxes.forEach(b => {
+      if (b.key === 'national_header' || b.key === 'certificate_title' || b.key === 'full_name_km') {
+        b.font = 'moul'
+        b.weight = 'bold'
+        b.color = '#1E3A8A'
+      } else {
+        b.font = 'siemreap'
+        b.weight = 'medium'
+        b.color = '#0F172A'
+      }
+    })
+    showNotification('បានអនុវត្តកម្រងរចនាប័ទ្ម "ស្ដង់ដាររាជរដ្ឋាភិបាល (Moul Light + Siemreap)"')
+  } else if (presetKey === 'modern') {
+    editingTemplate.value.boxes.forEach(b => {
+      if (b.key === 'national_header' || b.key === 'certificate_title') {
+        b.font = 'moul'
+        b.weight = 'bold'
+        b.color = '#0F172A'
+      } else {
+        b.font = 'battambang'
+        b.weight = 'semibold'
+        b.color = '#0F172A'
+      }
+    })
+    showNotification('បានអនុវត្តកម្រងរចនាប័ទ្ម "រដ្ឋបាលទំនើបឌីជីថល (Battambang + Kantumruy)"')
+  } else if (presetKey === 'archive') {
+    editingTemplate.value.boxes.forEach(b => {
+      b.font = 'serif'
+      b.color = '#0F172A'
+    })
+    showNotification('បានអនុវត្តកម្រងរចនាប័ទ្ម "ប័ណ្ណសារអត្រានុកូលដ្ឋាន (Serif + Siemreap)"')
+  }
+}
+
+// Reset active box to default
+function resetActiveBox() {
+  if (!activeBox.value) return
+  const def = getFieldDef(activeBox.value.key)
+  activeBox.value.font = def.defaultFont || 'siemreap'
+  activeBox.value.size = def.defaultSize || 12
+  activeBox.value.weight = def.defaultWeight || 'medium'
+  activeBox.value.color = def.defaultColor || '#0F172A'
+  activeBox.value.bg = 'transparent'
+  activeBox.value.opacity = 100
+  activeBox.value.borderStyle = 'solid'
+  activeBox.value.borderWidth = 1
+  activeBox.value.borderColor = '#CBD5E1'
+  activeBox.value.radius = 'lg'
+  activeBox.value.padding = 'normal'
+  showNotification('បានកំណត់រចនាប័ទ្មប្រអប់នេះឡើងវិញ')
+}
+
+// Duplicate Template
+function duplicateTemplate(template) {
   const cloned = JSON.parse(JSON.stringify(template))
   cloned.id = 'tpl-copy-' + Date.now()
   cloned.nameKm = cloned.nameKm + ' (ច្បាប់ចម្លង)'
@@ -371,1194 +408,1092 @@ function handleDuplicateTemplate(template) {
   cloned.updatedAt = new Date().toISOString().slice(0, 10)
   templates.value.unshift(cloned)
   saveTemplates()
-  showToast(t('templates.toast_duplicated', 'បានចម្លងគំរូទម្រង់ដោយជោគជ័យ'))
+  showNotification(t('templates.toast_duplicated'))
 }
 
-function handleDeleteTemplate(id) {
+// Delete Template
+function deleteTemplate(id) {
   if (templates.value.length <= 1) {
-    alert(t('templates.cannot_delete_last', 'មិនអាចលុបគំរូចុងក្រោយបានទេ'))
+    alert(t('templates.cannot_delete_last'))
     return
   }
-  if (confirm(t('templates.confirm_delete', 'តើអ្នកប្រាកដថាចង់លុបគំរូទម្រង់នេះទេ?'))) {
+  if (confirm(t('templates.confirm_delete'))) {
     templates.value = templates.value.filter(t => t.id !== id)
     saveTemplates()
-    showToast(t('templates.toast_deleted', 'បានលុបគំរូទម្រង់'))
+    showNotification(t('templates.toast_deleted'))
   }
 }
 
-function saveCurrentStudioTemplate() {
-  if (!editingTemplate.value) return
+// Add new template flow
+function openFormatSelection(source = 'blank') {
+  isAddDropdownOpen.value = false
+  creationSource.value = source
+  showFormatModal.value = true
+}
 
-  editingTemplate.value.updatedAt = new Date().toISOString().slice(0, 10)
-  if (customImagePreview.value) {
-    editingTemplate.value.customImage = customImagePreview.value
+function createTemplateConfirmed(formatType) {
+  showFormatModal.value = false
+  const isCertified = formatType === 'old'
+  const newTpl = {
+    id: 'tpl-custom-' + Date.now(),
+    format: formatType,
+    nameKm: isCertified ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើតថ្មី' : 'សេចក្តីចម្លងសំបុត្រកំណើតឌីជីថលថ្មី',
+    nameEn: isCertified ? 'New Certified Copy of Birth Certificate' : 'New Digital Copy of Birth Certificate',
+    descriptionKm: isCertified ? 'ទម្រង់សេចក្តីចម្លងបញ្ជាក់កំណើតសម្រាប់កំណត់ប្រអប់ពុម្ពអក្សរ' : 'ទម្រង់សេចក្តីចម្លងសំបុត្រកំណើតថ្មីទទួលទិន្នន័យស្រង់ចេញពី OCR',
+    descriptionEn: 'Custom configured birth certificate template with box styling controls.',
+    updatedAt: new Date().toISOString().slice(0, 10),
+    boxes: JSON.parse(JSON.stringify(DEFAULT_TEMPLATES[0].boxes))
   }
-
-  const existingIdx = templates.value.findIndex(t => t.id === editingTemplate.value.id)
-  if (existingIdx >= 0) {
-    templates.value[existingIdx] = JSON.parse(JSON.stringify(editingTemplate.value))
-  } else {
-    templates.value.unshift(JSON.parse(JSON.stringify(editingTemplate.value)))
-  }
-
+  templates.value.unshift(newTpl)
   saveTemplates()
-  showToast(t('templates.toast_saved', 'បានរក្សាទុកគំរូទម្រង់ និងប្រអប់ Bounding Box ដោយជោគជ័យ!'))
-  showStudio.value = false
-  editingTemplate.value = null
+  openStudio(newTpl)
 }
 
-function closeStudio() {
-  showStudio.value = false
-  editingTemplate.value = null
-  customImagePreview.value = null
-}
-
-// -------------------------------------------------------------
-// Interactive Bounding Box Canvas Events (Drawing & Moving)
-// -------------------------------------------------------------
-
-function getRelativePercentCoords(e) {
-  if (!canvasContainerRef.value) return { x: 0, y: 0 }
-  const rect = canvasContainerRef.value.getBoundingClientRect()
-  const rawX = ((e.clientX - rect.left) / rect.width) * 100
-  const rawY = ((e.clientY - rect.top) / rect.height) * 100
-  const x = Math.max(0, Math.min(100, Math.round(rawX * 10) / 10))
-  const y = Math.max(0, Math.min(100, Math.round(rawY * 10) / 10))
-  return { x, y }
-}
-
-function handleCanvasMouseDown(e) {
-  if (studioMode.value !== 'draw') return
-  // Don't start drawing if clicking on an existing box's control
-  if (e.target.closest('.bounding-box-item')) return
-
-  const coords = getRelativePercentCoords(e)
-  isDrawing.value = true
-  drawStart.value = coords
-  drawCurrent.value = coords
-}
-
-function handleCanvasMouseMove(e) {
-  if (isDrawing.value) {
-    drawCurrent.value = getRelativePercentCoords(e)
-  } else if (isMovingBox.value && activeBox.value) {
-    const coords = getRelativePercentCoords(e)
-    const dx = coords.x - moveStart.value.x
-    const dy = coords.y - moveStart.value.y
-    activeBox.value.x = Math.max(0, Math.min(100 - activeBox.value.width, Math.round((initialBoxPos.value.x + dx) * 10) / 10))
-    activeBox.value.y = Math.max(0, Math.min(100 - activeBox.value.height, Math.round((initialBoxPos.value.y + dy) * 10) / 10))
+// Format badge styles
+function getFormatBadgeClasses(format) {
+  if (format === 'new') {
+    return 'bg-blue-50 text-[#1E3A8A] border-blue-200'
   }
+  return 'bg-amber-50 text-amber-800 border-amber-200'
 }
 
-function handleCanvasMouseUp() {
-  if (isDrawing.value) {
-    const p = previewRect.value
-    if (p && p.width > 2 && p.height > 2) {
-      // Pick next unassigned field if possible
-      const existingKeys = new Set(editingTemplate.value.boxes.map(b => b.key))
-      const nextField = FIELD_DEFINITIONS.find(f => !existingKeys.has(f.key)) || FIELD_DEFINITIONS[0]
-
-      const newBox = {
-        id: 'box_' + Date.now(),
-        key: nextField.key,
-        x: Math.round(p.x * 10) / 10,
-        y: Math.round(p.y * 10) / 10,
-        width: Math.round(p.width * 10) / 10,
-        height: Math.round(p.height * 10) / 10,
-      }
-      editingTemplate.value.boxes.push(newBox)
-      selectedBoxId.value = newBox.id
-      studioMode.value = 'select'
-      showToast(`${t('templates.box_created')}: ${getFieldLabel(newBox.key)}`)
-    }
-    isDrawing.value = false
+// Typography summary label for table
+function getTypographySummary(tpl) {
+  if (!tpl.boxes || tpl.boxes.length === 0) return 'Standard'
+  const fonts = new Set(tpl.boxes.map(b => b.font))
+  if (fonts.has('moul') && fonts.has('siemreap')) {
+    return 'Moul Light (Headers) + Siemreap (Body)'
   }
-
-  if (isMovingBox.value) {
-    isMovingBox.value = false
+  if (fonts.has('battambang')) {
+    return 'Khmer OS Battambang (Standard Data)'
   }
-}
-
-function handleBoxMouseDown(e, box) {
-  selectedBoxId.value = box.id
-  if (studioMode.value === 'select') {
-    e.stopPropagation()
-    isMovingBox.value = true
-    const coords = getRelativePercentCoords(e)
-    moveStart.value = coords
-    initialBoxPos.value = { x: box.x, y: box.y }
-  }
-}
-
-function deleteBox(boxId) {
-  if (!editingTemplate.value) return
-  editingTemplate.value.boxes = editingTemplate.value.boxes.filter(b => b.id !== boxId)
-  if (selectedBoxId.value === boxId) {
-    selectedBoxId.value = editingTemplate.value.boxes[0]?.id || null
-  }
-}
-
-function handleCustomImageUpload(e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  if (!file.type.startsWith('image/')) {
-    alert('Please upload an image file (PNG, JPEG, WebP).')
-    return
-  }
-  const reader = new FileReader()
-  reader.onload = (evt) => {
-    customImagePreview.value = evt.target?.result
-  }
-  reader.readAsDataURL(file)
-}
-
-function removeCustomImage() {
-  customImagePreview.value = null
-  if (editingTemplate.value) {
-    delete editingTemplate.value.customImage
-  }
+  return 'Khmer OS Siemreap + Moul'
 }
 </script>
 
 <template>
-  <main class="min-h-screen bg-gov-surface py-8 sm:py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-8">
-      
-      <!-- Top Navigation & Header -->
-      <div class="pb-6 mb-8 border-b border-gov-border">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-gov-primary tracking-tight md:whitespace-nowrap">
-          {{ t('templates.title') }}
-        </h1>
-        <p class="text-xs sm:text-sm lg:text-[15px] text-gov-text-secondary mt-1.5 max-w-none leading-relaxed lg:whitespace-nowrap overflow-hidden text-ellipsis">
-          {{ t('templates.subtitle') }}
-        </p>
-      </div>
+  <main class="min-h-[calc(100vh-4rem)] bg-[#F8FAFC] py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 space-y-6">
 
-      <!-- Toast Notification -->
+      <!-- Toast Feedback Notification -->
       <transition
-        enter-active-class="transform ease-out duration-300 transition"
-        enter-from-class="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-        enter-to-class="translate-y-0 opacity-100 sm:translate-x-0"
-        leave-active-class="transition ease-in duration-100"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="transform -translate-y-2 opacity-0"
+        enter-to-class="transform translate-y-0 opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="transform translate-y-0 opacity-100"
+        leave-to-class="transform -translate-y-2 opacity-0"
       >
         <div
           v-if="notification"
-          class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 text-sm font-medium"
+          :class="[
+            'fixed top-20 right-6 z-50 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium flex items-center gap-3',
+            notification.type === 'success'
+              ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
+              : 'bg-rose-50 text-rose-900 border-rose-200'
+          ]"
         >
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-          <span>{{ notification }}</span>
+          <svg v-if="notification.type === 'success'" class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <svg v-else class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <span>{{ notification.text }}</span>
         </div>
       </transition>
 
-      <!-- TABS BAR: NEW & OLD WITH "+ Add New Template" BUTTON AT THE END OF THE LINE -->
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-gov-border pb-4 mb-8">
+      <!-- ============================================================= -->
+      <!-- VIEW 1: TEMPLATE CATALOGUE & HIGH-END ENTERPRISE TABLE        -->
+      <!-- ============================================================= -->
+      <template v-if="!showStudio">
         
-        <!-- Left: Tabs (New vs Old Format) -->
-        <div class="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200 select-none">
-          <!-- Tab 1: New Format -->
-          <button
-            type="button"
-            @click="activeTab = 'new'"
-            :class="[
-              'h-10 px-5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-150 inline-flex items-center gap-2 whitespace-nowrap',
-              activeTab === 'new'
-                ? 'bg-gov-primary text-white shadow-sm'
-                : 'text-slate-600 hover:text-gov-primary hover:bg-white/60'
-            ]"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span>{{ t('templates.tabs.new') }}</span>
-            <span
-              :class="[
-                'text-[11px] px-2 py-0.5 rounded-full font-mono font-bold',
-                activeTab === 'new' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
-              ]"
-            >
-              {{ newCount }}
-            </span>
-          </button>
-
-          <!-- Tab 2: Old Format -->
-          <button
-            type="button"
-            @click="activeTab = 'old'"
-            :class="[
-              'h-10 px-5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-150 inline-flex items-center gap-2 whitespace-nowrap',
-              activeTab === 'old'
-                ? 'bg-gov-primary text-white shadow-sm'
-                : 'text-slate-600 hover:text-gov-primary hover:bg-white/60'
-            ]"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>{{ t('templates.tabs.old') }}</span>
-            <span
-              :class="[
-                'text-[11px] px-2 py-0.5 rounded-full font-mono font-bold',
-                activeTab === 'old' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
-              ]"
-            >
-              {{ oldCount }}
-            </span>
-          </button>
-        </div>
-
-        <!-- Right: Button with two choices (Use Existing & Add from Computer) -->
-        <div class="relative self-end sm:self-center" ref="addMenuRef">
-          <button
-            type="button"
-            @click="toggleAddMenu"
-            class="h-11 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm hover:shadow-gov-md transition-all duration-150 inline-flex items-center justify-center gap-2 whitespace-nowrap select-none"
-            aria-haspopup="true"
-            :aria-expanded="isAddMenuOpen"
-          >
-            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>{{ t('templates.btn_add') }}</span>
-            <svg
-              :class="['w-3.5 h-3.5 transition-transform duration-200 opacity-80', isAddMenuOpen ? 'rotate-180' : '']"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          <!-- Dropdown Menu: Two Choices -->
-          <transition
-            enter-active-class="transition duration-150 ease-out"
-            enter-from-class="transform scale-95 opacity-0 -translate-y-1"
-            enter-to-class="transform scale-100 opacity-100 translate-y-0"
-            leave-active-class="transition duration-100 ease-in"
-            leave-from-class="transform scale-100 opacity-100 translate-y-0"
-            leave-to-class="transform scale-95 opacity-0 -translate-y-1"
-          >
-            <div
-              v-if="isAddMenuOpen"
-              class="absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-white border border-gov-border shadow-2xl p-2 z-30 space-y-1"
-            >
-              <!-- Choice 1: Use Existing Template -->
-              <button
-                type="button"
-                @click="handleCreateFromExisting"
-                class="w-full text-left p-3 rounded-xl hover:bg-blue-50/70 border border-transparent hover:border-blue-100 transition-colors flex items-start gap-3 group"
-              >
-                <div class="w-10 h-10 rounded-xl bg-blue-100 text-gov-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-gov-primary">
-                    {{ t('templates.choice_existing') }}
-                  </div>
-                  <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                    {{ t('templates.choice_existing_desc') }}
-                  </div>
-                </div>
-              </button>
-
-              <!-- Choice 2: Add New Template from Computer -->
-              <button
-                type="button"
-                @click="triggerComputerUpload"
-                class="w-full text-left p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-100 transition-colors flex items-start gap-3 group"
-              >
-                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <div class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-700">
-                    {{ t('templates.choice_computer') }}
-                  </div>
-                  <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                    {{ t('templates.choice_computer_desc') }}
-                  </div>
-                </div>
-              </button>
-            </div>
-          </transition>
-
-          <!-- Hidden Native File Input for Uploading from Computer -->
-          <input
-            ref="computerFileInputRef"
-            type="file"
-            accept="image/*"
-            class="hidden"
-            @change="handleComputerFileSelected"
-          />
-        </div>
-      </div>
-
-      <!-- TEMPLATE LIST GRID -->
-      <div v-if="filteredTemplates.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-        <div
-          v-for="tpl in filteredTemplates"
-          :key="tpl.id"
-          class="bg-white rounded-2xl border border-gov-border shadow-gov-sm hover:shadow-gov-md transition-all p-6 sm:p-7 flex flex-col justify-between group"
-        >
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
           <div>
-            <!-- Template Header & Badges -->
-            <div class="flex items-start justify-between gap-3 mb-4">
-              <div>
-                <div class="flex items-center gap-2 mb-1.5">
-                  <span
-                    :class="[
-                      'inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider',
-                      tpl.format === 'new'
-                        ? 'bg-blue-100 text-gov-primary border border-blue-200'
-                        : 'bg-amber-100 text-amber-800 border border-amber-200'
-                    ]"
-                  >
-                    {{ tpl.format === 'new' ? t('templates.tabs.new') : t('templates.tabs.old') }}
-                  </span>
-                  <span class="text-xs text-slate-400 font-mono">
-                    {{ tpl.boxes.length }} {{ t('templates.fields_count') }}
-                  </span>
-                </div>
-                <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-gov-primary transition-colors">
-                  {{ getTemplateName(tpl) }}
-                </h3>
-              </div>
-
-              <!-- Template Mini Actions -->
-              <div class="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  @click="handleDuplicateTemplate(tpl)"
-                  class="p-2 text-slate-400 hover:text-gov-primary hover:bg-slate-100 rounded-lg transition-colors"
-                  :title="t('templates.duplicate', 'ចម្លង')"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  @click="handleDeleteTemplate(tpl.id)"
-                  class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  :title="t('templates.delete', 'លុប')"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-[#1E3A8A] border border-blue-200">
+                Civil Status Standard 2026
+              </span>
             </div>
-
-            <!-- Description -->
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-5">
-              {{ getTemplateDesc(tpl) }}
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
+              {{ t('templates.title') }}
+            </h1>
+            <p class="text-xs sm:text-sm text-[#475569] mt-1 max-w-3xl leading-relaxed">
+              {{ t('templates.subtitle') }}
             </p>
-
-            <!-- Mini Preview of Certificate Sheet with Real Bounding Box Overlays -->
-            <div class="relative w-full aspect-[4/3] bg-slate-50 rounded-xl border border-slate-200 overflow-hidden mb-5 flex items-center justify-center p-3 select-none">
-              <!-- Custom Uploaded Image Preview from Computer if available -->
-              <div v-if="tpl.customImage" class="w-full h-full relative overflow-hidden rounded border border-slate-200 bg-white">
-                <img :src="tpl.customImage" alt="Custom Template Preview" class="w-full h-full object-contain pointer-events-none" />
-                <!-- Bounding Boxes Miniature Overlay on Custom Image -->
-                <div
-                  v-for="b in tpl.boxes"
-                  :key="b.id"
-                  :style="{
-                    left: `${b.x}%`,
-                    top: `${b.y}%`,
-                    width: `${b.width}%`,
-                    height: `${b.height}%`
-                  }"
-                  :class="[
-                    'absolute border border-dashed rounded-[2px] pointer-events-none flex items-center justify-center text-[7px] font-sans font-bold px-0.5 truncate',
-                    getFieldDef(b.key).color
-                  ]"
-                >
-                  <span class="truncate">{{ getFieldLabel(b.key) }}</span>
-                </div>
-              </div>
-
-              <!-- Default Document Graphic Mock if no custom image -->
-              <div
-                v-else
-                :class="[
-                  'w-full h-full rounded shadow-inner border p-3 flex flex-col justify-between text-[8px] font-serif relative overflow-hidden',
-                  tpl.format === 'new'
-                    ? 'bg-white border-blue-100 text-slate-700'
-                    : 'bg-[#FAF6EC] border-amber-200 text-amber-900'
-                ]"
-              >
-                <!-- Watermark Header -->
-                <div class="text-center opacity-70">
-                  <div class="font-bold">{{ locale === 'km' ? 'ព្រះរាជាណាចក្រកម្ពុជា' : 'KINGDOM OF CAMBODIA' }}</div>
-                  <div class="text-[7px]">{{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}</div>
-                  <div class="font-sans font-bold text-gov-primary pt-0.5">
-                    {{ tpl.format === 'new' ? (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'COPY OF BIRTH CERTIFICATE') : (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'CERTIFIED COPY OF BIRTH CERTIFICATE') }}
-                  </div>
-                </div>
-
-                <!-- Bounding Boxes Miniature Overlay -->
-                <div
-                  v-for="b in tpl.boxes"
-                  :key="b.id"
-                  :style="{
-                    left: `${b.x}%`,
-                    top: `${b.y}%`,
-                    width: `${b.width}%`,
-                    height: `${b.height}%`
-                  }"
-                  :class="[
-                    'absolute border border-dashed rounded-[2px] pointer-events-none flex items-center justify-center text-[7px] font-sans font-bold px-0.5 truncate',
-                    getFieldDef(b.key).color
-                  ]"
-                >
-                  <span class="truncate">{{ getFieldLabel(b.key) }}</span>
-                </div>
-
-                <!-- Bottom Document Footer -->
-                <div class="flex justify-between items-end opacity-60 text-[7px]">
-                  <span>{{ locale === 'km' ? 'រដ្ឋបាលក្រុង-ស្រុក-ខណ្ឌ' : 'District Administration' }}</span>
-                  <span>{{ tpl.format === 'new' ? (locale === 'km' ? 'កូដសម្ងាត់' : 'ENCRYPTED CODE') : (locale === 'km' ? 'ត្រារដ្ឋបាល' : 'OFFICIAL SEAL') }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Configured Fields Badges -->
-            <div class="space-y-2 mb-6">
-              <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                {{ t('templates.configured_fields') }}
-              </div>
-              <div class="flex flex-wrap gap-1.5">
-                <span
-                  v-for="box in tpl.boxes"
-                  :key="box.id"
-                  :class="[
-                    'inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold border',
-                    getFieldDef(box.key).color
-                  ]"
-                >
-                  <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                  <span>{{ getFieldLabel(box.key) }}</span>
-                </span>
-              </div>
-            </div>
           </div>
 
-          <!-- Card Primary Action Button: Edit & Draw Bounding Boxes -->
-          <div class="pt-4 border-t border-slate-100 flex items-center gap-3">
+          <!-- Add Template Button Group -->
+          <div class="relative shrink-0">
             <button
               type="button"
-              @click="openStudioForEdit(tpl)"
-              class="flex-1 h-11 px-4 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm hover:shadow-gov-md transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+              @click="isAddDropdownOpen = !isAddDropdownOpen"
+              class="h-11 min-h-[44px] px-5 flex items-center justify-center gap-2 text-sm font-medium tracking-wide transition-all duration-200 rounded-xl bg-[#1E3A8A] hover:bg-blue-950 text-white shadow-sm hover:shadow-md active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600 outline-none cursor-pointer select-none"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
-              <span>{{ t('templates.btn_edit_boxes') }}</span>
+              <span>{{ t('templates.btn_add') }}</span>
+              <svg :class="['w-3.5 h-3.5 transition-transform duration-200 opacity-80', isAddDropdownOpen ? 'rotate-180' : '']" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
 
-            <router-link
-              to="/verify"
-              class="h-11 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap"
-              :title="t('templates.test_verify')"
+            <!-- Dropdown Menu -->
+            <transition
+              enter-active-class="transition duration-150 ease-out"
+              enter-from-class="transform scale-95 opacity-0 -translate-y-1"
+              enter-to-class="transform scale-100 opacity-100 translate-y-0"
+              leave-active-class="transition duration-100 ease-in"
+              leave-from-class="transform scale-100 opacity-100 translate-y-0"
+              leave-to-class="transform scale-95 opacity-0 -translate-y-1"
             >
-              <span>{{ t('templates.test_verify') }}</span>
-              <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </router-link>
-          </div>
-        </div>
-      </div>
-
-      <!-- Empty State if no templates in tab -->
-      <div v-else class="text-center py-16 bg-white rounded-2xl border border-gov-border p-8">
-        <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-4">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </div>
-        <h3 class="text-lg font-bold text-slate-800 mb-1">
-          {{ t('templates.empty_title') }}
-        </h3>
-        <p class="text-xs sm:text-sm text-slate-500 mb-6 max-w-md mx-auto">
-          {{ t('templates.empty_desc') }}
-        </p>
-        <div class="inline-flex flex-wrap items-center justify-center gap-3">
-          <!-- Choice 1: Use Existing Template -->
-          <button
-            type="button"
-            @click="handleCreateFromExisting"
-            class="h-11 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm transition-all inline-flex items-center gap-2"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span>{{ t('templates.choice_existing') }}</span>
-          </button>
-
-          <!-- Choice 2: Add New Template from Computer -->
-          <button
-            type="button"
-            @click="triggerComputerUpload"
-            class="h-11 px-5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-sm border border-slate-300 shadow-gov-sm transition-all inline-flex items-center gap-2"
-          >
-            <svg class="w-5 h-5 text-gov-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <span>{{ t('templates.choice_computer') }}</span>
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- =================================================================== -->
-    <!-- TEMPLATE TYPE SELECTION MODAL (OLD FORMAT VS NEW FORMAT)             -->
-    <!-- =================================================================== -->
-    <div
-      v-if="showFormatChoiceModal"
-      class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
-    >
-      <div class="bg-white rounded-2xl border border-gov-border shadow-2xl w-full max-w-lg p-6 space-y-6">
-        <!-- Header -->
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-          <div>
-            <h3 class="text-base sm:text-lg font-bold text-slate-900">
-              {{ t('templates.format_modal.title') }}
-            </h3>
-            <p class="text-xs text-slate-500 mt-0.5">
-              {{ t('templates.format_modal.subtitle') }}
-            </p>
-          </div>
-          <button
-            type="button"
-            @click="showFormatChoiceModal = false"
-            class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center"
-          >
-            ✕
-          </button>
-        </div>
-
-        <!-- Choice Cards -->
-        <div class="space-y-3">
-          <!-- Option 1: Old Format (Scan & Extraction) -->
-          <div
-            @click="selectedCreationFormat = 'old'"
-            :class="[
-              'p-4 rounded-xl border-2 cursor-pointer transition-all flex items-start gap-3.5',
-              selectedCreationFormat === 'old'
-                ? 'border-gov-primary bg-blue-50/50 shadow-sm'
-                : 'border-slate-200 hover:border-slate-300 bg-white'
-            ]"
-          >
-            <div class="mt-0.5">
-              <input
-                type="radio"
-                name="formatChoice"
-                value="old"
-                v-model="selectedCreationFormat"
-                class="w-4 h-4 text-gov-primary focus:ring-gov-primary"
-              />
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between">
-                <span class="text-xs sm:text-sm font-bold text-slate-900">
-                  {{ t('templates.format_modal.old_title') }}
-                </span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">
-                  {{ t('templates.tabs.old') }}
-                </span>
+              <div
+                v-if="isAddDropdownOpen"
+                class="absolute right-0 mt-2 w-72 rounded-2xl bg-white border border-slate-200/90 shadow-xl p-2 z-30 space-y-1"
+              >
+                <button
+                  type="button"
+                  @click="openFormatSelection('blank')"
+                  class="w-full text-left p-3 rounded-xl hover:bg-blue-50/70 border border-transparent hover:border-blue-100 transition-colors flex items-start gap-3 cursor-pointer"
+                >
+                  <div class="w-9 h-9 rounded-lg bg-blue-100 text-[#1E3A8A] flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="text-xs font-bold text-slate-900">{{ t('templates.choice_existing') }}</div>
+                    <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">{{ t('templates.choice_existing_desc') }}</div>
+                  </div>
+                </button>
               </div>
-              <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                {{ t('templates.format_modal.old_desc') }}
-              </p>
-            </div>
+            </transition>
           </div>
+        </div>
 
-          <!-- Option 2: New Format (Standard Target Template) -->
-          <div
-            @click="selectedCreationFormat = 'new'"
-            :class="[
-              'p-4 rounded-xl border-2 cursor-pointer transition-all flex items-start gap-3.5',
-              selectedCreationFormat === 'new'
-                ? 'border-gov-primary bg-blue-50/50 shadow-sm'
-                : 'border-slate-200 hover:border-slate-300 bg-white'
-            ]"
-          >
-            <div class="mt-0.5">
-              <input
-                type="radio"
-                name="formatChoice"
-                value="new"
-                v-model="selectedCreationFormat"
-                class="w-4 h-4 text-gov-primary focus:ring-gov-primary"
-              />
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between">
-                <span class="text-xs sm:text-sm font-bold text-slate-900">
-                  {{ t('templates.format_modal.new_title') }}
-                </span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">
-                  {{ t('templates.tabs.new') }}
-                </span>
+        <!-- 4 Top Standard Metric Panels -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1: Total Templates -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ t('templates.stat_total') }}</span>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 text-[#1E3A8A] flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
               </div>
-              <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                {{ t('templates.format_modal.new_desc') }}
-              </p>
             </div>
+            <div class="mt-2 text-2xl font-black text-slate-900 tracking-tight">{{ totalTemplatesCount }}</div>
+            <div class="mt-1 text-xs text-slate-500">Official Civil Registry Formats</div>
+          </div>
+
+          <!-- Card 2: Digital New Format -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ t('templates.stat_new') }}</span>
+              <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <div class="mt-2 text-2xl font-black text-slate-900 tracking-tight">{{ newTemplatesCount }}</div>
+            <div class="mt-1 text-xs text-slate-500">Standard with QR & Latin</div>
+          </div>
+
+          <!-- Card 3: Certified Old Format -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ t('templates.stat_old') }}</span>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <div class="mt-2 text-2xl font-black text-slate-900 tracking-tight">{{ oldTemplatesCount }}</div>
+            <div class="mt-1 text-xs text-slate-500">Archival Certified Records</div>
+          </div>
+
+          <!-- Card 4: Typography Stack -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ t('templates.stat_fonts') }}</span>
+              <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                </svg>
+              </div>
+            </div>
+            <div class="mt-2 text-base font-bold text-slate-900 tracking-tight">Khmer OS Moul & Siemreap</div>
+            <div class="mt-1 text-xs text-slate-500">6 Native Khmer Typefaces</div>
           </div>
         </div>
 
-        <!-- Modal Actions -->
-        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-          <button
-            type="button"
-            @click="showFormatChoiceModal = false"
-            class="h-9 px-4 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
-          >
-            {{ t('common.cancel') }}
-          </button>
-          <button
-            type="button"
-            @click="handleConfirmFormatChoice"
-            class="h-9 px-5 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white text-xs font-bold shadow-sm"
-          >
-            {{ t('templates.format_modal.btn_continue') }}
-          </button>
-        </div>
-      </div>
-    </div>
+        <!-- High-End Senior Enterprise Table Card -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+          
+          <!-- Table Controls & Tabs Bar -->
+          <div class="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+            <!-- Tabs -->
+            <div class="flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-xl">
+              <button
+                type="button"
+                @click="activeFormatTab = 'all'"
+                :class="[
+                  'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer select-none',
+                  activeFormatTab === 'all'
+                    ? 'bg-white text-[#1E3A8A] shadow-xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                ]"
+              >
+                All Formats ({{ totalTemplatesCount }})
+              </button>
+              <button
+                type="button"
+                @click="activeFormatTab = 'new'"
+                :class="[
+                  'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer select-none',
+                  activeFormatTab === 'new'
+                    ? 'bg-white text-[#1E3A8A] shadow-xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                ]"
+              >
+                {{ t('templates.tabs.new') }} ({{ newTemplatesCount }})
+              </button>
+              <button
+                type="button"
+                @click="activeFormatTab = 'old'"
+                :class="[
+                  'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer select-none',
+                  activeFormatTab === 'old'
+                    ? 'bg-white text-[#1E3A8A] shadow-xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                ]"
+              >
+                {{ t('templates.tabs.old') }} ({{ oldTemplatesCount }})
+              </button>
+            </div>
 
-    <!-- =================================================================== -->
-    <!-- INTERACTIVE BOUNDING BOX STUDIO & DRAWING CANVAS MODAL/FULL DRAWER -->
-    <!-- =================================================================== -->
-    <div
-      v-if="showStudio && editingTemplate"
-      class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 animate-fadeIn"
-    >
-      <div class="bg-white rounded-2xl border border-gov-border shadow-2xl w-full max-w-7xl max-h-[96vh] flex flex-col overflow-hidden">
+            <div class="text-xs text-slate-500 font-medium">
+              Showing {{ filteredTemplates.length }} templates
+            </div>
+          </div>
+
+          <!-- The Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse table-fixed">
+              <thead class="bg-slate-50/75 border-b border-slate-200">
+                <tr>
+                  <th scope="col" class="w-[30%] px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    {{ t('templates.table.col_template') }}
+                  </th>
+                  <th scope="col" class="w-[17%] px-3 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                    {{ t('templates.table.col_format') }}
+                  </th>
+                  <th scope="col" class="w-[21%] px-3 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                    {{ t('templates.table.col_typography') }}
+                  </th>
+                  <th scope="col" class="w-[10%] px-2 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap text-center">
+                    {{ t('templates.table.col_boxes') }}
+                  </th>
+                  <th scope="col" class="w-[10%] px-2 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap text-center">
+                    {{ t('templates.table.col_updated') }}
+                  </th>
+                  <th scope="col" class="w-[12%] px-4 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right whitespace-nowrap">
+                    {{ t('templates.table.col_actions') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr
+                  v-for="tpl in filteredTemplates"
+                  :key="tpl.id"
+                  class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors duration-150 group"
+                >
+                  <!-- Col 1: Template Title & Description -->
+                  <td class="w-[30%] px-5 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-100 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                      <div class="min-w-0">
+                        <div class="text-sm font-bold text-slate-900 group-hover:text-[#1E3A8A] transition-colors truncate">
+                          {{ locale === 'km' ? (tpl.nameKm || tpl.nameEn) : (tpl.nameEn || tpl.nameKm) }}
+                        </div>
+                        <div class="text-xs text-slate-500 mt-0.5 truncate">
+                          {{ locale === 'km' ? tpl.descriptionKm : tpl.descriptionEn }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- Col 2: Registry Format Badge -->
+                  <td class="w-[17%] px-3 py-4 whitespace-nowrap">
+                    <span :class="['px-2.5 py-1 rounded-full text-xs font-semibold border inline-flex items-center gap-1.5', getFormatBadgeClasses(tpl.format)]">
+                      <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                      <span class="truncate">{{ tpl.format === 'new' ? t('templates.tabs.new') : t('templates.tabs.old') }}</span>
+                    </span>
+                  </td>
+
+                  <!-- Col 3: Typography Signature -->
+                  <td class="w-[21%] px-3 py-4 whitespace-nowrap text-sm text-slate-700">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100/70 px-2.5 py-1 rounded-lg truncate max-w-full">
+                      <span>🔤</span>
+                      <span class="truncate">{{ getTypographySummary(tpl) }}</span>
+                    </span>
+                  </td>
+
+                  <!-- Col 4: Configured Boxes Count -->
+                  <td class="w-[10%] px-2 py-4 whitespace-nowrap text-center">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-[#1E3A8A] border border-blue-200">
+                      {{ tpl.boxes.length }} {{ t('templates.fields_count') }}
+                    </span>
+                  </td>
+
+                  <!-- Col 5: Last Updated Date -->
+                  <td class="w-[10%] px-2 py-4 whitespace-nowrap text-center text-xs text-slate-500 font-mono">
+                    {{ tpl.updatedAt }}
+                  </td>
+
+                  <!-- Col 6: Action Buttons -->
+                  <td class="w-[12%] px-4 py-4 whitespace-nowrap text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <!-- Open Studio Button -->
+                      <button
+                        type="button"
+                        @click="openStudio(tpl)"
+                        class="h-9 px-3 rounded-xl bg-[#1E3A8A] hover:bg-blue-950 text-white font-medium text-xs flex items-center gap-1.5 transition-all shadow-xs hover:shadow-md active:scale-[0.98] cursor-pointer"
+                        :title="t('templates.table.btn_open_studio')"
+                      >
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        <span>{{ t('templates.table.btn_edit') }}</span>
+                      </button>
+
+                      <!-- Duplicate -->
+                      <button
+                        type="button"
+                        @click="duplicateTemplate(tpl)"
+                        class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                        :title="t('templates.duplicate')"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </button>
+
+                      <!-- Delete -->
+                      <button
+                        type="button"
+                        @click="deleteTemplate(tpl.id)"
+                        class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                        :title="t('templates.delete')"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </template>
+
+      <!-- ============================================================= -->
+      <!-- VIEW 2: TEMPLATE BOX STYLING STUDIO (SPLIT 12-COL WORKSPACE)   -->
+      <!-- ============================================================= -->
+      <template v-else>
         
-        <!-- Studio Header -->
-        <div class="px-6 py-4 border-b border-gov-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50">
+        <!-- Studio Top Bar -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gov-primary text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            <button
+              type="button"
+              @click="closeStudio"
+              class="h-10 px-3.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-            </div>
+              <span>ត្រឡប់ក្រោយ</span>
+            </button>
+
             <div>
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold uppercase px-2 py-0.5 rounded bg-blue-100 text-gov-primary font-mono">
-                  {{ t('templates.studio_badge') }}
-                </span>
-                <span class="text-xs text-slate-500">
+                <span :class="['px-2 py-0.5 rounded text-[11px] font-bold uppercase', getFormatBadgeClasses(editingTemplate.format)]">
                   {{ editingTemplate.format === 'new' ? t('templates.tabs.new') : t('templates.tabs.old') }}
                 </span>
+                <span class="text-xs text-slate-400 font-mono">{{ editingTemplate.boxes.length }} Boxes</span>
               </div>
-              <h2 class="text-base sm:text-lg font-bold text-slate-900">
-                {{ getTemplateName(editingTemplate) }}
+              <h2 class="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                {{ locale === 'km' ? (editingTemplate.nameKm || editingTemplate.nameEn) : (editingTemplate.nameEn || editingTemplate.nameKm) }}
               </h2>
             </div>
           </div>
 
-          <!-- Studio Actions: Mode Switching & Save -->
-          <div class="flex items-center gap-2.5">
-            <!-- Tool: Draw Mode -->
-            <button
-              type="button"
-              @click="studioMode = 'draw'"
-              :class="[
-                'h-9 px-3.5 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5 select-none',
-                studioMode === 'draw'
-                  ? 'bg-gov-primary text-white shadow-sm'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
-              ]"
-            >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              <span>{{ t('templates.tool_draw') }}</span>
-            </button>
+          <!-- Studio Actions & Controls -->
+          <div class="flex items-center flex-wrap gap-2.5">
+            
+            <!-- Preview Mode Toggle -->
+            <div class="flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs">
+              <button
+                type="button"
+                @click="previewMode = 'sample'"
+                :class="[
+                  'px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer',
+                  previewMode === 'sample' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                ]"
+              >
+                {{ t('templates.studio.preview_mode_real') }}
+              </button>
+              <button
+                type="button"
+                @click="previewMode = 'wireframe'"
+                :class="[
+                  'px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer',
+                  previewMode === 'wireframe' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                ]"
+              >
+                {{ t('templates.studio.preview_mode_wireframe') }}
+              </button>
+            </div>
 
-            <!-- Tool: Select/Move Mode -->
-            <button
-              type="button"
-              @click="studioMode = 'select'"
-              :class="[
-                'h-9 px-3.5 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5 select-none',
-                studioMode === 'select'
-                  ? 'bg-gov-primary text-white shadow-sm'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
-              ]"
-            >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-              </svg>
-              <span>{{ t('templates.tool_select') }}</span>
-            </button>
+            <!-- Zoom Controls -->
+            <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+              <button
+                type="button"
+                @click="zoomLevel = 75"
+                :class="['px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer', zoomLevel === 75 ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600']"
+              >
+                75%
+              </button>
+              <button
+                type="button"
+                @click="zoomLevel = 100"
+                :class="['px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer', zoomLevel === 100 ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600']"
+              >
+                100%
+              </button>
+              <button
+                type="button"
+                @click="zoomLevel = 125"
+                :class="['px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer', zoomLevel === 125 ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600']"
+              >
+                125%
+              </button>
+            </div>
 
             <!-- Save Button -->
             <button
               type="button"
-              @click="saveCurrentStudioTemplate"
-              class="h-9 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-all inline-flex items-center gap-1.5"
-            >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>{{ t('templates.save') }}</span>
-            </button>
-
-            <!-- Close Button -->
-            <button
-              type="button"
-              @click="closeStudio"
-              class="w-9 h-9 rounded-lg bg-white text-slate-500 hover:text-slate-800 border border-slate-200 hover:bg-slate-50 flex items-center justify-center transition-colors"
+              @click="saveStudioChanges"
+              class="h-11 min-h-[44px] px-5 flex items-center justify-center gap-2 text-sm font-medium tracking-wide transition-all duration-200 rounded-xl bg-slate-900 text-white hover:bg-slate-800 shadow-sm hover:shadow-md active:scale-[0.98] cursor-pointer"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
+              <span>{{ t('templates.save_changes') }}</span>
             </button>
           </div>
         </div>
 
-        <!-- Studio Body: Split View (Canvas on Left, Inspector & Fields on Right) -->
-        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden min-h-[580px]">
+        <!-- 12-Column Split Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          <!-- LEFT: DRAWING CANVAS AREA (Col 8) -->
-          <div class="lg:col-span-8 bg-slate-100 p-4 sm:p-6 flex flex-col justify-between overflow-y-auto">
+          <!-- LEFT COLUMN (5 COLS): BOX STYLING INSPECTOR CONTROLS -->
+          <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-5">
             
-            <!-- Canvas Controls Bar -->
-            <div class="flex items-center justify-between pb-3 text-xs">
-              <div class="flex items-center gap-2 text-slate-600 font-medium">
-                <span class="w-2 h-2 rounded-full" :class="studioMode === 'draw' ? 'bg-gov-primary animate-ping' : 'bg-slate-400'"></span>
-                <span v-if="studioMode === 'draw'" class="text-gov-primary font-bold">
-                  {{ t('templates.canvas_draw_hint') }}
-                </span>
-                <span v-else class="text-slate-600">
-                  {{ t('templates.canvas_select_hint') }}
-                </span>
-              </div>
-
-              <!-- Zoom Controls -->
-              <div class="inline-flex items-center rounded-lg bg-white border border-slate-200 p-0.5 text-xs shadow-sm">
-                <button
-                  type="button"
-                  @click="studioZoom = Math.max(0.7, studioZoom - 0.1)"
-                  class="w-7 h-7 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded"
-                  title="Zoom Out"
-                >
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                  </svg>
-                </button>
-                <span class="px-2 font-mono text-[11px] font-semibold text-slate-700">
-                  {{ Math.round(studioZoom * 100) }}%
-                </span>
-                <button
-                  type="button"
-                  @click="studioZoom = Math.min(1.5, studioZoom + 0.1)"
-                  class="w-7 h-7 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded"
-                  title="Zoom In"
-                >
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  @click="studioZoom = 1.0"
-                  class="h-7 px-2 text-[10px] text-slate-500 hover:text-slate-900 border-l border-slate-200"
-                >
-                  100%
-                </button>
-              </div>
-            </div>
-
-            <!-- Canvas Viewport -->
-            <div class="flex-1 flex items-center justify-center overflow-auto p-2">
-              <div
-                class="relative transition-transform duration-100 ease-out origin-center"
-                :style="{ transform: `scale(${studioZoom})` }"
+            <!-- Box Selector Header -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                {{ t('templates.studio.field_select') }}
+              </label>
+              <select
+                :value="activeBox ? activeBox.key : ''"
+                @change="selectBoxByKey($event.target.value)"
+                class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] shadow-xs cursor-pointer"
               >
-                <!-- INTERACTIVE DRAWING LAYER CONTAINER -->
-                <div
-                  ref="canvasContainerRef"
-                  @mousedown="handleCanvasMouseDown"
-                  @mousemove="handleCanvasMouseMove"
-                  @mouseup="handleCanvasMouseUp"
-                  :class="[
-                    'relative w-[440px] sm:w-[480px] h-[580px] rounded-lg shadow-xl border overflow-hidden select-none',
-                    studioMode === 'draw' ? 'cursor-crosshair' : 'cursor-default',
-                    editingTemplate.format === 'new'
-                      ? 'bg-white border-slate-300'
-                      : 'bg-[#FAF6EC] border-amber-300'
-                  ]"
-                >
-                  <!-- Background: Custom Uploaded Image if available -->
-                  <img
-                    v-if="customImagePreview"
-                    :src="customImagePreview"
-                    alt="Template Canvas Background"
-                    class="w-full h-full object-contain pointer-events-none"
-                  />
-
-                  <!-- Default High-Fidelity Vector Certificate Layout Mock -->
-                  <div
-                    v-else
-                    class="w-full h-full p-6 flex flex-col justify-between font-serif pointer-events-none"
-                  >
-                    <!-- Emblem & Title -->
-                    <div class="text-center space-y-1">
-                      <div class="w-10 h-10 mx-auto rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center font-bold text-sm">
-                        🇰🇭
-                      </div>
-                      <div class="text-xs font-bold text-slate-800 tracking-wider">
-                        {{ locale === 'km' ? 'ព្រះរាជាណាចក្រកម្ពុជា' : 'KINGDOM OF CAMBODIA' }}
-                      </div>
-                      <div class="text-[9px] text-slate-500">
-                        {{ locale === 'km' ? 'ជាតិ សាសនា ព្រះមហាក្សត្រ' : 'NATION RELIGION KING' }}
-                      </div>
-                      <div class="text-xs font-extrabold text-gov-primary font-sans pt-1">
-                        {{ editingTemplate.format === 'new' ? (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្រកំណើត' : 'COPY OF BIRTH CERTIFICATE') : (locale === 'km' ? 'សេចក្តីចម្លងសំបុត្របញ្ជាក់កំណើត' : 'CERTIFIED COPY OF BIRTH CERTIFICATE') }}
-                      </div>
-                    </div>
-
-                    <!-- Mock Form Lines -->
-                    <div class="space-y-4 text-[10px] text-slate-600 border-t border-b border-slate-200/80 py-4 font-sans">
-                      <div class="flex justify-between font-mono">
-                        <span>{{ locale === 'km' ? 'លេខកូដសម្គាល់ជាតិ: 1204009821' : 'National ID Code: 1204009821' }}</span>
-                        <span>{{ locale === 'km' ? 'សៀវភៅលេខ: BC-2024-009821' : 'Book No: BC-2024-009821' }}</span>
-                      </div>
-                      <div v-if="locale === 'km'">ឈ្មោះខ្មែរ: <span class="font-bold text-slate-900 font-khmer">សុខ ចាន់ដារ៉ា</span></div>
-                      <div v-else>Khmer Name: <span class="font-bold text-slate-900 font-khmer">សុខ ចាន់ដារ៉ា</span></div>
-                      <div v-if="locale === 'km'">ឈ្មោះឡាតាំង: <span class="font-bold text-slate-900 font-latin">SOK CHANDARA</span></div>
-                      <div v-else>Latin Name: <span class="font-bold text-slate-900 font-latin">SOK CHANDARA</span></div>
-                      <div class="flex justify-between">
-                        <span>{{ locale === 'km' ? 'ថ្ងៃខែឆ្នាំកំណើត: ១៥ ឧសភា ២០០០' : 'Date of Birth: 15 May 2000' }}</span>
-                        <span>{{ locale === 'km' ? 'ភេទ: ប្រុស' : 'Gender: Male' }}</span>
-                      </div>
-                      <div>{{ locale === 'km' ? 'ទីកន្លែងកំណើត: រាជធានីភ្នំពេញ' : 'Place of Birth: Phnom Penh' }}</div>
-                      <div>{{ locale === 'km' ? 'ឈ្មោះឪពុក: សុខ សុផល • ឈ្មោះម្តាយ: ចាន់ គន្ធា' : 'Father: SOK SOPHAL • Mother: CHAN KUNTHEA' }}</div>
-                      <div>{{ locale === 'km' ? 'រដ្ឋបាលខណ្ឌ: ដូនពេញ' : 'District: Daun Penh' }}</div>
-                    </div>
-
-                    <!-- Seal & Signatures -->
-                    <div class="flex justify-between items-end text-[9px] text-slate-500 font-sans">
-                      <div class="w-14 h-14 border border-dashed border-slate-300 rounded flex items-center justify-center text-[8px] text-slate-400">
-                        {{ editingTemplate.format === 'new' ? 'QR' : (locale === 'km' ? 'បណ្ណសារ' : 'ARCHIVE') }}
-                      </div>
-                      <div class="text-center space-y-1">
-                        <div>{{ locale === 'km' ? 'ច្រកចេញចូលតែមួយ' : 'One Window Service' }}</div>
-                        <div class="w-12 h-12 rounded-full border border-red-300 bg-red-50 text-red-600 flex items-center justify-center text-[8px] font-bold">
-                          {{ locale === 'km' ? 'ត្រា' : 'SEAL' }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- EXISTING BOUNDING BOXES OVERLAY -->
-                  <div
-                    v-for="b in editingTemplate.boxes"
-                    :key="b.id"
-                    @mousedown="handleBoxMouseDown($event, b)"
-                    :style="{
-                      left: `${b.x}%`,
-                      top: `${b.y}%`,
-                      width: `${b.width}%`,
-                      height: `${b.height}%`
-                    }"
-                    :class="[
-                      'bounding-box-item absolute border-2 rounded transition-all cursor-move flex items-center justify-between px-1.5 z-20 group',
-                      selectedBoxId === b.id
-                        ? 'ring-4 ring-gov-primary/40 border-gov-primary z-30 shadow-lg'
-                        : `${getFieldDef(b.key).color} hover:ring-2 hover:ring-slate-400`
-                    ]"
-                  >
-                    <span class="text-[9px] font-bold truncate tracking-tight uppercase select-none">
-                      {{ getFieldLabel(b.key) }}
-                    </span>
-
-                    <button
-                      type="button"
-                      @click.stop="deleteBox(b.id)"
-                      class="w-3.5 h-3.5 rounded bg-white/80 hover:bg-red-500 hover:text-white text-slate-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      ×
-                    </button>
-                  </div>
-
-                  <!-- DYNAMIC RUBBERBAND RECTANGLE WHILE DRAGGING TO DRAW -->
-                  <div
-                    v-if="previewRect"
-                    :style="{
-                      left: `${previewRect.x}%`,
-                      top: `${previewRect.y}%`,
-                      width: `${previewRect.width}%`,
-                      height: `${previewRect.height}%`
-                    }"
-                    class="absolute border-2 border-dashed border-gov-primary bg-gov-primary/20 rounded pointer-events-none z-40 flex items-center justify-center text-xs font-bold text-gov-primary"
-                  >
-                    <span>+ {{ locale === 'km' ? 'ប្រអប់ថ្មី' : 'New Box' }}</span>
-                  </div>
-
-                </div>
-              </div>
+                <option v-for="b in editingTemplate.boxes" :key="b.id" :value="b.key">
+                  {{ getFieldLabel(b.key) }} ({{ getFontDef(b.font).nameEn }})
+                </option>
+              </select>
             </div>
 
-            <!-- Canvas Bottom Helper Info -->
-            <div class="pt-3 flex flex-wrap items-center justify-between text-xs text-slate-500 border-t border-slate-200 mt-2 gap-2">
-              <div class="flex items-center gap-3">
-                <span>{{ t('templates.boxes_total') }} <strong class="text-gov-primary">{{ editingTemplate.boxes.length }}</strong></span>
-                <span>•</span>
-                <span>{{ locale === 'km' ? 'កូអរដោនេ:' : 'Coordinates:' }} <strong class="font-mono text-slate-700">Responsive %</strong></span>
-              </div>
-              <div class="flex items-center gap-2">
-                <label class="text-[11px] text-gov-primary hover:underline cursor-pointer">
-                  <span>{{ customImagePreview ? t('templates.change_image', 'ប្តូររូបភាពគំរូ') : t('templates.upload_sample', 'បង្ហោះរូបភាពគំរូជាក់ស្តែង') }}</span>
-                  <input type="file" accept="image/*" class="hidden" @change="handleCustomImageUpload" />
-                </label>
-                <button
-                  v-if="customImagePreview"
-                  type="button"
-                  @click="removeCustomImage"
-                  class="text-[11px] text-red-500 hover:underline"
-                >
-                  {{ t('templates.reset_image', 'ប្រើគំរូលំនាំដើម') }}
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- RIGHT: INSPECTOR & FIELDS SIDEBAR (Col 4) -->
-          <div class="lg:col-span-4 bg-white border-l border-gov-border p-5 flex flex-col justify-between overflow-y-auto space-y-6">
-            
-            <div class="space-y-5">
-              <!-- Template Metadata Config -->
-              <div class="space-y-3 pb-4 border-b border-slate-100">
-                <div class="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  {{ t('templates.template_info') }}
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    {{ t('templates.tpl_name') }}
-                  </label>
-                  <input
-                    v-model="editingTemplate.nameKm"
-                    type="text"
-                    class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-gov-primary focus:outline-none"
-                  />
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">
-                      {{ t('templates.format_category') }}
-                    </label>
-                    <select
-                      v-model="editingTemplate.format"
-                      class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none"
-                    >
-                      <option value="new">{{ t('templates.tabs.new') }}</option>
-                      <option value="old">{{ t('templates.tabs.old') }}</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">
-                      {{ t('templates.aspect_ratio') }}
-                    </label>
-                    <input
-                      v-model="editingTemplate.aspectRatio"
-                      type="text"
-                      disabled
-                      class="w-full px-2 py-1.5 rounded-lg border border-slate-200 text-xs bg-slate-50 text-slate-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Active Selected Box Properties Inspector -->
-              <div v-if="activeBox" class="p-4 rounded-xl bg-blue-50/60 border border-blue-200 space-y-3">
-                <div class="flex items-center justify-between">
-                  <div class="text-xs font-bold text-gov-primary flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-gov-primary"></span>
-                    <span>{{ t('templates.active_box') }}</span>
-                  </div>
-                  <button
-                    type="button"
-                    @click="deleteBox(activeBox.id)"
-                    class="text-[11px] text-red-600 hover:underline font-bold"
-                  >
-                    {{ t('templates.btn_delete_box') }}
-                  </button>
-                </div>
-
-                <!-- Field Mapping Selector -->
-                <div>
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    {{ t('templates.assigned_field') }}
-                  </label>
-                  <select
-                    v-model="activeBox.key"
-                    class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white font-semibold text-slate-800 focus:ring-2 focus:ring-gov-primary focus:outline-none"
-                  >
-                    <option
-                      v-for="f in FIELD_DEFINITIONS"
-                      :key="f.key"
-                      :value="f.key"
-                    >
-                      {{ locale === 'km' ? f.labelKm : f.labelEn }}
-                    </option>
-                  </select>
-                </div>
-
-                <!-- Numeric Coordinate Sliders / Inputs -->
-                <div class="grid grid-cols-2 gap-2 text-xs pt-1">
-                  <div>
-                    <span class="text-[10px] text-slate-500 font-mono">X (%)</span>
-                    <input
-                      v-model.number="activeBox.x"
-                      type="number"
-                      step="0.5"
-                      min="0"
-                      max="100"
-                      class="w-full px-2 py-1 rounded border border-slate-300 text-xs font-mono"
-                    />
-                  </div>
-                  <div>
-                    <span class="text-[10px] text-slate-500 font-mono">Y (%)</span>
-                    <input
-                      v-model.number="activeBox.y"
-                      type="number"
-                      step="0.5"
-                      min="0"
-                      max="100"
-                      class="w-full px-2 py-1 rounded border border-slate-300 text-xs font-mono"
-                    />
-                  </div>
-                  <div>
-                    <span class="text-[10px] text-slate-500 font-mono">Width (%)</span>
-                    <input
-                      v-model.number="activeBox.width"
-                      type="number"
-                      step="0.5"
-                      min="2"
-                      max="100"
-                      class="w-full px-2 py-1 rounded border border-slate-300 text-xs font-mono"
-                    />
-                  </div>
-                  <div>
-                    <span class="text-[10px] text-slate-500 font-mono">Height (%)</span>
-                    <input
-                      v-model.number="activeBox.height"
-                      type="number"
-                      step="0.5"
-                      min="2"
-                      max="100"
-                      class="w-full px-2 py-1 rounded border border-slate-300 text-xs font-mono"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <!-- List of All Configured Bounding Boxes -->
-              <div class="space-y-2">
-                <div class="flex items-center justify-between text-xs font-bold text-slate-800">
-                  <span>{{ t('templates.all_boxes') }} ({{ editingTemplate.boxes.length }})</span>
-                  <button
-                    type="button"
-                    @click="studioMode = 'draw'"
-                    class="text-[11px] text-gov-primary hover:underline font-bold"
-                  >
-                    + {{ t('templates.tool_draw') }}
-                  </button>
-                </div>
-
-                <div class="space-y-1.5 max-h-56 overflow-y-auto pr-1">
-                  <div
-                    v-for="b in editingTemplate.boxes"
-                    :key="b.id"
-                    @click="selectedBoxId = b.id; studioMode = 'select'"
-                    :class="[
-                      'p-2 rounded-lg border text-xs cursor-pointer flex items-center justify-between transition-colors',
-                      selectedBoxId === b.id
-                        ? 'bg-blue-50 border-gov-primary font-bold text-gov-primary shadow-sm'
-                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
-                    ]"
-                  >
-                    <div class="flex items-center gap-2 truncate">
-                      <span class="w-2 h-2 rounded-full shrink-0" :class="getFieldDef(b.key).color.split(' ')[0].replace('border-', 'bg-')"></span>
-                      <span class="truncate">{{ getFieldLabel(b.key) }}</span>
-                    </div>
-
-                    <div class="flex items-center gap-2 shrink-0 font-mono text-[10px] text-slate-400">
-                      <span>{{ b.width }}% × {{ b.height }}%</span>
-                      <button
-                        type="button"
-                        @click.stop="deleteBox(b.id)"
-                        class="text-slate-400 hover:text-red-500 text-sm font-bold px-1"
-                        title="Delete box"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Sidebar Bottom Action Buttons -->
-            <div class="pt-4 border-t border-slate-100 space-y-2">
+            <!-- Control Tabs -->
+            <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs">
               <button
                 type="button"
-                @click="saveCurrentStudioTemplate"
-                class="w-full h-11 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white font-bold text-xs sm:text-sm shadow-gov-sm transition-all flex items-center justify-center gap-2"
+                @click="studioActiveTab = 'typography'"
+                :class="[
+                  'flex-1 py-1.5 rounded-lg font-semibold transition-all cursor-pointer text-center',
+                  studioActiveTab === 'typography' ? 'bg-white text-[#1E3A8A] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                ]"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span>{{ t('templates.save_changes') }}</span>
+                {{ t('templates.studio.tab_typography') }}
               </button>
               <button
                 type="button"
-                @click="closeStudio"
-                class="w-full h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs transition-colors"
+                @click="studioActiveTab = 'appearance'"
+                :class="[
+                  'flex-1 py-1.5 rounded-lg font-semibold transition-all cursor-pointer text-center',
+                  studioActiveTab === 'appearance' ? 'bg-white text-[#1E3A8A] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                ]"
+              >
+                {{ t('templates.studio.tab_appearance') }}
+              </button>
+              <button
+                type="button"
+                @click="studioActiveTab = 'presets'"
+                :class="[
+                  'flex-1 py-1.5 rounded-lg font-semibold transition-all cursor-pointer text-center',
+                  studioActiveTab === 'presets' ? 'bg-white text-[#1E3A8A] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                ]"
+              >
+                {{ t('templates.studio.tab_presets') }}
+              </button>
+            </div>
+
+            <!-- TAB 1: TYPOGRAPHY CONTROLS -->
+            <div v-if="studioActiveTab === 'typography' && activeBox" class="space-y-4">
+              
+              <!-- 1. Khmer Font Family Selection -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-2">
+                  {{ t('templates.studio.font_family') }}
+                </label>
+                <div class="grid grid-cols-1 gap-2">
+                  <button
+                    v-for="font in FONT_OPTIONS"
+                    :key="font.id"
+                    type="button"
+                    @click="setBoxFont(font.id)"
+                    :class="[
+                      'w-full text-left p-3 rounded-xl border transition-all flex items-start justify-between cursor-pointer',
+                      activeBox.font === font.id
+                        ? 'border-[#1E3A8A] bg-blue-50/70 shadow-xs'
+                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/60'
+                    ]"
+                  >
+                    <div>
+                      <div :class="['text-sm font-bold', font.cssClass, activeBox.font === font.id ? 'text-[#1E3A8A]' : 'text-slate-800']">
+                        {{ font.nameKm }}
+                      </div>
+                      <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                        {{ locale === 'km' ? font.descKm : font.descEn }}
+                      </div>
+                    </div>
+                    <span v-if="activeBox.font === font.id" class="w-2 h-2 rounded-full bg-[#1E3A8A] mt-1 shrink-0"></span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 2. Font Size Slider & Number -->
+              <div class="pt-2 border-t border-slate-100">
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-semibold text-slate-600">
+                    {{ t('templates.studio.font_size') }}
+                  </label>
+                  <span class="text-xs font-mono font-bold text-[#1E3A8A]">{{ activeBox.size || 12 }}px</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min="10"
+                    max="28"
+                    step="1"
+                    v-model.number="activeBox.size"
+                    class="w-full accent-[#1E3A8A] cursor-pointer"
+                  />
+                  <input
+                    type="number"
+                    min="10"
+                    max="32"
+                    v-model.number="activeBox.size"
+                    class="w-16 h-9 px-2 rounded-lg border border-slate-200 text-xs text-center font-mono font-bold text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <!-- 3. Font Weight Buttons -->
+              <div class="pt-2 border-t border-slate-100">
+                <label class="block text-xs font-semibold text-slate-600 mb-2">
+                  {{ t('templates.studio.font_weight') }}
+                </label>
+                <div class="grid grid-cols-4 gap-1.5">
+                  <button
+                    type="button"
+                    @click="setBoxWeight('normal')"
+                    :class="[
+                      'py-2 px-1 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer',
+                      activeBox.weight === 'normal' || !activeBox.weight ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ]"
+                  >
+                    400 ធម្មតា
+                  </button>
+                  <button
+                    type="button"
+                    @click="setBoxWeight('medium')"
+                    :class="[
+                      'py-2 px-1 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer',
+                      activeBox.weight === 'medium' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ]"
+                  >
+                    500 មធ្យម
+                  </button>
+                  <button
+                    type="button"
+                    @click="setBoxWeight('semibold')"
+                    :class="[
+                      'py-2 px-1 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer',
+                      activeBox.weight === 'semibold' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ]"
+                  >
+                    600 ដិតល្មម
+                  </button>
+                  <button
+                    type="button"
+                    @click="setBoxWeight('bold')"
+                    :class="[
+                      'py-2 px-1 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer',
+                      activeBox.weight === 'bold' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ]"
+                  >
+                    700 ដិតខ្លាំង
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4. Text Alignment & Color -->
+              <div class="pt-2 border-t border-slate-100 grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+                    {{ t('templates.studio.text_align') }}
+                  </label>
+                  <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                    <button
+                      type="button"
+                      @click="setBoxAlign('left')"
+                      :class="['flex-1 py-1 rounded text-xs font-medium cursor-pointer', activeBox.align === 'left' ? 'bg-white shadow-xs text-[#1E3A8A]' : 'text-slate-600']"
+                      title="Left"
+                    >
+                      ឆ្វេង
+                    </button>
+                    <button
+                      type="button"
+                      @click="setBoxAlign('center')"
+                      :class="['flex-1 py-1 rounded text-xs font-medium cursor-pointer', activeBox.align === 'center' ? 'bg-white shadow-xs text-[#1E3A8A]' : 'text-slate-600']"
+                      title="Center"
+                    >
+                      កណ្តាល
+                    </button>
+                    <button
+                      type="button"
+                      @click="setBoxAlign('right')"
+                      :class="['flex-1 py-1 rounded text-xs font-medium cursor-pointer', activeBox.align === 'right' ? 'bg-white shadow-xs text-[#1E3A8A]' : 'text-slate-600']"
+                      title="Right"
+                    >
+                      ស្តាំ
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+                    {{ t('templates.studio.text_color') }}
+                  </label>
+                  <div class="flex items-center gap-1.5">
+                    <button
+                      v-for="c in ['#0F172A', '#1E3A8A', '#B45309', '#BE123C', '#475569']"
+                      :key="c"
+                      type="button"
+                      @click="setBoxColor(c)"
+                      :style="{ backgroundColor: c }"
+                      :class="[
+                        'w-7 h-7 rounded-full border-2 transition-transform cursor-pointer',
+                        activeBox.color === c ? 'border-white ring-2 ring-blue-600 scale-110' : 'border-transparent hover:scale-105'
+                      ]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Batch Action: Apply this Font to All Boxes -->
+              <div class="pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  @click="applyFontToAllBoxes(activeBox.font)"
+                  class="w-full h-10 px-4 rounded-xl border border-blue-200 bg-blue-50/70 text-[#1E3A8A] hover:bg-blue-100 font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>{{ t('templates.studio.btn_apply_all') }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB 2: APPEARANCE (BORDER & BACKGROUND) -->
+            <div v-else-if="studioActiveTab === 'appearance' && activeBox" class="space-y-4">
+              
+              <!-- Border Style -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+                  {{ t('templates.studio.border_style') }}
+                </label>
+                <div class="grid grid-cols-4 gap-1.5">
+                  <button
+                    type="button"
+                    @click="setBoxBorderStyle('none')"
+                    :class="['py-2 px-1 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer', activeBox.borderStyle === 'none' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    {{ t('templates.studio.border_none') }}
+                  </button>
+                  <button
+                    type="button"
+                    @click="setBoxBorderStyle('solid')"
+                    :class="['py-2 px-1 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer', activeBox.borderStyle === 'solid' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    {{ t('templates.studio.border_solid') }}
+                  </button>
+                  <button
+                    type="button"
+                    @click="setBoxBorderStyle('dashed')"
+                    :class="['py-2 px-1 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer', activeBox.borderStyle === 'dashed' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    {{ t('templates.studio.border_dashed') }}
+                  </button>
+                  <button
+                    type="button"
+                    @click="setBoxBorderStyle('dotted')"
+                    :class="['py-2 px-1 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer', activeBox.borderStyle === 'dotted' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    {{ t('templates.studio.border_dotted') }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Corner Radius -->
+              <div class="pt-2 border-t border-slate-100">
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+                  {{ t('templates.studio.corner_radius') }}
+                </label>
+                <div class="grid grid-cols-4 gap-1.5">
+                  <button
+                    type="button"
+                    @click="activeBox.radius = 'none'"
+                    :class="['py-1.5 px-2 rounded-lg text-xs font-medium border text-center cursor-pointer', activeBox.radius === 'none' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    0px
+                  </button>
+                  <button
+                    type="button"
+                    @click="activeBox.radius = 'lg'"
+                    :class="['py-1.5 px-2 rounded-lg text-xs font-medium border text-center cursor-pointer', activeBox.radius === 'lg' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    8px
+                  </button>
+                  <button
+                    type="button"
+                    @click="activeBox.radius = 'xl'"
+                    :class="['py-1.5 px-2 rounded-lg text-xs font-medium border text-center cursor-pointer', activeBox.radius === 'xl' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    12px
+                  </button>
+                  <button
+                    type="button"
+                    @click="activeBox.radius = '2xl'"
+                    :class="['py-1.5 px-2 rounded-lg text-xs font-medium border text-center cursor-pointer', activeBox.radius === '2xl' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    16px
+                  </button>
+                </div>
+              </div>
+
+              <!-- Box Background Fill -->
+              <div class="pt-2 border-t border-slate-100">
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+                  {{ t('templates.studio.box_bg') }}
+                </label>
+                <div class="grid grid-cols-4 gap-2">
+                  <button
+                    type="button"
+                    @click="setBoxBackground('transparent')"
+                    :class="['p-2 rounded-lg text-xs font-medium border text-center cursor-pointer', activeBox.bg === 'transparent' ? 'border-[#1E3A8A] bg-blue-50 text-[#1E3A8A] font-bold' : 'border-slate-200 text-slate-700']"
+                  >
+                    Transparent
+                  </button>
+                  <button
+                    type="button"
+                    @click="setBoxBackground('#FFFFFF')"
+                    :class="['p-2 rounded-lg text-xs font-medium border text-center cursor-pointer bg-white', activeBox.bg === '#FFFFFF' ? 'border-[#1E3A8A] ring-1 ring-[#1E3A8A] font-bold' : 'border-slate-200 text-slate-700']"
+                  >
+                    White
+                  </button>
+                  <button
+                    type="button"
+                    @click="setBoxBackground('#F8FAFC')"
+                    :class="['p-2 rounded-lg text-xs font-medium border text-center cursor-pointer bg-slate-50', activeBox.bg === '#F8FAFC' ? 'border-[#1E3A8A] ring-1 ring-[#1E3A8A] font-bold' : 'border-slate-200 text-slate-700']"
+                  >
+                    Soft Slate
+                  </button>
+                  <button
+                    type="button"
+                    @click="setBoxBackground('#FFFBEB')"
+                    :class="['p-2 rounded-lg text-xs font-medium border text-center cursor-pointer bg-amber-50', activeBox.bg === '#FFFBEB' ? 'border-[#1E3A8A] ring-1 ring-[#1E3A8A] font-bold' : 'border-slate-200 text-slate-700']"
+                  >
+                    Parchment
+                  </button>
+                </div>
+              </div>
+
+              <!-- Inner Padding -->
+              <div class="pt-2 border-t border-slate-100">
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+                  {{ t('templates.studio.padding') }}
+                </label>
+                <div class="grid grid-cols-4 gap-1.5">
+                  <button
+                    type="button"
+                    @click="activeBox.padding = 'none'"
+                    :class="['py-1.5 px-2 rounded-lg text-xs font-medium border text-center cursor-pointer', activeBox.padding === 'none' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    None
+                  </button>
+                  <button
+                    type="button"
+                    @click="activeBox.padding = 'tight'"
+                    :class="['py-1.5 px-2 rounded-lg text-xs font-medium border text-center cursor-pointer', activeBox.padding === 'tight' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    Compact
+                  </button>
+                  <button
+                    type="button"
+                    @click="activeBox.padding = 'normal'"
+                    :class="['py-1.5 px-2 rounded-lg text-xs font-medium border text-center cursor-pointer', activeBox.padding === 'normal' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    Standard
+                  </button>
+                  <button
+                    type="button"
+                    @click="activeBox.padding = 'loose'"
+                    :class="['py-1.5 px-2 rounded-lg text-xs font-medium border text-center cursor-pointer', activeBox.padding === 'loose' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'border-slate-200 text-slate-700']"
+                  >
+                    Roomy
+                  </button>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  @click="resetActiveBox"
+                  class="w-full h-10 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>{{ t('templates.studio.btn_reset_box') }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB 3: THEME PRESETS -->
+            <div v-else-if="studioActiveTab === 'presets'" class="space-y-3">
+              <div class="text-xs text-slate-500 mb-2">
+                ជ្រើសរើសកម្រងរចនាប័ទ្មពុម្ពអក្សរ និងកម្រាស់ស្ដង់ដារ ដើម្បីអនុវត្តដោយស្វ័យប្រវត្តិចំពោះប្រអប់ទាំងអស់នៃទម្រង់៖
+              </div>
+
+              <!-- Preset 1: Royal Official -->
+              <button
+                type="button"
+                @click="applyPresetTheme('royal')"
+                class="w-full p-4 rounded-xl border border-slate-200 hover:border-[#1E3A8A] hover:bg-blue-50/50 transition-all text-left group cursor-pointer"
+              >
+                <div class="text-xs font-bold text-slate-900 group-hover:text-[#1E3A8A]">
+                  {{ t('templates.studio.preset_royal') }}
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                  ចំណងជើងរដ្ឋបាលប្រើ <span class="font-bold text-slate-800">Khmer OS Moul Light</span>, ខ្លឹមសារ និងព័ត៌មានលម្អិតប្រើ <span class="font-bold text-slate-800">Khmer OS Siemreap</span>។
+                </div>
+              </button>
+
+              <!-- Preset 2: Modern Digital -->
+              <button
+                type="button"
+                @click="applyPresetTheme('modern')"
+                class="w-full p-4 rounded-xl border border-slate-200 hover:border-[#1E3A8A] hover:bg-blue-50/50 transition-all text-left group cursor-pointer"
+              >
+                <div class="text-xs font-bold text-slate-900 group-hover:text-[#1E3A8A]">
+                  {{ t('templates.studio.preset_modern') }}
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                  ចំណងជើងរដ្ឋបាលប្រើ <span class="font-bold text-slate-800">Khmer OS Moul Light</span>, ទិន្នន័យស្ដង់ដារប្រើ <span class="font-bold text-slate-800">Khmer OS Battambang</span>។
+                </div>
+              </button>
+
+              <!-- Preset 3: Archive -->
+              <button
+                type="button"
+                @click="applyPresetTheme('archive')"
+                class="w-full p-4 rounded-xl border border-slate-200 hover:border-[#1E3A8A] hover:bg-blue-50/50 transition-all text-left group cursor-pointer"
+              >
+                <div class="text-xs font-bold text-slate-900 group-hover:text-[#1E3A8A]">
+                  {{ t('templates.studio.preset_archive') }}
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                  ទម្រង់សេចក្តីចម្លងបញ្ជាក់បែបបុរាណ ប្រើប្រាស់ពុម្ពអក្សរមានជើង <span class="font-bold text-slate-800">Noto Serif Khmer</span>។
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN (7 COLS): INTERACTIVE LIVE A4 DOCUMENT CANVAS -->
+          <div class="lg:col-span-7 flex flex-col items-center justify-center">
+            
+            <div class="w-full flex items-center justify-between text-xs font-medium text-slate-500 mb-2 px-2">
+              <span>{{ t('templates.studio.sample_banner') }}</span>
+              <span>Click on any box below to inspect and style it</span>
+            </div>
+
+            <!-- A4 Document Page Canvas -->
+            <div
+              ref="canvasRef"
+              :style="{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }"
+              class="w-full max-w-[620px] aspect-[1/1.414] bg-white border border-slate-200/90 shadow-xl rounded-2xl relative select-none p-6 sm:p-8 transition-transform duration-150 overflow-hidden"
+            >
+              
+              <!-- Subtle Background Security Watermark Guilloche -->
+              <div class="absolute inset-4 rounded-xl border border-slate-100 pointer-events-none flex items-center justify-center opacity-40">
+                <div class="w-48 h-48 rounded-full border border-slate-200 flex items-center justify-center">
+                  <div class="w-36 h-36 rounded-full border border-slate-100"></div>
+                </div>
+              </div>
+
+              <!-- Top Emblem Graphic Container -->
+              <div class="text-center mb-2 pointer-events-none">
+                <div class="w-10 h-10 mx-auto rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 font-bold text-lg mb-1 shadow-xs">
+                  🇰🇭
+                </div>
+              </div>
+
+              <!-- Live Rendered Template Boxes Overlay -->
+              <div
+                v-for="box in editingTemplate.boxes"
+                :key="box.id"
+                @click="selectBox(box.id)"
+                :style="{
+                  left: `${box.x}%`,
+                  top: `${box.y}%`,
+                  width: `${box.width}%`,
+                  height: `${box.height}%`,
+                  fontSize: `${box.size || 12}px`,
+                  fontWeight: box.weight === 'bold' ? 700 : (box.weight === 'semibold' ? 600 : (box.weight === 'medium' ? 500 : 400)),
+                  color: box.color || '#0F172A',
+                  textAlign: box.align || 'left',
+                  backgroundColor: box.bg === 'transparent' ? 'transparent' : box.bg,
+                  opacity: (box.opacity || 100) / 100,
+                  borderStyle: box.borderStyle || 'none',
+                  borderWidth: `${box.borderWidth || 0}px`,
+                  borderColor: box.borderColor || '#CBD5E1',
+                }"
+                :class="[
+                  'absolute transition-all cursor-pointer flex flex-col justify-center leading-tight',
+                  getFontCssClass(box.font),
+                  box.radius === '2xl' ? 'rounded-2xl' : (box.radius === 'xl' ? 'rounded-xl' : (box.radius === 'lg' ? 'rounded-lg' : 'rounded-none')),
+                  box.padding === 'loose' ? 'p-3' : (box.padding === 'normal' ? 'p-2' : (box.padding === 'tight' ? 'px-1.5 py-0.5' : 'p-0')),
+                  selectedBoxId === box.id
+                    ? 'ring-2 ring-[#1E3A8A] ring-offset-1 z-20 shadow-md'
+                    : 'hover:ring-1 hover:ring-blue-400 z-10'
+                ]"
+              >
+                <!-- Wireframe Mode Label -->
+                <template v-if="previewMode === 'wireframe'">
+                  <div class="text-[10px] font-mono tracking-tight text-blue-900 bg-blue-100/80 px-1 py-0.5 rounded truncate">
+                    {{ box.key }}
+                  </div>
+                </template>
+
+                <!-- Real Extracted Data Mode -->
+                <template v-else>
+                  <div class="whitespace-pre-line truncate max-w-full">
+                    {{ SAMPLE_DOCUMENT_VALUES[box.key] || getFieldLabel(box.key) }}
+                  </div>
+                </template>
+
+                <!-- Active Indicator Corner Handle -->
+                <div v-if="selectedBoxId === box.id" class="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-[#1E3A8A] border-2 border-white rounded-full shadow-xs"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- FORMAT CHOICE MODAL (OLD VS NEW) -->
+      <transition
+        enter-active-class="transition duration-150 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-100 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="showFormatModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xl max-w-md w-full p-6 space-y-5">
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">{{ t('templates.format_modal.title') }}</h3>
+              <p class="text-xs text-slate-500 mt-1">{{ t('templates.format_modal.subtitle') }}</p>
+            </div>
+
+            <div class="space-y-3">
+              <!-- Choice 1: New Format -->
+              <button
+                type="button"
+                @click="createTemplateConfirmed('new')"
+                class="w-full text-left p-4 rounded-xl border border-slate-200 hover:border-[#1E3A8A] hover:bg-blue-50/50 transition-all cursor-pointer group"
+              >
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-blue-100 text-blue-900">New Standard</span>
+                  <div class="text-sm font-bold text-slate-900 group-hover:text-[#1E3A8A]">{{ t('templates.tabs.new') }}</div>
+                </div>
+                <div class="text-xs text-slate-500 leading-snug">{{ t('templates.format_modal.new_desc') }}</div>
+              </button>
+
+              <!-- Choice 2: Old Certified Format -->
+              <button
+                type="button"
+                @click="createTemplateConfirmed('old')"
+                class="w-full text-left p-4 rounded-xl border border-slate-200 hover:border-amber-600 hover:bg-amber-50/50 transition-all cursor-pointer group"
+              >
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-900">Certified Copy</span>
+                  <div class="text-sm font-bold text-slate-900 group-hover:text-amber-800">{{ t('templates.tabs.old') }}</div>
+                </div>
+                <div class="text-xs text-slate-500 leading-snug">{{ t('templates.format_modal.old_desc') }}</div>
+              </button>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button
+                type="button"
+                @click="showFormatModal = false"
+                class="h-10 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold cursor-pointer"
               >
                 {{ t('common.cancel') }}
               </button>
             </div>
-
           </div>
-
         </div>
+      </transition>
 
-      </div>
     </div>
-
   </main>
 </template>
-
-<style scoped>
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.animate-fadeIn {
-  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-</style>

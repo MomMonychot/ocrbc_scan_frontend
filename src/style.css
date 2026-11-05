@@ -64,4 +64,24 @@
     margin: 0;
     padding: 0;
   }
+
+  /* Official Khmer Font Families for Document Template Styling Studio */
+  .font-khmer-moul {
+    font-family: 'Khmer OS Moul Light', 'Khmer OS Muol', 'Moul', 'Moulpali', serif;
+  }
+  .font-khmer-siemreap {
+    font-family: 'Khmer OS Siemreap', 'Siemreap', 'Kantumruy Pro', sans-serif;
+  }
+  .font-khmer-battambang {
+    font-family: 'Khmer OS Battambang', 'Battambang', 'Kantumruy Pro', sans-serif;
+  }
+  .font-khmer-bokor {
+    font-family: 'Khmer OS Bokor', 'Bokor', cursive;
+  }
+  .font-khmer-serif {
+    font-family: 'Noto Serif Khmer', 'Khmer OS Moul Light', serif;
+  }
+  .font-khmer-sans {
+    font-family: 'Kantumruy Pro', 'Khmer OS Siemreap', system-ui, sans-serif;
+  }
 }
