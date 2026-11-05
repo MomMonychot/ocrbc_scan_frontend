@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n'
 import {
   getGeoHierarchy,
   getGeoProvinces,
+  getGeoDistricts,
+  getGeoCommunes,
   getGeoEntities,
   createGeoEntity,
   updateGeoEntity,
@@ -15,22 +17,30 @@ const { t, locale } = useI18n()
 // Summary statistics
 const hierarchyStats = ref({
   total_provinces: 25,
-  total_districts: 0,
-  total_communes: 0,
-  total_villages: 0,
+  total_districts: 132,
+  total_communes: 527,
+  total_villages: 432,
 })
 
-// Query & filtering state
-const activeLevel = ref('all') // 'all' | 'province' | 'district' | 'commune' | 'village'
-const searchQuery = ref('')
-const selectedProvinceFilter = ref('')
-const provinceList = ref([])
+// Cascading Filter Selection State
+const selectedProvince = ref('') // e.g. '14' (Prey Veng)
+const selectedDistrict = ref('') // e.g. '1401' (Ba Phnum)
+const selectedCommune = ref('')  // e.g. '140101' (Boeng Preah)
 
-// Sorting state
+// Options Lists for Cascader
+const provinceList = ref([])
+const districtList = ref([])
+const communeList = ref([])
+
+// Active Tier Tab ('all' | 'province' | 'district' | 'commune' | 'village')
+const activeLevel = ref('all')
+
+// Search & Sorting
+const searchQuery = ref('')
 const sortBy = ref('code')
 const sortOrder = ref('asc')
 
-// Pagination state
+// Pagination
 const currentPage = ref(1)
 const pageSize = ref(15)
 const totalItems = ref(0)
@@ -38,7 +48,7 @@ const totalPages = ref(1)
 const entities = ref([])
 const isLoading = ref(false)
 
-// Modals state
+// Modals
 const isEditModalOpen = ref(false)
 const isCreateModalOpen = ref(false)
 const isDeleteModalOpen = ref(false)
@@ -74,7 +84,23 @@ function showNotification(text, type = 'success') {
   }, 4000)
 }
 
-// Fetch hierarchy overview stats
+// Breadcrumb entity names computed
+const activeProvinceObj = computed(() => {
+  if (!selectedProvince.value) return null
+  return provinceList.value.find((p) => p.code === selectedProvince.value) || null
+})
+
+const activeDistrictObj = computed(() => {
+  if (!selectedDistrict.value) return null
+  return districtList.value.find((d) => d.code === selectedDistrict.value) || null
+})
+
+const activeCommuneObj = computed(() => {
+  if (!selectedCommune.value) return null
+  return communeList.value.find((c) => c.code === selectedCommune.value) || null
+})
+
+// Fetch initial metadata
 async function loadHierarchyStats() {
   try {
     const data = await getGeoHierarchy()
@@ -86,17 +112,99 @@ async function loadHierarchyStats() {
   }
 }
 
-// Fetch 25 provinces for dropdown filter
 async function loadProvinces() {
   try {
     const data = await getGeoProvinces()
     provinceList.value = data || []
   } catch (err) {
-    console.error('Failed to load provinces list:', err)
+    console.error('Failed to load provinces:', err)
   }
 }
 
-// Fetch tabular data
+// Fetch districts when province changes
+async function onProvinceSelect(provCode, autoSwitchTab = true) {
+  selectedProvince.value = provCode || ''
+  selectedDistrict.value = ''
+  selectedCommune.value = ''
+  districtList.value = []
+  communeList.value = []
+
+  if (selectedProvince.value) {
+    try {
+      const districts = await getGeoDistricts(selectedProvince.value)
+      districtList.value = districts || []
+      if (autoSwitchTab) {
+        activeLevel.value = 'district'
+      }
+    } catch (err) {
+      console.error('Failed to load districts for province:', err)
+    }
+  } else {
+    if (activeLevel.value === 'district' || activeLevel.value === 'commune' || activeLevel.value === 'village') {
+      activeLevel.value = 'province'
+    }
+  }
+
+  currentPage.value = 1
+  loadEntities()
+}
+
+// Fetch communes when district changes
+async function onDistrictSelect(distCode, autoSwitchTab = true) {
+  selectedDistrict.value = distCode || ''
+  selectedCommune.value = ''
+  communeList.value = []
+
+  if (selectedDistrict.value) {
+    try {
+      const communes = await getGeoCommunes(selectedDistrict.value)
+      communeList.value = communes || []
+      if (autoSwitchTab) {
+        activeLevel.value = 'commune'
+      }
+    } catch (err) {
+      console.error('Failed to load communes for district:', err)
+    }
+  } else {
+    if (autoSwitchTab && selectedProvince.value) {
+      activeLevel.value = 'district'
+    }
+  }
+
+  currentPage.value = 1
+  loadEntities()
+}
+
+// Select commune
+function onCommuneSelect(commCode, autoSwitchTab = true) {
+  selectedCommune.value = commCode || ''
+  if (selectedCommune.value) {
+    if (autoSwitchTab) {
+      activeLevel.value = 'village'
+    }
+  } else {
+    if (autoSwitchTab && selectedDistrict.value) {
+      activeLevel.value = 'commune'
+    }
+  }
+  currentPage.value = 1
+  loadEntities()
+}
+
+// Reset all cascading filters
+function resetCascadingFilters() {
+  selectedProvince.value = ''
+  selectedDistrict.value = ''
+  selectedCommune.value = ''
+  districtList.value = []
+  communeList.value = []
+  searchQuery.value = ''
+  activeLevel.value = 'all'
+  currentPage.value = 1
+  loadEntities()
+}
+
+// Load paginated entities with hierarchical parameters
 async function loadEntities() {
   isLoading.value = true
   try {
@@ -112,8 +220,13 @@ async function loadEntities() {
       params.search = searchQuery.value.trim()
     }
 
-    if (selectedProvinceFilter.value) {
-      params.parent_code = selectedProvinceFilter.value
+    // Apply cascading hierarchy codes
+    if (selectedCommune.value) {
+      params.commune_code = selectedCommune.value
+    } else if (selectedDistrict.value) {
+      params.district_code = selectedDistrict.value
+    } else if (selectedProvince.value) {
+      params.province_code = selectedProvince.value
     }
 
     const res = await getGeoEntities(params)
@@ -129,6 +242,42 @@ async function loadEntities() {
   }
 }
 
+// Drill-Down into children from row click
+function handleDrillDown(item) {
+  if (item.level === 'province') {
+    onProvinceSelect(item.code, true)
+  } else if (item.level === 'district') {
+    if (item.province_code && (!selectedProvince.value || selectedProvince.value !== item.province_code)) {
+      selectedProvince.value = item.province_code
+      getGeoDistricts(item.province_code).then((d) => {
+        districtList.value = d || []
+      })
+    }
+    onDistrictSelect(item.code, true)
+  } else if (item.level === 'commune') {
+    if (item.province_code && (!selectedProvince.value || selectedProvince.value !== item.province_code)) {
+      selectedProvince.value = item.province_code
+      getGeoDistricts(item.province_code).then((d) => {
+        districtList.value = d || []
+      })
+    }
+    if (item.district_code && (!selectedDistrict.value || selectedDistrict.value !== item.district_code)) {
+      selectedDistrict.value = item.district_code
+      getGeoCommunes(item.district_code).then((c) => {
+        communeList.value = c || []
+      })
+    }
+    onCommuneSelect(item.code, true)
+  }
+}
+
+// Tab selection
+function selectLevelTab(lvl) {
+  activeLevel.value = lvl
+  currentPage.value = 1
+  loadEntities()
+}
+
 // Sort handler
 function handleSort(column) {
   if (sortBy.value === column) {
@@ -141,7 +290,7 @@ function handleSort(column) {
   loadEntities()
 }
 
-// Debounce search
+// Search debounce
 let searchDebounceTimeout = null
 function onSearchInput() {
   clearTimeout(searchDebounceTimeout)
@@ -153,17 +302,6 @@ function onSearchInput() {
 
 function clearSearch() {
   searchQuery.value = ''
-  currentPage.value = 1
-  loadEntities()
-}
-
-function selectLevelTab(lvl) {
-  activeLevel.value = lvl
-  currentPage.value = 1
-  loadEntities()
-}
-
-function onProvinceFilterChange() {
   currentPage.value = 1
   loadEntities()
 }
@@ -180,7 +318,7 @@ function goToPage(p) {
   }
 }
 
-// Edit Modal Handlers
+// Edit Modal
 function openEditModal(item) {
   currentEditingEntity.value = item
   editForm.value = {
@@ -220,15 +358,24 @@ async function handleUpdateSubmit() {
   }
 }
 
-// Create Modal Handlers
+// Create Modal
 function openCreateModal() {
+  let defaultParent = ''
+  if (selectedCommune.value) {
+    defaultParent = selectedCommune.value
+  } else if (selectedDistrict.value) {
+    defaultParent = selectedDistrict.value
+  } else if (selectedProvince.value) {
+    defaultParent = selectedProvince.value
+  }
+
   createForm.value = {
     level: activeLevel.value === 'all' ? 'village' : activeLevel.value,
     code: '',
     name_km: '',
     name_en: '',
     type: '',
-    parent_code: selectedProvinceFilter.value || '',
+    parent_code: defaultParent,
   }
   isCreateModalOpen.value = true
 }
@@ -262,7 +409,7 @@ async function handleCreateSubmit() {
   }
 }
 
-// Delete Modal Handlers
+// Delete Modal
 function openDeleteModal(item) {
   currentDeletingEntity.value = item
   isDeleteModalOpen.value = true
@@ -402,10 +549,13 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Overview Quick-Stat Metric Cards -->
+      <!-- Quick-Stat Metric Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- 1. Provinces Card -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
+        <div
+          @click="selectLevelTab('province')"
+          class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:border-[#1E3A8A] hover:shadow-sm transition-all cursor-pointer"
+        >
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ t('divisions.stat_provinces') }}</span>
             <div class="w-8 h-8 rounded-lg bg-blue-50 text-[#1E3A8A] flex items-center justify-center font-bold text-xs">
@@ -418,7 +568,10 @@ onMounted(() => {
         </div>
 
         <!-- 2. Districts Card -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
+        <div
+          @click="selectLevelTab('district')"
+          class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:border-indigo-600 hover:shadow-sm transition-all cursor-pointer"
+        >
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ t('divisions.stat_districts') }}</span>
             <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center">
@@ -433,7 +586,10 @@ onMounted(() => {
         </div>
 
         <!-- 3. Communes Card -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
+        <div
+          @click="selectLevelTab('commune')"
+          class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:border-teal-600 hover:shadow-sm transition-all cursor-pointer"
+        >
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ t('divisions.stat_communes') }}</span>
             <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center">
@@ -448,7 +604,10 @@ onMounted(() => {
         </div>
 
         <!-- 4. Villages Card -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
+        <div
+          @click="selectLevelTab('village')"
+          class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:border-emerald-600 hover:shadow-sm transition-all cursor-pointer"
+        >
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ t('divisions.stat_villages') }}</span>
             <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
@@ -463,10 +622,172 @@ onMounted(() => {
         </div>
       </div>
 
+      <!-- ============================================================= -->
+      <!-- HIERARCHICAL DRILL-DOWN CASCADING FILTER CONTROLS              -->
+      <!-- ============================================================= -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs space-y-4">
+        
+        <!-- Interactive Hierarchical Breadcrumb Trail -->
+        <div class="flex items-center justify-between flex-wrap gap-2 text-xs font-medium pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <!-- Root Level: Cambodia -->
+            <button
+              type="button"
+              @click="resetCascadingFilters"
+              :class="[
+                'px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer',
+                !selectedProvince ? 'bg-blue-50 text-[#1E3A8A] font-bold' : 'text-slate-600 hover:bg-slate-100'
+              ]"
+            >
+              <span>🇰🇭</span>
+              <span>{{ t('divisions.breadcrumb_all') }}</span>
+            </button>
+
+            <!-- Province Level -->
+            <template v-if="activeProvinceObj">
+              <span class="text-slate-400">/</span>
+              <button
+                type="button"
+                @click="onDistrictSelect('')"
+                :class="[
+                  'px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer',
+                  selectedProvince && !selectedDistrict ? 'bg-blue-50 text-[#1E3A8A] font-bold' : 'text-slate-600 hover:bg-slate-100'
+                ]"
+              >
+                <span>📍</span>
+                <span>{{ activeProvinceObj.name_km }}</span>
+                <span class="text-[10px] text-slate-400">({{ districtList.length }} ស្រុក)</span>
+              </button>
+            </template>
+
+            <!-- District Level -->
+            <template v-if="activeDistrictObj">
+              <span class="text-slate-400">/</span>
+              <button
+                type="button"
+                @click="onCommuneSelect('')"
+                :class="[
+                  'px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer',
+                  selectedDistrict && !selectedCommune ? 'bg-indigo-50 text-indigo-900 font-bold' : 'text-slate-600 hover:bg-slate-100'
+                ]"
+              >
+                <span>🏢</span>
+                <span>{{ activeDistrictObj.name_km }}</span>
+                <span class="text-[10px] text-slate-400">({{ communeList.length }} ឃុំ)</span>
+              </button>
+            </template>
+
+            <!-- Commune Level -->
+            <template v-if="activeCommuneObj">
+              <span class="text-slate-400">/</span>
+              <div class="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-900 font-bold flex items-center gap-1.5">
+                <span>🌾</span>
+                <span>{{ activeCommuneObj.name_km }}</span>
+              </div>
+            </template>
+          </div>
+
+          <!-- Reset Filter Button -->
+          <button
+            v-if="selectedProvince || selectedDistrict || selectedCommune || searchQuery"
+            type="button"
+            @click="resetCascadingFilters"
+            class="text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 transition-colors flex items-center gap-1 cursor-pointer"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>{{ t('divisions.btn_reset_filters') }}</span>
+          </button>
+        </div>
+
+        <!-- 3-Step Cascading Dropdown Selectors -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- 1. Province Selector -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">
+              {{ t('divisions.filter_province') }} (25)
+            </label>
+            <select
+              :value="selectedProvince"
+              @change="onProvinceSelect($event.target.value)"
+              class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs cursor-pointer"
+            >
+              <option value="">{{ t('divisions.filter_all_provinces') }}</option>
+              <option
+                v-for="prov in provinceList"
+                :key="prov.code"
+                :value="prov.code"
+              >
+                {{ prov.name_km }} ({{ prov.name_en }})
+              </option>
+            </select>
+          </div>
+
+          <!-- 2. District Selector (Enabled when Province Selected) -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">
+              {{ t('divisions.filter_district') }}
+            </label>
+            <select
+              :value="selectedDistrict"
+              :disabled="!selectedProvince"
+              @change="onDistrictSelect($event.target.value)"
+              :class="[
+                'w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs',
+                selectedProvince
+                  ? 'bg-white text-slate-800 cursor-pointer'
+                  : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+              ]"
+            >
+              <option value="">
+                {{ selectedProvince ? t('divisions.filter_all_districts') : '(Select Province First)' }}
+              </option>
+              <option
+                v-for="dist in districtList"
+                :key="dist.code"
+                :value="dist.code"
+              >
+                {{ dist.name_km }} ({{ dist.name_en }})
+              </option>
+            </select>
+          </div>
+
+          <!-- 3. Commune Selector (Enabled when District Selected) -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">
+              {{ t('divisions.filter_commune') }}
+            </label>
+            <select
+              :value="selectedCommune"
+              :disabled="!selectedDistrict"
+              @change="onCommuneSelect($event.target.value)"
+              :class="[
+                'w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs',
+                selectedDistrict
+                  ? 'bg-white text-slate-800 cursor-pointer'
+                  : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+              ]"
+            >
+              <option value="">
+                {{ selectedDistrict ? t('divisions.filter_all_communes') : '(Select District First)' }}
+              </option>
+              <option
+                v-for="comm in communeList"
+                :key="comm.code"
+                :value="comm.code"
+              >
+                {{ comm.name_km }} ({{ comm.name_en }})
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- Main Data Table Container -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         
-        <!-- Tier Navigation Tabs -->
+        <!-- Tier Navigation Tabs (Retained as requested) -->
         <div class="px-6 pt-5 pb-3 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-xl overflow-x-auto">
             <button
@@ -537,7 +858,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Search & Filter Controls Bar -->
+        <!-- Search Bar & Rows Selector -->
         <div class="p-6 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
           <!-- Search Input with Clear Button -->
           <div class="relative w-full md:w-96">
@@ -565,33 +886,18 @@ onMounted(() => {
             </button>
           </div>
 
-          <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-            <!-- Province Filter Dropdown -->
-            <select
-              v-model="selectedProvinceFilter"
-              @change="onProvinceFilterChange"
-              class="h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs cursor-pointer"
-            >
-              <option value="">{{ t('divisions.filter_all_provinces') }}</option>
-              <option
-                v-for="prov in provinceList"
-                :key="prov.code"
-                :value="prov.code"
-              >
-                {{ prov.name_km }} ({{ prov.name_en }})
-              </option>
-            </select>
-
-            <!-- Page Size Dropdown -->
+          <!-- Rows per page -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500 font-medium">{{ t('divisions.pagination.rows_per_page') }}:</span>
             <select
               v-model="pageSize"
               @change="onPageSizeChange"
-              class="h-10 px-3 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs cursor-pointer"
+              class="h-10 px-3 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs cursor-pointer font-medium"
             >
-              <option :value="10">10 / page</option>
-              <option :value="15">15 / page</option>
-              <option :value="25">25 / page</option>
-              <option :value="50">50 / page</option>
+              <option :value="10">10</option>
+              <option :value="15">15</option>
+              <option :value="25">25</option>
+              <option :value="50">50</option>
             </select>
           </div>
         </div>
@@ -692,16 +998,31 @@ onMounted(() => {
                 v-else
                 v-for="item in entities"
                 :key="item.code"
-                class="hover:bg-slate-50/70 transition-colors group"
+                class="hover:bg-slate-50/80 transition-colors group"
               >
                 <!-- NIS Code -->
                 <td class="py-4 px-6 font-mono font-semibold text-slate-900">
                   {{ item.code }}
                 </td>
 
-                <!-- Khmer Name -->
-                <td class="py-4 px-6 font-medium text-slate-900 text-sm">
-                  {{ item.name_km }}
+                <!-- Khmer Name with Drill-Down Action Link -->
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-2">
+                    <span class="font-medium text-slate-900 text-sm">{{ item.name_km }}</span>
+                    <!-- Drill Down Link if Province/District/Commune -->
+                    <button
+                      v-if="item.level !== 'village'"
+                      type="button"
+                      @click.stop="handleDrillDown(item)"
+                      class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#1E3A8A] hover:underline bg-blue-50/70 hover:bg-blue-100/70 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
+                      :title="item.level === 'province' ? t('divisions.view_children_districts') : item.level === 'district' ? t('divisions.view_children_communes') : t('divisions.view_children_villages')"
+                    >
+                      <span>{{ item.level === 'province' ? t('divisions.view_children_districts') : item.level === 'district' ? t('divisions.view_children_communes') : t('divisions.view_children_villages') }}</span>
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
                 </td>
 
                 <!-- Latin Name -->
@@ -970,7 +1291,7 @@ onMounted(() => {
                 v-model="createForm.code"
                 required
                 class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
-                placeholder="e.g. 12010103"
+                placeholder="e.g. 14010103"
               />
             </div>
 
