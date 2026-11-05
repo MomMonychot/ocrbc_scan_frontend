@@ -2,6 +2,8 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import BaseDropdownSelect from '../components/BaseDropdownSelect.vue'
+import BaseDropdownMenu from '../components/BaseDropdownMenu.vue'
 
 const { t, locale } = useI18n()
 const router = useRouter()
@@ -243,6 +245,17 @@ function getFontDef(fontId) {
 function getFontCssClass(fontId) {
   return getFontDef(fontId).cssClass
 }
+
+// Studio Box Dropdown Options
+const studioBoxOptions = computed(() => {
+  if (!editingTemplate.value?.boxes) return []
+  return editingTemplate.value.boxes.map(b => ({
+    value: b.key,
+    label: getFieldLabel(b.key),
+    sublabel: `${getFontDef(b.font).nameKm} • ${b.size}px`,
+    badge: b.weight
+  }))
+})
 
 // -------------------------------------------------------------
 // Studio Actions & Box Typography Controls
@@ -524,53 +537,52 @@ function getTypographySummary(tpl) {
             </p>
           </div>
 
-          <!-- Add Template Button Group -->
-          <div class="relative shrink-0">
-            <button
-              type="button"
-              @click="isAddDropdownOpen = !isAddDropdownOpen"
-              class="h-11 min-h-[44px] px-5 flex items-center justify-center gap-2 text-sm font-medium tracking-wide transition-all duration-200 rounded-xl bg-[#1E3A8A] hover:bg-blue-950 text-white shadow-sm hover:shadow-md active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600 outline-none cursor-pointer select-none"
-            >
+          <!-- Standard Add Template Dropdown Button -->
+          <BaseDropdownMenu
+            :buttonText="t('templates.btn_add')"
+            variant="primary"
+            align="right"
+            menuWidth="w-80"
+          >
+            <template #icon>
               <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
-              <span>{{ t('templates.btn_add') }}</span>
-              <svg :class="['w-3.5 h-3.5 transition-transform duration-200 opacity-80', isAddDropdownOpen ? 'rotate-180' : '']" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            <!-- Dropdown Menu -->
-            <transition
-              enter-active-class="transition duration-150 ease-out"
-              enter-from-class="transform scale-95 opacity-0 -translate-y-1"
-              enter-to-class="transform scale-100 opacity-100 translate-y-0"
-              leave-active-class="transition duration-100 ease-in"
-              leave-from-class="transform scale-100 opacity-100 translate-y-0"
-              leave-to-class="transform scale-95 opacity-0 -translate-y-1"
-            >
-              <div
-                v-if="isAddDropdownOpen"
-                class="absolute right-0 mt-2 w-72 rounded-2xl bg-white border border-slate-200/90 shadow-xl p-2 z-30 space-y-1"
+            </template>
+            <template #default="{ close }">
+              <button
+                type="button"
+                @click="openFormatSelection('blank'); close()"
+                class="w-full text-left p-3 rounded-xl hover:bg-blue-50/70 border border-transparent hover:border-blue-100 transition-colors flex items-start gap-3 cursor-pointer group"
               >
-                <button
-                  type="button"
-                  @click="openFormatSelection('blank')"
-                  class="w-full text-left p-3 rounded-xl hover:bg-blue-50/70 border border-transparent hover:border-blue-100 transition-colors flex items-start gap-3 cursor-pointer"
-                >
-                  <div class="w-9 h-9 rounded-lg bg-blue-100 text-[#1E3A8A] flex items-center justify-center shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900">{{ t('templates.choice_existing') }}</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">{{ t('templates.choice_existing_desc') }}</div>
-                  </div>
-                </button>
-              </div>
-            </transition>
-          </div>
+                <div class="w-9 h-9 rounded-xl bg-blue-100 text-[#1E3A8A] group-hover:bg-[#1E3A8A] group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-slate-900 group-hover:text-[#1E3A8A]">{{ t('templates.choice_existing') }}</div>
+                  <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">{{ t('templates.choice_existing_desc') }}</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                @click="openFormatSelection('computer'); close()"
+                class="w-full text-left p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-100 transition-colors flex items-start gap-3 cursor-pointer group"
+              >
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 group-hover:bg-emerald-700 group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-slate-900 group-hover:text-emerald-800">{{ t('templates.choice_computer') }}</div>
+                  <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">{{ t('templates.choice_computer_desc') }}</div>
+                </div>
+              </button>
+            </template>
+          </BaseDropdownMenu>
         </div>
 
         <!-- 4 Top Standard Metric Panels -->
@@ -917,15 +929,14 @@ function getTypographySummary(tpl) {
               <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
                 {{ t('templates.studio.field_select') }}
               </label>
-              <select
-                :value="activeBox ? activeBox.key : ''"
-                @change="selectBoxByKey($event.target.value)"
-                class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] shadow-xs cursor-pointer"
-              >
-                <option v-for="b in editingTemplate.boxes" :key="b.id" :value="b.key">
-                  {{ getFieldLabel(b.key) }} ({{ getFontDef(b.font).nameEn }})
-                </option>
-              </select>
+              <BaseDropdownSelect
+                :modelValue="activeBox ? activeBox.key : ''"
+                @update:modelValue="selectBoxByKey($event)"
+                :options="studioBoxOptions"
+                prefixIcon="type"
+                :searchable="true"
+                searchPlaceholder="ស្វែងរកឈ្មោះប្រអប់វាល (Search field)..."
+              />
             </div>
 
             <!-- Control Tabs -->

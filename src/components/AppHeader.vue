@@ -27,12 +27,20 @@ function handleDocumentClick(event) {
   }
 }
 
+function handleKeyDown(event) {
+  if (event.key === 'Escape') {
+    closeMenus()
+  }
+}
+
 onMounted(() => {
   document.addEventListener('click', handleDocumentClick)
+  document.addEventListener('keydown', handleKeyDown)
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', handleDocumentClick)
+  document.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 
@@ -56,11 +64,11 @@ onUnmounted(() => {
         </router-link>
 
         <!-- Navigation Links with Fixed Heights (Desktop) -->
-        <nav class="hidden lg:flex items-center gap-1 pl-4 border-l border-slate-200 text-xs font-semibold shrink-0">
+        <nav class="hidden lg:flex items-center gap-1.5 pl-4 border-l border-slate-200 text-xs font-semibold shrink-0">
           <router-link
             to="/"
-            active-class="bg-blue-50 text-gov-primary font-bold"
-            class="h-9 px-3.5 rounded-lg text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center whitespace-nowrap"
+            active-class="bg-blue-50 text-gov-primary font-bold shadow-2xs"
+            class="h-10 px-3.5 rounded-xl text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center whitespace-nowrap active:scale-[0.98]"
             @click="closeMenus"
           >
             {{ t('nav.home') }}
@@ -68,8 +76,8 @@ onUnmounted(() => {
 
           <router-link
             to="/dashboard"
-            active-class="bg-blue-50 text-gov-primary font-bold"
-            class="h-9 px-3.5 rounded-lg text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+            active-class="bg-blue-50 text-gov-primary font-bold shadow-2xs"
+            class="h-10 px-3.5 rounded-xl text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-[0.98]"
             @click="closeMenus"
           >
             <span>{{ t('nav.dashboard') }}</span>
@@ -77,8 +85,8 @@ onUnmounted(() => {
 
           <router-link
             to="/verify"
-            active-class="bg-blue-50 text-gov-primary font-bold"
-            class="h-9 px-3.5 rounded-lg text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+            active-class="bg-blue-50 text-gov-primary font-bold shadow-2xs"
+            class="h-10 px-3.5 rounded-xl text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-[0.98]"
             @click="closeMenus"
           >
             <span>{{ t('nav.verify') }}</span>
@@ -87,8 +95,8 @@ onUnmounted(() => {
 
           <router-link
             to="/templates"
-            active-class="bg-blue-50 text-gov-primary font-bold"
-            class="h-9 px-3.5 rounded-lg text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+            active-class="bg-blue-50 text-gov-primary font-bold shadow-2xs"
+            class="h-10 px-3.5 rounded-xl text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-[0.98]"
             @click="closeMenus"
           >
             <span>{{ t('nav.templates') }}</span>
@@ -96,8 +104,8 @@ onUnmounted(() => {
 
           <router-link
             to="/divisions"
-            active-class="bg-blue-50 text-gov-primary font-bold"
-            class="h-9 px-3.5 rounded-lg text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+            active-class="bg-blue-50 text-gov-primary font-bold shadow-2xs"
+            class="h-10 px-3.5 rounded-xl text-slate-600 hover:text-gov-primary hover:bg-slate-50 transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-[0.98]"
             @click="closeMenus"
           >
             <span>{{ t('nav.divisions') }}</span>
@@ -109,9 +117,10 @@ onUnmounted(() => {
               type="button"
               @click.stop="toggleAboutMenu"
               :class="[
-                'h-9 px-3.5 rounded-lg transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap select-none',
+                'h-10 px-3.5 rounded-xl transition-all duration-150 inline-flex items-center justify-center gap-1.5 whitespace-nowrap select-none outline-none cursor-pointer',
+                'active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600',
                 route.path === '/about' || isAboutMenuOpen
-                  ? 'bg-blue-50 text-gov-primary font-bold'
+                  ? 'bg-blue-50 text-gov-primary font-bold shadow-2xs'
                   : 'text-slate-600 hover:text-gov-primary hover:bg-slate-50'
               ]"
               aria-haspopup="true"
@@ -119,12 +128,12 @@ onUnmounted(() => {
             >
               <span>{{ t('nav.about') }}</span>
               <svg
-                :class="['w-3.5 h-3.5 transition-transform duration-200 text-slate-400', isAboutMenuOpen ? 'rotate-180 text-gov-primary' : '']"
+                :class="['w-4 h-4 transition-transform duration-200 text-slate-400 shrink-0', isAboutMenuOpen ? 'rotate-180 text-gov-primary' : '']"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
@@ -139,22 +148,22 @@ onUnmounted(() => {
             >
               <div
                 v-if="isAboutMenuOpen"
-                class="absolute left-0 mt-2 w-72 rounded-2xl bg-white shadow-gov-lg border border-slate-200 py-2 z-50 text-xs"
+                class="absolute left-0 mt-2 w-72 rounded-2xl bg-white shadow-xl border border-slate-200/90 p-2 z-50 text-xs space-y-1"
               >
                 <!-- 1. About Us (Overview) -->
                 <router-link
                   to="/about?section=overview"
                   @click="closeMenus"
-                  class="flex items-center gap-3 px-3.5 py-2.5 hover:bg-blue-50 text-slate-700 hover:text-gov-primary transition-colors group"
+                  class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50/70 border border-transparent hover:border-blue-100/50 text-slate-700 hover:text-gov-primary transition-colors group"
                 >
-                  <div class="w-7 h-7 rounded-lg bg-blue-50 text-gov-primary group-hover:bg-gov-primary group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+                  <div class="w-8 h-8 rounded-lg bg-blue-50 text-gov-primary group-hover:bg-gov-primary group-hover:text-white flex items-center justify-center transition-colors shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div>
                     <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.about') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.about') }}</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">{{ t('nav.subtitles.about') }}</div>
                   </div>
                 </router-link>
 
@@ -164,16 +173,16 @@ onUnmounted(() => {
                 <router-link
                   to="/about?section=goal"
                   @click="closeMenus"
-                  class="flex items-center gap-3 px-3.5 py-2 hover:bg-blue-50 text-slate-700 hover:text-gov-primary transition-colors group"
+                  class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-100/50 text-slate-700 hover:text-emerald-800 transition-colors group"
                 >
-                  <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center transition-colors shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div>
-                    <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.goal') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.goal') }}</div>
+                    <div class="font-bold text-slate-900 group-hover:text-emerald-800">{{ t('nav.goal') }}</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">{{ t('nav.subtitles.goal') }}</div>
                   </div>
                 </router-link>
 
@@ -181,17 +190,17 @@ onUnmounted(() => {
                 <router-link
                   to="/about?section=vision"
                   @click="closeMenus"
-                  class="flex items-center gap-3 px-3.5 py-2 hover:bg-blue-50 text-slate-700 hover:text-gov-primary transition-colors group"
+                  class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-indigo-50/70 border border-transparent hover:border-indigo-100/50 text-slate-700 hover:text-indigo-800 transition-colors group"
                 >
-                  <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+                  <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white flex items-center justify-center transition-colors shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                   </div>
                   <div>
-                    <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.vision') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.vision') }}</div>
+                    <div class="font-bold text-slate-900 group-hover:text-indigo-800">{{ t('nav.vision') }}</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">{{ t('nav.subtitles.vision') }}</div>
                   </div>
                 </router-link>
 
@@ -199,16 +208,16 @@ onUnmounted(() => {
                 <router-link
                   to="/about?section=mission"
                   @click="closeMenus"
-                  class="flex items-center gap-3 px-3.5 py-2 hover:bg-blue-50 text-slate-700 hover:text-gov-primary transition-colors group"
+                  class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-amber-50/70 border border-transparent hover:border-amber-100/50 text-slate-700 hover:text-amber-800 transition-colors group"
                 >
-                  <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+                  <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white flex items-center justify-center transition-colors shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
                   <div>
-                    <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.mission') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.mission') }}</div>
+                    <div class="font-bold text-slate-900 group-hover:text-amber-800">{{ t('nav.mission') }}</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">{{ t('nav.subtitles.mission') }}</div>
                   </div>
                 </router-link>
 
@@ -216,16 +225,16 @@ onUnmounted(() => {
                 <router-link
                   to="/about?section=policies"
                   @click="closeMenus"
-                  class="flex items-center gap-3 px-3.5 py-2 hover:bg-blue-50 text-slate-700 hover:text-gov-primary transition-colors group"
+                  class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50/70 border border-transparent hover:border-blue-100/50 text-slate-700 hover:text-gov-primary transition-colors group"
                 >
-                  <div class="w-7 h-7 rounded-lg bg-blue-50 text-gov-primary group-hover:bg-gov-primary group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+                  <div class="w-8 h-8 rounded-lg bg-blue-50 text-gov-primary group-hover:bg-gov-primary group-hover:text-white flex items-center justify-center transition-colors shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                   </div>
                   <div>
                     <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.policies') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.policies') }}</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">{{ t('nav.subtitles.policies') }}</div>
                   </div>
                 </router-link>
 
@@ -233,16 +242,16 @@ onUnmounted(() => {
                 <router-link
                   to="/about?section=rules"
                   @click="closeMenus"
-                  class="flex items-center gap-3 px-3.5 py-2 hover:bg-blue-50 text-slate-700 hover:text-gov-primary transition-colors group"
+                  class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-rose-50/70 border border-transparent hover:border-rose-100/50 text-slate-700 hover:text-rose-700 transition-colors group"
                 >
-                  <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 group-hover:bg-rose-600 group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+                  <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 group-hover:bg-rose-600 group-hover:text-white flex items-center justify-center transition-colors shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
                   <div>
-                    <div class="font-bold text-slate-900 group-hover:text-gov-primary">{{ t('nav.rules') }}</div>
-                    <div class="text-[10px] text-slate-500 font-normal">{{ t('nav.subtitles.rules') }}</div>
+                    <div class="font-bold text-slate-900 group-hover:text-rose-700">{{ t('nav.rules') }}</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">{{ t('nav.subtitles.rules') }}</div>
                   </div>
                 </router-link>
               </div>

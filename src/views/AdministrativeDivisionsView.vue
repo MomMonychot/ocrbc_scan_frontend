@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import BaseDropdownSelect from '../components/BaseDropdownSelect.vue'
 import {
   getGeoHierarchy,
   getGeoProvinces,
@@ -31,6 +32,44 @@ const selectedCommune = ref('')  // e.g. '140101' (Boeng Preah)
 const provinceList = ref([])
 const districtList = ref([])
 const communeList = ref([])
+
+// Dropdown options formatted for BaseDropdownSelect
+const provinceDropdownOptions = computed(() => [
+  { value: '', label: t('divisions.filter_all_provinces'), sublabel: '25 Provinces / Capitals' },
+  ...provinceList.value.map(p => ({
+    value: p.code,
+    label: p.name_km,
+    sublabel: p.name_en,
+    badge: p.code
+  }))
+])
+
+const districtDropdownOptions = computed(() => [
+  { value: '', label: selectedProvince.value ? t('divisions.filter_all_districts') : '(Select Province First)', sublabel: '' },
+  ...districtList.value.map(d => ({
+    value: d.code,
+    label: d.name_km,
+    sublabel: d.name_en,
+    badge: d.code
+  }))
+])
+
+const communeDropdownOptions = computed(() => [
+  { value: '', label: selectedDistrict.value ? t('divisions.filter_all_communes') : '(Select District First)', sublabel: '' },
+  ...communeList.value.map(c => ({
+    value: c.code,
+    label: c.name_km,
+    sublabel: c.name_en,
+    badge: c.code
+  }))
+])
+
+const levelOptions = computed(() => [
+  { value: 'province', label: t('divisions.tabs.province'), sublabel: 'Level 1' },
+  { value: 'district', label: t('divisions.tabs.district'), sublabel: 'Level 2' },
+  { value: 'commune', label: t('divisions.tabs.commune'), sublabel: 'Level 3' },
+  { value: 'village', label: t('divisions.tabs.village'), sublabel: 'Level 4' }
+])
 
 // Active Tier Tab ('all' | 'province' | 'district' | 'commune' | 'village')
 const activeLevel = ref('all')
@@ -708,20 +747,17 @@ onMounted(() => {
             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">
               {{ t('divisions.filter_province') }} (25)
             </label>
-            <select
-              :value="selectedProvince"
-              @change="onProvinceSelect($event.target.value)"
-              class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs cursor-pointer"
-            >
-              <option value="">{{ t('divisions.filter_all_provinces') }}</option>
-              <option
-                v-for="prov in provinceList"
-                :key="prov.code"
-                :value="prov.code"
-              >
-                {{ prov.name_km }} ({{ prov.name_en }})
-              </option>
-            </select>
+            <BaseDropdownSelect
+              :modelValue="selectedProvince"
+              @update:modelValue="onProvinceSelect($event)"
+              :options="provinceDropdownOptions"
+              :placeholder="t('divisions.filter_all_provinces')"
+              prefixIcon="map-pin"
+              :searchable="true"
+              size="compact"
+              :clearable="true"
+              searchPlaceholder="ស្វែងរកខេត្ត/រាជធានី (Search province)..."
+            />
           </div>
 
           <!-- 2. District Selector (Enabled when Province Selected) -->
@@ -729,28 +765,18 @@ onMounted(() => {
             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">
               {{ t('divisions.filter_district') }}
             </label>
-            <select
-              :value="selectedDistrict"
+            <BaseDropdownSelect
+              :modelValue="selectedDistrict"
+              @update:modelValue="onDistrictSelect($event)"
+              :options="districtDropdownOptions"
               :disabled="!selectedProvince"
-              @change="onDistrictSelect($event.target.value)"
-              :class="[
-                'w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs',
-                selectedProvince
-                  ? 'bg-white text-slate-800 cursor-pointer'
-                  : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-              ]"
-            >
-              <option value="">
-                {{ selectedProvince ? t('divisions.filter_all_districts') : '(Select Province First)' }}
-              </option>
-              <option
-                v-for="dist in districtList"
-                :key="dist.code"
-                :value="dist.code"
-              >
-                {{ dist.name_km }} ({{ dist.name_en }})
-              </option>
-            </select>
+              :placeholder="selectedProvince ? t('divisions.filter_all_districts') : '(Select Province First)'"
+              prefixIcon="building"
+              :searchable="true"
+              size="compact"
+              :clearable="true"
+              searchPlaceholder="ស្វែងរកស្រុក/ខណ្ឌ (Search district)..."
+            />
           </div>
 
           <!-- 3. Commune Selector (Enabled when District Selected) -->
@@ -758,28 +784,18 @@ onMounted(() => {
             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">
               {{ t('divisions.filter_commune') }}
             </label>
-            <select
-              :value="selectedCommune"
+            <BaseDropdownSelect
+              :modelValue="selectedCommune"
+              @update:modelValue="onCommuneSelect($event)"
+              :options="communeDropdownOptions"
               :disabled="!selectedDistrict"
-              @change="onCommuneSelect($event.target.value)"
-              :class="[
-                'w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs',
-                selectedDistrict
-                  ? 'bg-white text-slate-800 cursor-pointer'
-                  : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-              ]"
-            >
-              <option value="">
-                {{ selectedDistrict ? t('divisions.filter_all_communes') : '(Select District First)' }}
-              </option>
-              <option
-                v-for="comm in communeList"
-                :key="comm.code"
-                :value="comm.code"
-              >
-                {{ comm.name_km }} ({{ comm.name_en }})
-              </option>
-            </select>
+              :placeholder="selectedDistrict ? t('divisions.filter_all_communes') : '(Select District First)'"
+              prefixIcon="home"
+              :searchable="true"
+              size="compact"
+              :clearable="true"
+              searchPlaceholder="ស្វែងរកឃុំ/សង្កាត់ (Search commune)..."
+            />
           </div>
         </div>
       </div>
@@ -887,18 +903,21 @@ onMounted(() => {
           </div>
 
           <!-- Rows per page -->
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2.5">
             <span class="text-xs text-slate-500 font-medium">{{ t('divisions.pagination.rows_per_page') }}:</span>
-            <select
-              v-model="pageSize"
-              @change="onPageSizeChange"
-              class="h-10 px-3 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all shadow-xs cursor-pointer font-medium"
-            >
-              <option :value="10">10</option>
-              <option :value="15">15</option>
-              <option :value="25">25</option>
-              <option :value="50">50</option>
-            </select>
+            <div class="w-24">
+              <BaseDropdownSelect
+                v-model="pageSize"
+                @change="onPageSizeChange"
+                :options="[
+                  { value: 10, label: '10' },
+                  { value: 15, label: '15' },
+                  { value: 25, label: '25' },
+                  { value: 50, label: '50' }
+                ]"
+                size="compact"
+              />
+            </div>
           </div>
         </div>
 
@@ -1255,16 +1274,12 @@ onMounted(() => {
               <label class="block text-xs font-semibold text-slate-700 mb-1">
                 {{ t('divisions.form.level') }} *
               </label>
-              <select
+              <BaseDropdownSelect
                 v-model="createForm.level"
-                required
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
-              >
-                <option value="province">{{ t('divisions.tabs.province') }}</option>
-                <option value="district">{{ t('divisions.tabs.district') }}</option>
-                <option value="commune">{{ t('divisions.tabs.commune') }}</option>
-                <option value="village">{{ t('divisions.tabs.village') }}</option>
-              </select>
+                :options="levelOptions"
+                prefixIcon="layers"
+                placeholder="ជ្រើសរើសថ្នាក់រដ្ឋបាល..."
+              />
             </div>
 
             <!-- Parent Code (if not province) -->
