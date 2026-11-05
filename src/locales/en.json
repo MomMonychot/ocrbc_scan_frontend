@@ -8,6 +8,7 @@
   },
   "nav": {
     "home": "Home",
+    "dashboard": "Dashboard",
     "verify": "Document Verification",
     "about": "About Us",
     "goal": "Goal",
@@ -323,5 +324,70 @@
     "khmer": "ភាសាខ្មែរ",
     "status_operational": "System Operational",
     "confidentiality_notice": "Official District Administrative System. All operations comply with national civil registration privacy protocols."
+  },
+  "dashboard": {
+    "title": "Municipal Verification & OCR Audit Dashboard",
+    "subtitle": "Real-time document intake monitoring, optical extraction accuracy benchmarks, and zero-data-retention queue resolution.",
+    "timeframe": {
+      "today": "Today",
+      "week": "This Week",
+      "month": "This Month"
+    },
+    "btn_refresh": "Refresh",
+    "btn_export_log": "Export Audit Log",
+    "kpi": {
+      "total_ingested": "Total Ingested Documents",
+      "accuracy_rate": "Extraction Accuracy Rate",
+      "pending_review": "Pending Officer Review",
+      "zdr_latency": "ZDR Memory Purge Latency",
+      "vs_yesterday": "vs. yesterday",
+      "model_audit": "model v2.4 audit",
+      "discrepancy_queue": "discrepancy queue",
+      "zero_retention": "Zero Retention"
+    },
+    "tabs": {
+      "all": "All Batches",
+      "standard": "Standard",
+      "certified": "Certified",
+      "flagged": "Flagged"
+    },
+    "search_placeholder": "Search record or citizen...",
+    "table": {
+      "col_doc_ref": "Document Reference",
+      "col_citizen": "Citizen Identity",
+      "col_template": "Template",
+      "col_confidence": "Confidence",
+      "col_status": "Status",
+      "col_actions": "Actions",
+      "btn_inspect": "Inspect",
+      "showing_records": "Showing {from} to {to} of {total} records",
+      "btn_prev": "Previous",
+      "btn_next": "Next"
+    },
+    "field_accuracy": {
+      "title": "Field-Level OCR Recognition Accuracy",
+      "baseline": "Model Baseline 95.0%",
+      "khmer_name": "Khmer Citizen Name",
+      "latin_name": "Latin Character Translation",
+      "certificate_no": "Birth Certificate Registry No.",
+      "dob": "Date of Birth (Gregorian / Khmer)",
+      "stamp": "Official District Stamp Detection"
+    },
+    "discrepancy": {
+      "title": "Action Required Queue",
+      "active_badge": "{count} Active",
+      "btn_resolve": "Resolve",
+      "issue_stamp": "Seal stamp opacity below threshold (41%)",
+      "issue_book": "Discrepancy with Municipal Book No. 14",
+      "issue_skew": "Bounding box perspective skew exceeds 4.5°"
+    },
+    "zdr_health": {
+      "title": "Zero-Data-Retention (ZDR) Health",
+      "buffer_status": "Volatile Buffer Status",
+      "buffer_clean": "Active (RAM Zeroized)",
+      "sha_trail": "SHA-256 Audit Trail",
+      "sha_sealed": "100% Sealed",
+      "gateway_ping": "Municipal Gateway Ping"
+    }
   }
 }

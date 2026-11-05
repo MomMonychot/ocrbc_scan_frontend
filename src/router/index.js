@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import DashboardView from '../views/DashboardView.vue'
 import VerificationView from '../views/VerificationView.vue'
 import AboutView from '../views/AboutView.vue'
 import TemplatesView from '../views/TemplatesView.vue'
@@ -11,6 +12,14 @@ const routes = [
     component: HomeView,
     meta: {
       title: 'District Administration OCR Portal'
+    }
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: DashboardView,
+    meta: {
+      title: 'OCR Audit Dashboard - District Administration'
     }
   },
   {
