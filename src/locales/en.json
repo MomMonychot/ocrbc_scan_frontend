@@ -168,10 +168,12 @@
     "doc_standard_badge": "General Document",
     "doc_standard_desc": "Scan old documents and extract text using AI to update into the new birth certificate template.",
     "doc_standard_tag": "Digital Standard Template",
+    "doc_standard_upload_desc": "Upload an image or PDF file of the old copy of birth certificate. The AI system will automatically scan, extract Khmer and Latin text, verify record accuracy with district civil administration databases, and update into the official new template.",
     "doc_certified_title": "Certified Copy of Birth Certificate",
     "doc_certified_badge": "Certified Document",
     "doc_certified_desc": "Scan old documents and extract text using AI to update into the new certified copy template.",
     "doc_certified_tag": "Official Certified Template",
+    "doc_certified_upload_desc": "Upload an image or PDF file of the old certified copy of birth certificate. The AI system will automatically scan, extract text, verify official certification remarks with district civil administration databases, and update into the official new template.",
     "btn_update_template": "Update to New Template",
     "back_to_document_types": "Back to Document Types",
     "btn_back": "Back"

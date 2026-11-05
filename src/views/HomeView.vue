@@ -43,16 +43,6 @@ function handleProceedToVerification(event) {
   setSharedDocument(event.file, event.previewUrl, event.inspectResult, selectedDocType.value)
   router.push({ path: '/verify', query: { type: selectedDocType.value } })
 }
-
-function handleLoadSampleScan() {
-  setSharedDocument(
-    { name: 'archival_sample_birth_cert.png', size: 1024 * 720, type: 'image/png' },
-    null,
-    null,
-    selectedDocType.value
-  )
-  router.push({ path: '/verify', query: { type: selectedDocType.value } })
-}
 </script>
 
 <template>
@@ -167,49 +157,23 @@ function handleLoadSampleScan() {
               </button>
             </div>
 
-            <!-- Top Title Replaced by Selected Block's Title & Description -->
+            <!-- Top Title Replaced by Selected Block's Title & Detailed Description -->
             <div class="text-center max-w-2xl mx-auto space-y-2">
               <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gov-primary tracking-tight">
                 {{ selectedDocType === 'standard' ? t('home.doc_standard_title') : t('home.doc_certified_title') }}
               </h1>
-              <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed max-w-xl mx-auto">
-                {{ selectedDocType === 'standard' ? t('home.doc_standard_desc') : t('home.doc_certified_desc') }}
+              <p class="text-xs sm:text-sm text-gov-text-secondary leading-relaxed max-w-2xl mx-auto">
+                {{ selectedDocType === 'standard' ? t('home.doc_standard_upload_desc') : t('home.doc_certified_upload_desc') }}
               </p>
             </div>
           </div>
 
-          <!-- BELOW OF THEM: UPLOAD FILE COMPONENT & SAMPLE SCAN -->
-          <div class="space-y-6">
+          <!-- BELOW OF THEM: UPLOAD FILE COMPONENT (BROWSE FILE ONLY) -->
+          <div>
             <DocumentUpload
               :hideHeader="true"
               @proceed="handleProceedToVerification"
             />
-
-            <!-- Fast Sample Document Testing Card -->
-            <div class="p-6 bg-white rounded-2xl border border-gov-border text-center shadow-gov-sm max-w-xl mx-auto">
-              <div class="w-12 h-12 mx-auto rounded-2xl bg-blue-50 text-gov-primary flex items-center justify-center mb-3 shadow-xs">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 class="text-sm font-bold text-slate-800 mb-1">
-                {{ t('verification.sample_doc_btn') }}
-              </h3>
-              <p class="text-xs text-slate-500 mb-4 max-w-sm mx-auto leading-relaxed">
-                {{ t('verification.sample_doc_desc') }}
-              </p>
-              <button
-                type="button"
-                @click="handleLoadSampleScan"
-                class="h-10 px-6 rounded-xl bg-gov-primary hover:bg-gov-primary-hover text-white text-xs font-bold shadow-gov-sm transition-all inline-flex items-center gap-2 cursor-pointer"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>{{ t('verification.sample_doc_btn') }}</span>
-              </button>
-            </div>
           </div>
         </div>
       </template>
