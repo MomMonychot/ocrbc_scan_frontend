@@ -122,8 +122,60 @@ export async function fetchSystemHealth() {
   return apiClient.get('/health_check')
 }
 
+/**
+ * Geographic Administrative Gazetteer API Services
+ */
+
+export async function getGeoHierarchy() {
+  return apiClient.get('/geo/hierarchy')
+}
+
+export async function getGeoProvinces() {
+  return apiClient.get('/geo/provinces')
+}
+
+export async function getGeoDistricts(provinceCode) {
+  const params = provinceCode ? { province_code: provinceCode } : {}
+  return apiClient.get('/geo/districts', { params })
+}
+
+export async function getGeoCommunes(districtCode) {
+  const params = districtCode ? { district_code: districtCode } : {}
+  return apiClient.get('/geo/communes', { params })
+}
+
+export async function getGeoVillages(communeCode) {
+  const params = communeCode ? { commune_code: communeCode } : {}
+  return apiClient.get('/geo/villages', { params })
+}
+
+export async function getGeoEntities(params = {}) {
+  return apiClient.get('/geo/entities', { params })
+}
+
+export async function createGeoEntity(payload) {
+  return apiClient.post('/geo/entities', payload)
+}
+
+export async function updateGeoEntity(level, code, payload) {
+  return apiClient.put(`/geo/entities/${level}/${code}`, payload)
+}
+
+export async function deleteGeoEntity(level, code) {
+  return apiClient.delete(`/geo/entities/${level}/${code}`)
+}
+
 export default {
   inspectDocument,
   verifyExtractedFields,
   fetchSystemHealth,
+  getGeoHierarchy,
+  getGeoProvinces,
+  getGeoDistricts,
+  getGeoCommunes,
+  getGeoVillages,
+  getGeoEntities,
+  createGeoEntity,
+  updateGeoEntity,
+  deleteGeoEntity,
 }

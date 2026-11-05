@@ -4,6 +4,7 @@ import DashboardView from '../views/DashboardView.vue'
 import VerificationView from '../views/VerificationView.vue'
 import AboutView from '../views/AboutView.vue'
 import TemplatesView from '../views/TemplatesView.vue'
+import AdministrativeDivisionsView from '../views/AdministrativeDivisionsView.vue'
 
 const routes = [
   {
@@ -20,6 +21,14 @@ const routes = [
     component: DashboardView,
     meta: {
       title: 'OCR Audit Dashboard - District Administration'
+    }
+  },
+  {
+    path: '/divisions',
+    name: 'divisions',
+    component: AdministrativeDivisionsView,
+    meta: {
+      title: 'Cambodia Administrative Gazetteer - 25 Provinces'
     }
   },
   {

@@ -9,6 +9,7 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "divisions": "Divisions",
     "verify": "Document Verification",
     "about": "About Us",
     "goal": "Goal",
@@ -388,6 +389,67 @@
       "sha_trail": "SHA-256 Audit Trail",
       "sha_sealed": "100% Sealed",
       "gateway_ping": "Municipal Gateway Ping"
+    }
+  },
+  "divisions": {
+    "title": "Administrative Divisions of Cambodia",
+    "subtitle": "Authoritative National Gazetteer: 25 Provinces/Capitals, Districts, Communes, and Villages",
+    "stat_provinces": "Provinces / Capitals",
+    "stat_districts": "Districts / Khans",
+    "stat_communes": "Communes / Sangkats",
+    "stat_villages": "Villages / Phums",
+    "tabs": {
+      "all": "All Tiers",
+      "province": "25 Provinces & Capitals",
+      "district": "Districts / Municipalities",
+      "commune": "Communes / Sangkats",
+      "village": "Villages / Phums"
+    },
+    "search_placeholder": "Search by NIS code, Khmer name, Latin name...",
+    "filter_province": "Filter by Province",
+    "filter_all_provinces": "All Provinces",
+    "btn_add": "Add Division",
+    "btn_refresh": "Refresh",
+    "table": {
+      "col_code": "NIS Code",
+      "col_name_km": "Name (Khmer)",
+      "col_name_en": "Name (Latin)",
+      "col_level": "Tier Level",
+      "col_type": "Type Classification",
+      "col_parent": "Parent Jurisdiction",
+      "col_actions": "Actions",
+      "empty_title": "No administrative divisions found",
+      "empty_desc": "Try adjusting your search criteria or filter options."
+    },
+    "modal_add_title": "Add New Administrative Division",
+    "modal_edit_title": "Update Administrative Division",
+    "modal_delete_title": "Confirm Division Deletion",
+    "modal_delete_desc": "Are you sure you want to remove this administrative division? This deletion will cascade to any child divisions and impact gazetteer cross-referencing.",
+    "form": {
+      "level": "Administrative Tier",
+      "code": "Official NIS Code",
+      "name_km": "Name (Khmer)",
+      "name_en": "Name (Latin)",
+      "type": "Classification Type",
+      "parent": "Parent Administrative Code",
+      "parent_hint": "Select or input the parent division code (e.g. 12 for Phnom Penh)",
+      "btn_save": "Save Changes",
+      "btn_create": "Create Division",
+      "btn_cancel": "Cancel",
+      "btn_delete": "Delete Division"
+    },
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} divisions",
+      "page": "Page {page} of {pages}",
+      "prev": "Previous",
+      "next": "Next",
+      "rows_per_page": "Rows per page"
+    },
+    "messages": {
+      "created_success": "Administrative division created successfully.",
+      "updated_success": "Administrative division updated successfully.",
+      "deleted_success": "Administrative division deleted successfully.",
+      "error_generic": "An error occurred while processing the division record."
     }
   }
 }
