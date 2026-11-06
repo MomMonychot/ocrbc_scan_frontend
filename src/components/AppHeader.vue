@@ -1,19 +1,26 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 import AdminNotificationDropdown from './AdminNotificationDropdown.vue'
+import UserProfileSettingsModal from './UserProfileSettingsModal.vue'
 import { authStore } from '../services/authStore'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-// Hidden on first open
+// Modals and dropdowns
 const isAboutMenuOpen = ref(false)
 const isMobileMenuOpen = ref(false)
+const isProfileModalOpen = ref(false)
 const dropdownRef = ref(null)
+
+const userInitials = computed(() => {
+  const name = authStore.user?.full_name_en || authStore.user?.username || 'US'
+  return name.slice(0, 2).toUpperCase()
+})
 
 function toggleAboutMenu() {
   isAboutMenuOpen.value = !isAboutMenuOpen.value
@@ -267,36 +274,39 @@ onUnmounted(() => {
         <!-- Language Switcher Component -->
         <LanguageSwitcher />
 
-        <!-- User Authentication & Profile Pill (Desktop) -->
+        <!-- User Authentication & Circular Profile Avatar (Desktop) -->
         <div class="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200">
-          <!-- Logged In State -->
-          <div v-if="authStore.isAuthenticated" class="flex items-center gap-2">
-            <div
-              :class="[
-                'h-10 px-3 rounded-xl border flex items-center gap-2 text-xs font-semibold select-none',
-                authStore.isAdmin
-                  ? 'bg-amber-50/70 border-amber-200/80 text-amber-900'
-                  : 'bg-blue-50/70 border-blue-200/80 text-blue-900'
-              ]"
-            >
-              <span class="text-sm">{{ authStore.isAdmin ? '👑' : '👤' }}</span>
-              <div class="text-left leading-tight hidden md:block">
-                <div class="font-bold text-[11px] truncate max-w-[120px]">{{ authStore.user?.full_name_km || authStore.user?.username }}</div>
-                <div class="text-[9px] text-slate-500 uppercase tracking-wider">{{ authStore.isAdmin ? t('auth.role_admin') : t('auth.role_user') }}</div>
-              </div>
-            </div>
-
-            <!-- Logout Button -->
+          <!-- Logged In State: Executive Profile Avatar Trigger -->
+          <div v-if="authStore.isAuthenticated" class="flex items-center gap-2.5">
+            <!-- Circular Profile Button -->
             <button
               type="button"
-              @click="handleLogout"
-              class="h-10 px-3 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:border-rose-200 hover:text-rose-700 text-slate-600 text-xs font-medium flex items-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
-              :title="t('auth.logout')"
+              @click="isProfileModalOpen = true"
+              class="relative w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shadow-xs ring-2 hover:ring-4 transition-all duration-200 cursor-pointer outline-none active:scale-[0.95]"
+              :class="[
+                authStore.isAdmin
+                  ? 'bg-gradient-to-tr from-amber-600 via-amber-500 to-amber-400 text-white ring-amber-200/80 hover:ring-amber-300'
+                  : 'bg-gradient-to-tr from-blue-700 via-indigo-600 to-blue-500 text-white ring-blue-200/80 hover:ring-blue-300'
+              ]"
+              :title="authStore.isAdmin ? 'ព័ត៌មានគណនី និងការកំណត់ (Admin Profile & Settings)' : 'ព័ត៌មានគណនី និងការកំណត់ (User Profile & Settings)'"
             >
-              <svg class="w-4 h-4 text-slate-400 group-hover:text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              <span class="hidden lg:inline">{{ t('auth.logout') }}</span>
+              <span class="text-sm font-black">{{ authStore.isAdmin ? '👑' : userInitials }}</span>
+              <!-- Online status indicator -->
+              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+            </button>
+
+            <!-- User Name with click to open settings -->
+            <button
+              type="button"
+              @click="isProfileModalOpen = true"
+              class="text-left hidden md:flex flex-col justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div class="font-bold text-[11px] text-slate-900 leading-tight truncate max-w-[125px]">
+                {{ authStore.user?.full_name_km || authStore.user?.username }}
+              </div>
+              <div class="text-[9px] text-slate-500 uppercase tracking-wider">
+                {{ authStore.isAdmin ? t('auth.role_admin') : t('auth.role_user') }}
+              </div>
             </button>
           </div>
 
@@ -417,15 +427,32 @@ onUnmounted(() => {
 
       <!-- Mobile User Session -->
       <div class="pt-3 border-t border-slate-100 flex items-center justify-between px-3">
-        <div v-if="authStore.isAuthenticated" class="flex items-center gap-2">
-          <span class="text-sm">{{ authStore.isAdmin ? '👑' : '👤' }}</span>
-          <span class="font-bold text-xs text-slate-800">{{ authStore.user?.full_name_km || authStore.user?.username }}</span>
-        </div>
+        <button
+          v-if="authStore.isAuthenticated"
+          type="button"
+          @click="isProfileModalOpen = true; closeMenus()"
+          class="flex items-center gap-2.5 text-left cursor-pointer"
+        >
+          <div
+            :class="[
+              'w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs shadow-xs',
+              authStore.isAdmin
+                ? 'bg-gradient-to-tr from-amber-600 to-amber-400'
+                : 'bg-gradient-to-tr from-blue-700 to-indigo-500'
+            ]"
+          >
+            <span>{{ authStore.isAdmin ? '👑' : userInitials }}</span>
+          </div>
+          <div>
+            <div class="font-bold text-xs text-slate-800">{{ authStore.user?.full_name_km || authStore.user?.username }}</div>
+            <div class="text-[10px] text-slate-400">កែប្រែព័ត៌មានគណនី (Settings)</div>
+          </div>
+        </button>
         <button
           v-if="authStore.isAuthenticated"
           type="button"
           @click="handleLogout"
-          class="text-xs font-semibold text-rose-600 hover:text-rose-700"
+          class="text-xs font-semibold text-rose-600 hover:text-rose-700 px-2 py-1 rounded-lg hover:bg-rose-50"
         >
           {{ t('auth.logout') }}
         </button>
@@ -439,5 +466,12 @@ onUnmounted(() => {
         </router-link>
       </div>
     </div>
+
+    <!-- User Profile & System Settings Modal -->
+    <UserProfileSettingsModal
+      :isOpen="isProfileModalOpen"
+      @close="isProfileModalOpen = false"
+      @logout="handleLogout"
+    />
   </header>
 </template>

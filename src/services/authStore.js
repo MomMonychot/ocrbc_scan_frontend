@@ -9,9 +9,24 @@
  */
 
 import { reactive, computed } from 'vue'
-import { apiLogin, getGeoReports, updateGeoReportStatus } from './api_client'
+import { apiLogin, getGeoReports, updateGeoReportStatus, updateUserProfile } from './api_client'
 
 const STORAGE_KEY = 'ocrbc_civil_auth_session'
+const SETTINGS_KEY = 'ocrbc_civil_user_settings'
+
+function loadStoredSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch (e) {}
+  return {
+    tableDensity: 'comfortable', // 'comfortable' | 'compact'
+    instantNotifications: true,
+    audioAlerts: true,
+    autoScrollToCheck: true,
+    defaultLanding: '/divisions',
+  }
+}
 
 // Initial state restoring from localStorage if present
 function loadStoredSession() {
@@ -43,6 +58,7 @@ const initial = loadStoredSession()
 export const authState = reactive({
   token: initial.token,
   user: initial.user,
+  settings: loadStoredSettings(),
   reports: [],
   unreadReportsCount: 0,
   isLoadingReports: false,
@@ -64,6 +80,9 @@ export const authStore = {
   },
   get isOfficer() {
     return authState.user?.role === 'user'
+  },
+  get settings() {
+    return authState.settings
   },
   get reports() {
     return authState.reports
@@ -139,5 +158,34 @@ export const authStore = {
       console.error('Failed to mark report as read:', err)
       throw err
     }
+  },
+
+  async updateProfile(profileData) {
+    try {
+      const updatedUser = await updateUserProfile({
+        username: authState.user.username,
+        ...profileData,
+      })
+      authState.user = {
+        ...authState.user,
+        ...updatedUser,
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        token: authState.token,
+        user: authState.user,
+      }))
+      return updatedUser
+    } catch (err) {
+      console.error('Failed to update profile:', err)
+      throw err
+    }
+  },
+
+  updateSettings(newSettings) {
+    authState.settings = {
+      ...authState.settings,
+      ...newSettings,
+    }
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(authState.settings))
   },
 }

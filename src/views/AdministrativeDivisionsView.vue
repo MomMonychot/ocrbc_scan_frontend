@@ -1228,20 +1228,7 @@ watch(
                 <!-- 4. Interactive Senior Actions -->
                 <td class="py-4 px-6 text-right whitespace-nowrap">
                   <div class="inline-flex items-center justify-end gap-1.5 flex-wrap">
-                    <!-- Action A: Copy Full Address (1-Click) -->
-                    <button
-                      type="button"
-                      @click="copyFullAddress(item)"
-                      class="h-8 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-[11px] font-medium inline-flex items-center gap-1 transition-all active:scale-[0.98] shadow-2xs cursor-pointer"
-                      :title="t('divisions_assistant.copy_full_address')"
-                    >
-                      <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      <span>{{ t('divisions_assistant.copy_full_address') }}</span>
-                    </button>
-
-                    <!-- Action B: Drill Down Children (if province/district/commune) -->
+                    <!-- Action A: Drill Down Children (if province/district/commune) -->
                     <button
                       v-if="item.level !== 'village'"
                       type="button"
@@ -1254,8 +1241,9 @@ watch(
                       </svg>
                     </button>
 
-                    <!-- Action C: Report Issue Button (User & Officer) -->
+                    <!-- Action B: Report Issue Button (Citizens & Officers only, hidden for Admin) -->
                     <button
+                      v-if="!authStore.isAdmin"
                       type="button"
                       @click="openReportModal(item)"
                       class="h-8 px-2.5 rounded-lg bg-amber-50/80 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-semibold inline-flex items-center gap-1 transition-all active:scale-[0.98] cursor-pointer"
@@ -1267,17 +1255,18 @@ watch(
                       <span>{{ t('divisions_assistant.report_issue') }}</span>
                     </button>
 
-                    <!-- Action D: Administrator Only Controls -->
+                    <!-- Action C: Administrator Only Controls (Edit & Delete) -->
                     <template v-if="authStore.isAdmin">
                       <button
                         type="button"
                         @click="openEditModal(item)"
-                        class="h-8 w-8 rounded-lg text-slate-500 hover:text-[#1E3A8A] hover:bg-blue-50 border border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+                        class="h-8 px-2.5 rounded-lg text-slate-700 hover:text-[#1E3A8A] bg-white hover:bg-blue-50 border border-slate-200 text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer"
                         title="Edit Division"
                       >
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
+                        <span>កែប្រែ</span>
                       </button>
 
                       <button

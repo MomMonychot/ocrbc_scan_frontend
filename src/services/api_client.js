@@ -181,6 +181,10 @@ export async function getAuthProfile(username) {
   return apiClient.get('/auth/me', { params })
 }
 
+export async function updateUserProfile(payload) {
+  return apiClient.put('/auth/profile', payload)
+}
+
 /**
  * Administrative Division Error Reports & Notifications API Services
  */
@@ -220,6 +224,7 @@ export default {
   deleteGeoEntity,
   apiLogin,
   getAuthProfile,
+  updateUserProfile,
   getGeoReports,
   submitGeoReport,
   updateGeoReportStatus,
