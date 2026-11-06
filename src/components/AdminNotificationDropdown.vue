@@ -128,7 +128,7 @@ function goToCheck(report) {
           <button
             type="button"
             @click="authStore.refreshReports()"
-            class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200/60 transition-colors cursor-pointer"
+            class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200/60 transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
             title="ធ្វើបច្ចុប្បន្នភាព"
           >
             <svg
@@ -215,7 +215,7 @@ function goToCheck(report) {
                 v-if="rep.status === 'pending'"
                 @click="markAsRead(rep)"
                 :disabled="isUpdating[rep.id]"
-                class="h-8 px-3 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-[11px] font-medium flex items-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
+                class="h-8 px-3 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-[11px] font-medium flex items-center gap-1.5 transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer disabled:opacity-50"
                 title="សម្គាល់ថាបានអាន"
               >
                 <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -228,7 +228,7 @@ function goToCheck(report) {
               <button
                 type="button"
                 @click="goToCheck(rep)"
-                class="h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-medium flex items-center gap-1.5 transition-all active:scale-[0.98] shadow-2xs cursor-pointer"
+                class="h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-medium flex items-center gap-1.5 transition-all active:scale-[0.98] shadow-2xs hover:shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
                 title="ទៅកាន់ទីតាំងដែលរាយការណ៍ក្នុងតារាងភូមិសាស្ត្រ"
               >
                 <span>{{ t('notifications.action_go_to_check') }}</span>

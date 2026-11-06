@@ -115,7 +115,7 @@ function fillCredentials(user, pass) {
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+              class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg"
               :aria-label="showPassword ? 'Hide password' : 'Show password'"
             >
               <svg v-if="!showPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,7 +156,7 @@ function fillCredentials(user, pass) {
           <button
             type="button"
             @click="fillCredentials('admin', 'admin123')"
-            class="h-11 min-h-[44px] px-3 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100/70 text-slate-800 text-xs font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+            class="h-11 min-h-[44px] px-3.5 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100/70 text-slate-800 text-xs font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer shadow-2xs hover:shadow-xs"
           >
             <span class="text-sm">👑</span>
             <div class="text-left leading-tight">
@@ -169,7 +169,7 @@ function fillCredentials(user, pass) {
           <button
             type="button"
             @click="fillCredentials('user', 'user123')"
-            class="h-11 min-h-[44px] px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+            class="h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer shadow-2xs hover:shadow-xs"
           >
             <span class="text-sm">👤</span>
             <div class="text-left leading-tight">

@@ -698,9 +698,9 @@ watch(
           <button
             type="button"
             @click="loadEntities"
-            class="h-10 px-4 rounded-xl bg-white text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition-all font-medium text-xs sm:text-sm flex items-center gap-2 shadow-xs cursor-pointer select-none"
+            class="h-11 min-h-[44px] px-5 rounded-xl bg-white text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition-all duration-200 font-medium text-xs sm:text-sm flex items-center gap-2 shadow-xs hover:shadow-md active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600 cursor-pointer select-none"
           >
-            <svg :class="['w-4 h-4', isLoading ? 'animate-spin text-[#1E3A8A]' : '']" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg :class="['w-4 h-4', isLoading ? 'animate-spin text-slate-700' : 'text-slate-500']" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             <span>{{ t('divisions.btn_refresh') }}</span>
@@ -711,7 +711,7 @@ watch(
             v-if="authStore.isAdmin"
             type="button"
             @click="openCreateModal"
-            class="h-10 px-5 rounded-xl bg-[#1E3A8A] hover:bg-blue-950 text-white transition-all font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm cursor-pointer select-none active:scale-[0.99]"
+            class="h-11 min-h-[44px] px-5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white transition-all duration-200 font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm hover:shadow-md active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 cursor-pointer select-none"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -744,12 +744,12 @@ watch(
           </div>
         </div>
 
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-2.5 shrink-0">
           <button
             v-if="inspectingTarget.entity && authStore.isAdmin"
             type="button"
             @click="openEditModal(inspectingTarget.entity)"
-            class="h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium flex items-center gap-2 shadow-xs cursor-pointer active:scale-[0.98]"
+            class="h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-2 shadow-xs hover:shadow-md transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600 cursor-pointer"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -759,7 +759,7 @@ watch(
           <button
             type="button"
             @click="dismissInspection"
-            class="h-10 px-4 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium cursor-pointer active:scale-[0.98]"
+            class="h-10 px-4 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 cursor-pointer"
           >
             {{ t('divisions_assistant.dismiss_inspect') }}
           </button>
@@ -852,8 +852,8 @@ watch(
               type="button"
               @click="resetCascadingFilters"
               :class="[
-                'px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer',
-                !selectedProvince ? 'bg-blue-50 text-[#1E3A8A] font-bold' : 'text-slate-600 hover:bg-slate-100'
+                'px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-all duration-150 cursor-pointer active:scale-[0.97] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
+                !selectedProvince ? 'bg-blue-50 text-[#1E3A8A] font-bold shadow-2xs' : 'text-slate-600 hover:bg-slate-100'
               ]"
             >
               <span>🇰🇭</span>
@@ -867,8 +867,8 @@ watch(
                 type="button"
                 @click="onDistrictSelect('')"
                 :class="[
-                  'px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer',
-                  selectedProvince && !selectedDistrict ? 'bg-blue-50 text-[#1E3A8A] font-bold' : 'text-slate-600 hover:bg-slate-100'
+                  'px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-all duration-150 cursor-pointer active:scale-[0.97] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
+                  selectedProvince && !selectedDistrict ? 'bg-blue-50 text-[#1E3A8A] font-bold shadow-2xs' : 'text-slate-600 hover:bg-slate-100'
                 ]"
               >
                 <span>📍</span>
@@ -884,8 +884,8 @@ watch(
                 type="button"
                 @click="onCommuneSelect('')"
                 :class="[
-                  'px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer',
-                  selectedDistrict && !selectedCommune ? 'bg-indigo-50 text-indigo-900 font-bold' : 'text-slate-600 hover:bg-slate-100'
+                  'px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-all duration-150 cursor-pointer active:scale-[0.97] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
+                  selectedDistrict && !selectedCommune ? 'bg-indigo-50 text-indigo-900 font-bold shadow-2xs' : 'text-slate-600 hover:bg-slate-100'
                 ]"
               >
                 <span>🏢</span>
@@ -897,7 +897,7 @@ watch(
             <!-- Commune Level -->
             <template v-if="activeCommuneObj">
               <span class="text-slate-400">/</span>
-              <div class="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-900 font-bold flex items-center gap-1.5">
+              <div class="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-900 font-bold flex items-center gap-1.5 shadow-2xs">
                 <span>🌾</span>
                 <span>{{ activeCommuneObj.name_km }}</span>
               </div>
@@ -909,7 +909,7 @@ watch(
             v-if="selectedProvince || selectedDistrict || selectedCommune || searchQuery"
             type="button"
             @click="resetCascadingFilters"
-            class="text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 transition-colors flex items-center gap-1 cursor-pointer"
+            class="h-8 px-3 rounded-lg border border-rose-200 bg-rose-50/70 hover:bg-rose-100 text-rose-700 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-rose-500 cursor-pointer"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -983,14 +983,14 @@ watch(
         
         <!-- Tier Navigation Tabs (Retained as requested) -->
         <div class="px-6 pt-5 pb-3 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
-          <div class="flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-xl overflow-x-auto">
+          <div class="flex items-center gap-1.5 p-1 bg-slate-100/90 rounded-xl overflow-x-auto">
             <button
               type="button"
               @click="selectLevelTab('all')"
               :class="[
-                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer select-none whitespace-nowrap',
+                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer select-none whitespace-nowrap active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
                 activeLevel === 'all'
-                  ? 'bg-white text-[#1E3A8A] shadow-xs font-bold'
+                  ? 'bg-white text-slate-900 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
               ]"
             >
@@ -1000,9 +1000,9 @@ watch(
               type="button"
               @click="selectLevelTab('province')"
               :class="[
-                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer select-none whitespace-nowrap',
+                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer select-none whitespace-nowrap active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
                 activeLevel === 'province'
-                  ? 'bg-white text-[#1E3A8A] shadow-xs font-bold'
+                  ? 'bg-white text-slate-900 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
               ]"
             >
@@ -1012,9 +1012,9 @@ watch(
               type="button"
               @click="selectLevelTab('district')"
               :class="[
-                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer select-none whitespace-nowrap',
+                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer select-none whitespace-nowrap active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
                 activeLevel === 'district'
-                  ? 'bg-white text-[#1E3A8A] shadow-xs font-bold'
+                  ? 'bg-white text-slate-900 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
               ]"
             >
@@ -1024,9 +1024,9 @@ watch(
               type="button"
               @click="selectLevelTab('commune')"
               :class="[
-                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer select-none whitespace-nowrap',
+                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer select-none whitespace-nowrap active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
                 activeLevel === 'commune'
-                  ? 'bg-white text-[#1E3A8A] shadow-xs font-bold'
+                  ? 'bg-white text-slate-900 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
               ]"
             >
@@ -1036,9 +1036,9 @@ watch(
               type="button"
               @click="selectLevelTab('village')"
               :class="[
-                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer select-none whitespace-nowrap',
+                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer select-none whitespace-nowrap active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
                 activeLevel === 'village'
-                  ? 'bg-white text-[#1E3A8A] shadow-xs font-bold'
+                  ? 'bg-white text-slate-900 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
               ]"
             >
@@ -1233,7 +1233,7 @@ watch(
                       v-if="item.level !== 'village'"
                       type="button"
                       @click.stop="handleDrillDown(item)"
-                      class="h-8 px-2.5 rounded-lg bg-blue-50/80 hover:bg-blue-100/90 text-[#1E3A8A] border border-blue-200 text-[11px] font-semibold inline-flex items-center gap-1 transition-all active:scale-[0.98] cursor-pointer"
+                      class="h-8 px-2.5 rounded-lg bg-blue-50/90 hover:bg-blue-100 text-[#1E3A8A] border border-blue-200 text-[11px] font-semibold inline-flex items-center gap-1 transition-all duration-150 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
                     >
                       <span>{{ item.level === 'province' ? t('divisions_assistant.view_districts') : item.level === 'district' ? t('divisions_assistant.view_communes') : t('divisions_assistant.view_villages') }}</span>
                       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1246,7 +1246,7 @@ watch(
                       v-if="!authStore.isAdmin"
                       type="button"
                       @click="openReportModal(item)"
-                      class="h-8 px-2.5 rounded-lg bg-amber-50/80 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-semibold inline-flex items-center gap-1 transition-all active:scale-[0.98] cursor-pointer"
+                      class="h-8 px-2.5 rounded-lg bg-amber-50/90 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-semibold inline-flex items-center gap-1.5 transition-all duration-150 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer"
                       :title="t('divisions_assistant.report_issue')"
                     >
                       <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1260,10 +1260,10 @@ watch(
                       <button
                         type="button"
                         @click="openEditModal(item)"
-                        class="h-8 px-2.5 rounded-lg text-slate-700 hover:text-[#1E3A8A] bg-white hover:bg-blue-50 border border-slate-200 text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                        class="h-8 px-2.5 rounded-lg text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 text-[11px] font-medium flex items-center gap-1 transition-all duration-150 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
                         title="Edit Division"
                       >
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                         <span>កែប្រែ</span>
@@ -1272,7 +1272,7 @@ watch(
                       <button
                         type="button"
                         @click="openDeleteModal(item)"
-                        class="h-8 w-8 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+                        class="h-8 w-8 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 flex items-center justify-center transition-all duration-150 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-rose-500 cursor-pointer"
                         title="Delete Division"
                       >
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1298,7 +1298,7 @@ watch(
               type="button"
               @click="goToPage(currentPage - 1)"
               :disabled="currentPage <= 1"
-              class="h-8 px-3 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer font-medium"
+              class="h-9 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer font-medium text-xs shadow-2xs"
             >
               {{ t('divisions.pagination.prev') }}
             </button>
@@ -1310,10 +1310,10 @@ watch(
               type="button"
               @click="goToPage(p)"
               :class="[
-                'w-8 h-8 rounded-lg font-medium transition-all cursor-pointer text-xs',
+                'w-9 h-9 rounded-xl font-semibold transition-all duration-150 cursor-pointer text-xs flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:scale-[0.98]',
                 currentPage === p
-                  ? 'bg-[#1E3A8A] text-white shadow-xs'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-2xs'
               ]"
             >
               {{ p }}
@@ -1323,7 +1323,7 @@ watch(
               type="button"
               @click="goToPage(currentPage + 1)"
               :disabled="currentPage >= totalPages"
-              class="h-8 px-3 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer font-medium"
+              class="h-9 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer font-medium text-xs shadow-2xs"
             >
               {{ t('divisions.pagination.next') }}
             </button>
@@ -1347,7 +1347,7 @@ watch(
             <button
               type="button"
               @click="closeEditModal"
-              class="text-slate-400 hover:text-slate-600 cursor-pointer"
+              class="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1365,7 +1365,7 @@ watch(
                 type="text"
                 v-model="editForm.code"
                 disabled
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-500 font-mono text-sm cursor-not-allowed"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-500 font-mono text-sm cursor-not-allowed"
               />
             </div>
 
@@ -1378,7 +1378,7 @@ watch(
                 type="text"
                 v-model="editForm.name_km"
                 required
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
             </div>
 
@@ -1391,7 +1391,7 @@ watch(
                 type="text"
                 v-model="editForm.name_en"
                 required
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
             </div>
 
@@ -1403,7 +1403,7 @@ watch(
               <input
                 type="text"
                 v-model="editForm.type"
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="Province, Khan, Sangkat, etc."
               />
             </div>
@@ -1413,14 +1413,14 @@ watch(
               <button
                 type="button"
                 @click="closeEditModal"
-                class="h-10 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-xs sm:text-sm cursor-pointer"
+                class="h-11 min-h-[44px] px-5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-slate-400 cursor-pointer"
               >
                 {{ t('divisions.form.btn_cancel') }}
               </button>
               <button
                 type="submit"
                 :disabled="isSubmitting"
-                class="h-10 px-5 rounded-xl bg-[#1E3A8A] hover:bg-blue-950 text-white font-medium text-xs sm:text-sm shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                class="h-11 min-h-[44px] px-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs sm:text-sm shadow-sm hover:shadow-md transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-50 cursor-pointer"
               >
                 <span v-if="isSubmitting">Saving...</span>
                 <span v-else>{{ t('divisions.form.btn_save') }}</span>
@@ -1445,7 +1445,7 @@ watch(
             <button
               type="button"
               @click="closeCreateModal"
-              class="text-slate-400 hover:text-slate-600 cursor-pointer"
+              class="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1476,7 +1476,7 @@ watch(
                 type="text"
                 v-model="createForm.parent_code"
                 required
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                 :placeholder="t('divisions.form.parent_hint')"
               />
             </div>
@@ -1490,7 +1490,7 @@ watch(
                 type="text"
                 v-model="createForm.code"
                 required
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="e.g. 14010103"
               />
             </div>
@@ -1504,7 +1504,7 @@ watch(
                 type="text"
                 v-model="createForm.name_km"
                 required
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="ឈ្មោះជាភាសាខ្មែរ"
               />
             </div>
@@ -1518,7 +1518,7 @@ watch(
                 type="text"
                 v-model="createForm.name_en"
                 required
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="Official Latin transliteration"
               />
             </div>
@@ -1531,7 +1531,7 @@ watch(
               <input
                 type="text"
                 v-model="createForm.type"
-                class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="Province, Capital, Krong, Khan, Sangkat, etc."
               />
             </div>
@@ -1541,14 +1541,14 @@ watch(
               <button
                 type="button"
                 @click="closeCreateModal"
-                class="h-10 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-xs sm:text-sm cursor-pointer"
+                class="h-11 min-h-[44px] px-5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-slate-400 cursor-pointer"
               >
                 {{ t('divisions.form.btn_cancel') }}
               </button>
               <button
                 type="submit"
                 :disabled="isSubmitting"
-                class="h-10 px-5 rounded-xl bg-[#1E3A8A] hover:bg-blue-950 text-white font-medium text-xs sm:text-sm shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                class="h-11 min-h-[44px] px-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs sm:text-sm shadow-sm hover:shadow-md transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-50 cursor-pointer"
               >
                 <span v-if="isSubmitting">Creating...</span>
                 <span v-else>{{ t('divisions.form.btn_create') }}</span>
@@ -1590,7 +1590,7 @@ watch(
             <button
               type="button"
               @click="closeDeleteModal"
-              class="h-10 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-xs sm:text-sm cursor-pointer"
+              class="h-11 min-h-[44px] px-5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-slate-400 cursor-pointer"
             >
               {{ t('divisions.form.btn_cancel') }}
             </button>
@@ -1598,7 +1598,7 @@ watch(
               type="button"
               @click="handleDeleteSubmit"
               :disabled="isSubmitting"
-              class="h-10 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs sm:text-sm shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+              class="h-11 min-h-[44px] px-6 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs sm:text-sm shadow-sm hover:shadow-md transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-rose-500 disabled:opacity-50 cursor-pointer"
             >
               <span v-if="isSubmitting">Deleting...</span>
               <span v-else>{{ t('divisions.form.btn_delete') }}</span>

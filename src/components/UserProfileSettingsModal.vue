@@ -2,6 +2,7 @@
 import { ref, reactive, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { authStore } from '../services/authStore'
+import BaseSwitch from './BaseSwitch.vue'
 
 const props = defineProps({
   isOpen: {
@@ -178,7 +179,8 @@ function handleLogout() {
         <button
           type="button"
           @click="emit('close')"
-          class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer"
+          class="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 flex items-center justify-center transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+          aria-label="បិទផ្ទាំង"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -192,7 +194,7 @@ function handleLogout() {
           type="button"
           @click="activeTab = 'profile'"
           :class="[
-            'pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5',
+            'pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-t-lg',
             activeTab === 'profile'
               ? 'border-blue-600 text-blue-600 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -208,7 +210,7 @@ function handleLogout() {
           type="button"
           @click="activeTab = 'settings'"
           :class="[
-            'pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5',
+            'pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-t-lg',
             activeTab === 'settings'
               ? 'border-blue-600 text-blue-600 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -225,7 +227,7 @@ function handleLogout() {
           type="button"
           @click="activeTab = 'security'"
           :class="[
-            'pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5',
+            'pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-t-lg',
             activeTab === 'security'
               ? 'border-blue-600 text-blue-600 font-bold'
               : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -319,74 +321,74 @@ function handleLogout() {
         <!-- TAB 2: SYSTEM PREFERENCES & SETTINGS                         -->
         <!-- ============================================================ -->
         <template v-if="activeTab === 'settings'">
-          <!-- Table Density -->
-          <div class="space-y-2 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
-            <label class="block font-bold text-slate-800">
-              គម្លាតទិន្នន័យតារាង (Table Display Density)
-            </label>
-            <div class="grid grid-cols-2 gap-2">
+          <!-- Table Density Segmented Control -->
+          <div class="space-y-2 p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50">
+            <div class="flex items-center justify-between">
+              <label class="block font-bold text-slate-800 text-xs">
+                គម្លាតទិន្នន័យតារាង (Table Display Density)
+              </label>
+              <span class="text-[10px] text-slate-400 font-medium">កំណត់រចនាប័ទ្មបន្ទាត់</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 bg-slate-200/60 p-1 rounded-xl">
               <button
                 type="button"
                 @click="settingsForm.tableDensity = 'comfortable'"
                 :class="[
-                  'h-10 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all',
+                  'h-9 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
                   settingsForm.tableDensity === 'comfortable'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80 font-bold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50 border border-transparent'
                 ]"
               >
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
                 <span>ផាសុកភាព (Comfortable)</span>
               </button>
               <button
                 type="button"
                 @click="settingsForm.tableDensity = 'compact'"
                 :class="[
-                  'h-10 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all',
+                  'h-9 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
                   settingsForm.tableDensity === 'compact'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80 font-bold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50 border border-transparent'
                 ]"
               >
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
                 <span>បង្រួមតូច (Compact)</span>
               </button>
             </div>
           </div>
 
-          <!-- Feature Toggles -->
-          <div class="space-y-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
-            <label class="block font-bold text-slate-800">
-              ការជូនដំណឹង និងប្រតិបត្តិការ (Notifications & Automation)
+          <!-- Feature Toggles via Standard Switch Buttons -->
+          <div class="space-y-3 p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50">
+            <label class="block font-bold text-slate-800 text-xs">
+              ការជូនដំណឹង និងស្វ័យប្រវត្តិកម្ម (Notifications & Automation)
             </label>
 
-            <!-- Toggle 1: Instant Notifications -->
-            <label class="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-100 cursor-pointer">
-              <span class="text-slate-700 font-medium">ទទួលដំណឹងភ្លាមៗលើរបាយការណ៍កំហុសថ្មី</span>
-              <input
-                type="checkbox"
-                v-model="settingsForm.instantNotifications"
-                class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-              />
-            </label>
+            <!-- Switch 1: Instant Notifications -->
+            <BaseSwitch
+              v-model="settingsForm.instantNotifications"
+              label="ទទួលដំណឹងភ្លាមៗលើរបាយការណ៍កំហុសថ្មី"
+              description="ផ្ញើការជូនដំណឹងរហ័សនៅពេលមានរបាយការណ៍កែតម្រូវឈ្មោះពីមន្ត្រី"
+            />
 
-            <!-- Toggle 2: Auto Scroll to target -->
-            <label class="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-100 cursor-pointer">
-              <span class="text-slate-700 font-medium">រំកិលស្វ័យប្រវត្តិទៅកាន់ទីតាំងដែលរាយការណ៍ (Auto-Scroll)</span>
-              <input
-                type="checkbox"
-                v-model="settingsForm.autoScrollToCheck"
-                class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-              />
-            </label>
+            <!-- Switch 2: Auto Scroll to target -->
+            <BaseSwitch
+              v-model="settingsForm.autoScrollToCheck"
+              label="រំកិលស្វ័យប្រវត្តិទៅកាន់ទីតាំងដែលរាយការណ៍ (Auto-Scroll)"
+              description="រំកិលអេក្រង់ដោយស្វ័យប្រវត្តិ និងបើកផ្ទាំងពណ៌ភ្លឺលើទីតាំងដែលត្រូវពិនិត្យ"
+            />
 
-            <!-- Toggle 3: Audio Alerts -->
-            <label class="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-100 cursor-pointer">
-              <span class="text-slate-700 font-medium">សំឡេងបញ្ជាក់នៅពេលបញ្ចប់ប្រតិបត្តិការ (Audio Cues)</span>
-              <input
-                type="checkbox"
-                v-model="settingsForm.audioAlerts"
-                class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-              />
-            </label>
+            <!-- Switch 3: Audio Alerts -->
+            <BaseSwitch
+              v-model="settingsForm.audioAlerts"
+              label="សំឡេងបញ្ជាក់នៅពេលបញ្ចប់ប្រតិបត្តិការ (Audio Cues)"
+              description="បន្លឺសំឡេងកម្រិតស្រាលពេលរក្សាទុក ឬផ្ទៀងផ្ទាត់ទិន្នន័យបានជោគជ័យ"
+            />
           </div>
         </template>
 
@@ -401,7 +403,7 @@ function handleLogout() {
                 v-model="passwordForm.currentPassword"
                 type="password"
                 placeholder="បញ្ចូលពាក្យសម្ងាត់បច្ចុប្បន្ន"
-                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
               />
             </div>
 
@@ -411,7 +413,7 @@ function handleLogout() {
                 v-model="passwordForm.newPassword"
                 type="password"
                 placeholder="បញ្ចូលពាក្យសម្ងាត់ថ្មី"
-                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
               />
             </div>
 
@@ -421,19 +423,19 @@ function handleLogout() {
                 v-model="passwordForm.confirmPassword"
                 type="password"
                 placeholder="បញ្ចូលពាក្យសម្ងាត់ថ្មីម្តងទៀត"
-                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none"
+                class="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
               />
             </div>
           </div>
         </template>
 
-        <!-- Modal Footer Actions -->
+        <!-- Modal Footer Actions (Standard 44px Blueprint) -->
         <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
           <!-- Logout Button -->
           <button
             type="button"
             @click="handleLogout"
-            class="h-10 px-3.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-medium text-xs flex items-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
+            class="h-11 min-h-[44px] px-4 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-medium text-xs flex items-center gap-2 transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-rose-500 cursor-pointer"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -441,11 +443,11 @@ function handleLogout() {
             <span>ចាកចេញ (Sign Out)</span>
           </button>
 
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2.5">
             <button
               type="button"
               @click="emit('close')"
-              class="h-10 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition-all active:scale-[0.98] cursor-pointer"
+              class="h-11 min-h-[44px] px-5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 cursor-pointer"
             >
               បោះបង់
             </button>
@@ -453,9 +455,9 @@ function handleLogout() {
             <button
               type="submit"
               :disabled="isSaving"
-              class="h-10 px-5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-sm flex items-center gap-2 transition-all active:scale-[0.98] cursor-pointer disabled:opacity-60"
+              class="h-11 min-h-[44px] px-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-sm hover:shadow-md flex items-center gap-2 transition-all active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <svg v-if="isSaving" class="animate-spin w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24">
+              <svg v-if="isSaving" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>

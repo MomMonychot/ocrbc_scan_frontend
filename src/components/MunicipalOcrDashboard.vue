@@ -254,7 +254,7 @@ function handleRefresh() {
             type="button"
             @click="selectedTimeframe = 'today'"
             :class="[
-              'px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200',
+              'px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:scale-[0.98]',
               selectedTimeframe === 'today'
                 ? 'bg-slate-100 text-slate-900 font-semibold shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -266,7 +266,7 @@ function handleRefresh() {
             type="button"
             @click="selectedTimeframe = 'week'"
             :class="[
-              'px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200',
+              'px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:scale-[0.98]',
               selectedTimeframe === 'week'
                 ? 'bg-slate-100 text-slate-900 font-semibold shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -278,7 +278,7 @@ function handleRefresh() {
             type="button"
             @click="selectedTimeframe = 'month'"
             :class="[
-              'px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200',
+              'px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:scale-[0.98]',
               selectedTimeframe === 'month'
                 ? 'bg-slate-100 text-slate-900 font-semibold shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -292,7 +292,7 @@ function handleRefresh() {
           type="button"
           @click="handleRefresh"
           :disabled="isRefreshing"
-          class="h-10 px-3.5 rounded-xl bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-xs transition-all duration-200 ease-in-out active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 outline-none inline-flex items-center gap-2 text-xs font-medium cursor-pointer"
+          class="h-11 min-h-[44px] px-4 rounded-xl bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-xs transition-all duration-200 ease-in-out active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 outline-none inline-flex items-center gap-2 text-xs font-medium cursor-pointer"
         >
           <RefreshCw class="w-4 h-4 text-slate-500" :class="{ 'animate-spin': isRefreshing }" :stroke-width="2" />
           <span class="hidden sm:inline">{{ t('dashboard.btn_refresh') }}</span>
@@ -301,7 +301,7 @@ function handleRefresh() {
         <button
           type="button"
           @click="emit('export-audit-log')"
-          class="h-10 px-4 rounded-xl bg-blue-900 hover:bg-blue-950 text-white shadow-xs transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 outline-none inline-flex items-center gap-2 text-xs font-medium cursor-pointer"
+          class="h-11 min-h-[44px] px-5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all duration-200 ease-in-out hover:shadow-md active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 outline-none inline-flex items-center gap-2 text-xs font-medium cursor-pointer"
         >
           <Download class="w-4 h-4" :stroke-width="2" />
           <span>{{ t('dashboard.btn_export_log') }}</span>

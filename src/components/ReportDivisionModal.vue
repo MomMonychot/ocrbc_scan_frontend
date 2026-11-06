@@ -122,7 +122,7 @@ function handleClose() {
         <button
           type="button"
           @click="handleClose"
-          class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+          class="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -238,7 +238,7 @@ function handleClose() {
           <button
             type="button"
             @click="handleClose"
-            class="h-11 min-h-[44px] px-5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl font-medium tracking-wide active:scale-[0.98] transition-all cursor-pointer"
+            class="h-11 min-h-[44px] px-5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl font-medium tracking-wide active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 transition-all cursor-pointer"
           >
             {{ t('reports.cancel_btn') }}
           </button>
@@ -246,7 +246,7 @@ function handleClose() {
           <button
             type="submit"
             :disabled="isSubmitting"
-            class="h-11 min-h-[44px] px-5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-medium tracking-wide shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
+            class="h-11 min-h-[44px] px-6 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-medium tracking-wide shadow-sm hover:shadow-md active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
           >
             <svg v-if="isSubmitting" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

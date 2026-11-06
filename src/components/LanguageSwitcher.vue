@@ -13,21 +13,21 @@ function selectLanguage(lang) {
 </script>
 
 <template>
-  <div class="inline-flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200 select-none shrink-0 h-10 gap-1">
+  <div class="inline-flex items-center rounded-xl bg-slate-100/90 p-1 border border-slate-200 select-none shrink-0 h-10 gap-1 shadow-2xs">
     <!-- Standard Cambodia Flag Button (Khmer) -->
     <button
       type="button"
       @click="selectLanguage('km')"
       :class="[
-        'w-8 h-8 rounded-lg transition-all duration-150 flex items-center justify-center p-0 shrink-0 text-center',
+        'w-8 h-8 rounded-lg transition-all duration-200 flex items-center justify-center p-0 shrink-0 text-center outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:scale-95 cursor-pointer',
         currentLang === 'km'
-          ? 'bg-white shadow-sm border border-slate-200/80'
-          : 'border border-transparent opacity-40 hover:opacity-100 hover:bg-slate-200/50'
+          ? 'bg-white shadow-xs border border-slate-200/90 font-bold'
+          : 'border border-transparent opacity-45 hover:opacity-100 hover:bg-slate-200/60'
       ]"
-      :title="currentLang === 'km' ? 'ភាសាខ្មែរ' : 'Khmer'"
+      :title="currentLang === 'km' ? 'ភាសាខ្មែរ (Khmer)' : 'Khmer'"
       aria-label="ប្តូរទៅភាសាខ្មែរ"
     >
-      <span class="flag-icon text-2xl select-none">🇰🇭</span>
+      <span class="flag-icon text-xl select-none">🇰🇭</span>
     </button>
 
     <!-- Standard UK Flag Button (English) -->
@@ -35,15 +35,15 @@ function selectLanguage(lang) {
       type="button"
       @click="selectLanguage('en')"
       :class="[
-        'w-8 h-8 rounded-lg transition-all duration-150 flex items-center justify-center p-0 shrink-0 text-center',
+        'w-8 h-8 rounded-lg transition-all duration-200 flex items-center justify-center p-0 shrink-0 text-center outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:scale-95 cursor-pointer',
         currentLang === 'en'
-          ? 'bg-white shadow-sm border border-slate-200/80'
-          : 'border border-transparent opacity-40 hover:opacity-100 hover:bg-slate-200/50'
+          ? 'bg-white shadow-xs border border-slate-200/90 font-bold'
+          : 'border border-transparent opacity-45 hover:opacity-100 hover:bg-slate-200/60'
       ]"
-      :title="currentLang === 'km' ? 'ភាសាអង់គ្លេស' : 'English'"
+      :title="currentLang === 'km' ? 'ភាសាអង់គ្លេស (English)' : 'English'"
       aria-label="Switch to English"
     >
-      <span class="flag-icon text-2xl select-none">🇬🇧</span>
+      <span class="flag-icon text-xl select-none">🇬🇧</span>
     </button>
   </div>
 </template>
