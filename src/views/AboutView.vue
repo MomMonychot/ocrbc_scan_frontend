@@ -323,7 +323,7 @@ watch(() => route.query.section, (newSection) => {
           <p class="text-sm text-blue-100 mt-1">ចាប់ផ្តើមដំណើរការស្កេន និងផ្ទៀងផ្ទាត់ទិន្នន័យក្នុងប្រព័ន្ធភ្លាមៗ</p>
         </div>
         <router-link
-          to="/verify"
+          to="/"
           class="h-12 px-7 rounded-xl bg-white hover:bg-slate-100 text-gov-primary font-bold text-sm shadow-sm transition-all inline-flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
         >
           <span>{{ t('functions.birth_certificate.title') }}</span>
