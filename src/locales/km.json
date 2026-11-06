@@ -517,5 +517,72 @@
       "deleted_success": "បានលុបផ្នែករដ្ឋបាលដោយជោគជ័យ។",
       "error_generic": "មានបញ្ហាក្នុងដំណើរការទិន្នន័យផ្នែករដ្ឋបាល។"
     }
+  },
+  "auth": {
+    "login_title": "ចូលប្រើប្រាស់ប្រព័ន្ធ",
+    "login_subtitle": "ប្រព័ន្ធគ្រប់គ្រង និងផ្ទៀងផ្ទាត់ទិន្នន័យអត្រានុកូលដ្ឋាន",
+    "username_label": "ឈ្មោះគណនី",
+    "username_placeholder": "បញ្ចូលឈ្មោះគណនី (admin ឬ user)",
+    "password_label": "ពាក្យសម្ងាត់",
+    "password_placeholder": "បញ្ចូលពាក្យសម្ងាត់",
+    "login_btn": "ចូលប្រព័ន្ធ",
+    "logging_in": "កំពុងផ្ទៀងផ្ទាត់...",
+    "quick_demo": "ជ្រើសរើសគណនីសាកល្បង (Demo Quick Switch)",
+    "admin_chip": "👑 អភិបាលប្រព័ន្ធ (Admin)",
+    "user_chip": "👤 មន្ត្រីចុះបញ្ជី (Officer)",
+    "logout": "ចាកចេញ",
+    "logged_in_as": "បានចូលជា",
+    "role_admin": "អភិបាលប្រព័ន្ធ (Admin)",
+    "role_user": "មន្ត្រីចុះបញ្ជី (Officer)",
+    "invalid_credentials": "ឈ្មោះអ្នកប្រើប្រាស់ ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។ សូមសាកល្បងម្តងទៀត។"
+  },
+  "notifications": {
+    "title": "ការជូនដំណឹងរដ្ឋបាល",
+    "reports_title": "របាយការណ៍កំហុសឈ្មោះទីតាំង",
+    "unread_badge": "របាយការណ៍ថ្មី",
+    "no_reports": "គ្មានរបាយការណ៍ថ្មីទេ",
+    "action_mark_read": "សញ្ញាថាបានអាន",
+    "action_go_to_check": "ទៅពិនិត្យមើល",
+    "reported_issue": "ប្រភេទបញ្ហា",
+    "suggested_fix": "ស្នើសុំកែទៅជា",
+    "status_pending": "មិនទាន់ពិនិត្យ",
+    "status_read": "បានអានរួច",
+    "status_resolved": "បានដោះស្រាយ"
+  },
+  "reports": {
+    "modal_title": "រាយការណ៍កំហុសឈ្មោះផ្នែករដ្ឋបាល",
+    "modal_subtitle": "សូមជួយកែលម្អភាពត្រឹមត្រូវនៃទិន្នន័យភូមិសាស្ត្រជាតិ",
+    "target_division": "ផ្នែករដ្ឋបាលដែលត្រូវរាយការណ៍",
+    "current_name": "ឈ្មោះបច្ចុប្បន្ន",
+    "code": "លេខកូដ NIS",
+    "issue_type": "ប្រភេទបញ្ហា",
+    "types": {
+      "spelling": "កំហុសអក្ខរាវិរុទ្ធ (Spelling Error)",
+      "incorrect_name": "ឈ្មោះខុសទាំងស្រុង (Incorrect Name)",
+      "wrong_hierarchy": "ឋានានុក្រមមិនត្រឹមត្រូវ (Wrong Hierarchy)",
+      "other": "បញ្ហាផ្សេងទៀត (Other Issue)"
+    },
+    "suggested_km": "ឈ្មោះត្រឹមត្រូវជាភាសាខ្មែរ",
+    "suggested_km_placeholder": "បញ្ចូលឈ្មោះដែលត្រឹមត្រូវ",
+    "suggested_en": "ឈ្មោះត្រឹមត្រូវជាអក្សរឡាតាំង (ស្រេចចិត្ត)",
+    "suggested_en_placeholder": "បញ្ចូលឈ្មោះឡាតាំងត្រឹមត្រូវ",
+    "notes": "មូលហេតុ ឬកំណត់សម្គាល់បន្ថែម",
+    "notes_placeholder": "បញ្ជាក់ប្រភពឯកសារ ឬមូលហេតុនៃការកែប្រែ...",
+    "submit_btn": "ផ្ញើរបាយការណ៍ទៅអភិបាល",
+    "submitting": "កំពុងផ្ញើ...",
+    "cancel_btn": "បោះបង់",
+    "success_msg": "របាយការណ៍របស់អ្នកត្រូវបានបញ្ជូនទៅកាន់អភិបាលប្រព័ន្ធដោយជោគជ័យ!"
+  },
+  "divisions_assistant": {
+    "copy_full_address": "ចម្លងអាសយដ្ឋាន",
+    "copied_toast": "បានចម្លងអាសយដ្ឋានពេញលេញ!",
+    "report_issue": "រាយការណ៍កំហុស",
+    "view_districts": "មើលស្រុក",
+    "view_communes": "មើលឃុំ",
+    "view_villages": "មើលភូមិ",
+    "inspecting_banner": "កំពុងពិនិត្យមើលទីតាំងដែលបានរាយការណ៍",
+    "dismiss_inspect": "បិទការពិនិត្យ",
+    "hierarchy_path": "ខ្សែស្រឡាយរដ្ឋបាល",
+    "full_address": "អាសយដ្ឋានពេញលេញ"
   }
 }

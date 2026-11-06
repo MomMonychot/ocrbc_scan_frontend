@@ -517,5 +517,72 @@
       "deleted_success": "Administrative division deleted successfully.",
       "error_generic": "An error occurred while processing the division record."
     }
+  },
+  "auth": {
+    "login_title": "System Sign In",
+    "login_subtitle": "Civil Status Verification & Administrative Governance Platform",
+    "username_label": "Account Username",
+    "username_placeholder": "Enter username (admin or user)",
+    "password_label": "Password",
+    "password_placeholder": "Enter password",
+    "login_btn": "Sign In",
+    "logging_in": "Authenticating...",
+    "quick_demo": "One-Click Quick Credentials (Demo)",
+    "admin_chip": "👑 Administrator (admin / admin123)",
+    "user_chip": "👤 Civil Officer (user / user123)",
+    "logout": "Sign Out",
+    "logged_in_as": "Signed in as",
+    "role_admin": "System Administrator",
+    "role_user": "Civil Registrar",
+    "invalid_credentials": "Invalid username or password. Please try again."
+  },
+  "notifications": {
+    "title": "Administrative Notifications",
+    "reports_title": "Division Discrepancy Reports",
+    "unread_badge": "New Reports",
+    "no_reports": "No pending reports",
+    "action_mark_read": "Mark as Read",
+    "action_go_to_check": "Go to Check",
+    "reported_issue": "Issue Category",
+    "suggested_fix": "Suggested Fix",
+    "status_pending": "Pending Review",
+    "status_read": "Read",
+    "status_resolved": "Resolved"
+  },
+  "reports": {
+    "modal_title": "Report Administrative Division Error",
+    "modal_subtitle": "Help improve Cambodia national gazetteer data integrity",
+    "target_division": "Target Division",
+    "current_name": "Current Name",
+    "code": "NIS Code",
+    "issue_type": "Issue Category",
+    "types": {
+      "spelling": "Spelling / Orthography Error",
+      "incorrect_name": "Completely Incorrect Name",
+      "wrong_hierarchy": "Incorrect Hierarchy / Parent",
+      "other": "Other Discrepancy"
+    },
+    "suggested_km": "Correct Khmer Name",
+    "suggested_km_placeholder": "Enter corrected Khmer name",
+    "suggested_en": "Correct Latin Name (Optional)",
+    "suggested_en_placeholder": "Enter corrected Latin name",
+    "notes": "Reason or Reference Notes",
+    "notes_placeholder": "Cite official sub-decree or describe reason for revision...",
+    "submit_btn": "Submit Report to Admin",
+    "submitting": "Submitting...",
+    "cancel_btn": "Cancel",
+    "success_msg": "Report has been successfully submitted to the System Administrator!"
+  },
+  "divisions_assistant": {
+    "copy_full_address": "Copy Full Address",
+    "copied_toast": "Full address copied to clipboard!",
+    "report_issue": "Report Issue",
+    "view_districts": "View Districts",
+    "view_communes": "View Communes",
+    "view_villages": "View Villages",
+    "inspecting_banner": "Inspecting Reported Administrative Division",
+    "dismiss_inspect": "Dismiss Inspection",
+    "hierarchy_path": "Administrative Hierarchy",
+    "full_address": "Full Standard Address"
   }
 }

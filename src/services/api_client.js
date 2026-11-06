@@ -165,6 +165,46 @@ export async function deleteGeoEntity(level, code) {
   return apiClient.delete(`/geo/entities/${level}/${code}`)
 }
 
+/**
+ * Authentication and User Session API Services
+ */
+
+export async function apiLogin(username, password) {
+  return apiClient.post('/auth/login', {
+    username: username.trim(),
+    password: password.trim(),
+  })
+}
+
+export async function getAuthProfile(username) {
+  const params = username ? { username } : {}
+  return apiClient.get('/auth/me', { params })
+}
+
+/**
+ * Administrative Division Error Reports & Notifications API Services
+ */
+
+export async function getGeoReports(statusFilter = null) {
+  const params = statusFilter ? { status_filter: statusFilter } : {}
+  return apiClient.get('/geo/reports', { params })
+}
+
+export async function submitGeoReport(payload) {
+  return apiClient.post('/geo/reports', payload)
+}
+
+export async function updateGeoReportStatus(reportId, status, adminNotes = null) {
+  return apiClient.patch(`/geo/reports/${reportId}`, {
+    status,
+    admin_notes: adminNotes,
+  })
+}
+
+export async function deleteGeoReport(reportId) {
+  return apiClient.delete(`/geo/reports/${reportId}`)
+}
+
 export default {
   inspectDocument,
   verifyExtractedFields,
@@ -178,4 +218,10 @@ export default {
   createGeoEntity,
   updateGeoEntity,
   deleteGeoEntity,
+  apiLogin,
+  getAuthProfile,
+  getGeoReports,
+  submitGeoReport,
+  updateGeoReportStatus,
+  deleteGeoReport,
 }

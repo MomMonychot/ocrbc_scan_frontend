@@ -1,7 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import BaseDropdownSelect from '../components/BaseDropdownSelect.vue'
+import ReportDivisionModal from '../components/ReportDivisionModal.vue'
+import { authStore } from '../services/authStore'
 import {
   getGeoHierarchy,
   getGeoProvinces,
@@ -13,6 +16,7 @@ import {
   deleteGeoEntity,
 } from '../services/api_client'
 
+const route = useRoute()
 const { t, locale } = useI18n()
 
 // Summary statistics
@@ -508,11 +512,138 @@ function getLevelDisplayName(level) {
   }
 }
 
-onMounted(() => {
-  loadHierarchyStats()
-  loadProvinces()
-  loadEntities()
+// Reporting and Deep-Link Inspection States
+const isReportModalOpen = ref(false)
+const reportingDivision = ref(null)
+const highlightedCode = ref('')
+const inspectingTarget = ref(null)
+
+function openReportModal(item) {
+  reportingDivision.value = item
+  isReportModalOpen.value = true
+}
+
+function handleReportSubmitted() {
+  showNotification(t('reports.success_msg'), 'success')
+  if (authStore.isAdmin) {
+    authStore.refreshReports()
+  }
+}
+
+function copyFullAddress(item) {
+  let full = item.name_km
+  if (item.parent_name_km) {
+    full += ` ${item.parent_name_km}`
+  }
+  if (navigator?.clipboard?.writeText) {
+    navigator.clipboard.writeText(full).then(() => {
+      showNotification(t('divisions_assistant.copied_toast'), 'success')
+    }).catch(() => {
+      showNotification(full, 'success')
+    })
+  } else {
+    showNotification(full, 'success')
+  }
+}
+
+function dismissInspection() {
+  inspectingTarget.value = null
+  highlightedCode.value = ''
+}
+
+async function handleDeepLink(code, repId = null) {
+  if (!code) return
+  const targetCode = String(code).trim()
+  highlightedCode.value = targetCode
+
+  const len = targetCode.length
+  let provCode = ''
+  let distCode = ''
+  let commCode = ''
+  let level = 'all'
+
+  if (len >= 8) {
+    level = 'village'
+    provCode = targetCode.slice(0, 2)
+    distCode = targetCode.slice(0, 4)
+    commCode = targetCode.slice(0, 6)
+  } else if (len >= 6) {
+    level = 'commune'
+    provCode = targetCode.slice(0, 2)
+    distCode = targetCode.slice(0, 4)
+    commCode = targetCode
+  } else if (len >= 4) {
+    level = 'district'
+    provCode = targetCode.slice(0, 2)
+    distCode = targetCode
+  } else {
+    level = 'province'
+    provCode = targetCode
+  }
+
+  // Set cascading selectors
+  selectedProvince.value = provCode
+  if (provCode) {
+    try {
+      const d = await getGeoDistricts(provCode)
+      districtList.value = d || []
+    } catch (err) {}
+  }
+
+  if (distCode) {
+    selectedDistrict.value = distCode
+    try {
+      const c = await getGeoCommunes(distCode)
+      communeList.value = c || []
+    } catch (err) {}
+  }
+
+  if (commCode && len >= 8) {
+    selectedCommune.value = commCode
+  }
+
+  activeLevel.value = level
+  currentPage.value = 1
+  searchQuery.value = ''
+
+  await loadEntities()
+
+  setTimeout(() => {
+    const el = document.getElementById(`div-row-${targetCode}`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, 250)
+
+  const matched = entities.value.find((e) => e.code === targetCode)
+  inspectingTarget.value = {
+    code: targetCode,
+    name_km: matched?.name_km || targetCode,
+    name_en: matched?.name_en || '',
+    level: matched?.level || level,
+    repId,
+    entity: matched || null,
+  }
+}
+
+onMounted(async () => {
+  await loadHierarchyStats()
+  await loadProvinces()
+  if (route.query.code) {
+    await handleDeepLink(route.query.code, route.query.repId)
+  } else {
+    await loadEntities()
+  }
 })
+
+watch(
+  () => route.query.code,
+  (newCode) => {
+    if (newCode) {
+      handleDeepLink(newCode, route.query.repId)
+    }
+  }
+)
 </script>
 
 <template>
@@ -575,7 +706,9 @@ onMounted(() => {
             <span>{{ t('divisions.btn_refresh') }}</span>
           </button>
 
+          <!-- Add Entity Button (Restricted to Administrator Only) -->
           <button
+            v-if="authStore.isAdmin"
             type="button"
             @click="openCreateModal"
             class="h-10 px-5 rounded-xl bg-[#1E3A8A] hover:bg-blue-950 text-white transition-all font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm cursor-pointer select-none active:scale-[0.99]"
@@ -584,6 +717,51 @@ onMounted(() => {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             <span>{{ t('divisions.btn_add') }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Deep-Link Inspection Banner (When Admin clicked 'Go to check' from notifications) -->
+      <div
+        v-if="inspectingTarget"
+        class="bg-blue-50/90 border border-blue-200/90 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in slide-in-from-top-2"
+      >
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs ring-2 ring-blue-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">{{ t('divisions_assistant.inspecting_banner') }}</span>
+              <span class="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-white text-blue-700 border border-blue-200">NIS #{{ inspectingTarget.code }}</span>
+            </div>
+            <div class="text-base font-black text-slate-900 mt-0.5">
+              {{ inspectingTarget.name_km }} <span class="text-xs font-normal text-slate-600">({{ inspectingTarget.name_en }})</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <button
+            v-if="inspectingTarget.entity && authStore.isAdmin"
+            type="button"
+            @click="openEditModal(inspectingTarget.entity)"
+            class="h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium flex items-center gap-2 shadow-xs cursor-pointer active:scale-[0.98]"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span>កែសម្រួលឈ្មោះ</span>
+          </button>
+          <button
+            type="button"
+            @click="dismissInspection"
+            class="h-10 px-4 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium cursor-pointer active:scale-[0.98]"
+          >
+            {{ t('divisions_assistant.dismiss_inspect') }}
           </button>
         </div>
       </div>
@@ -923,29 +1101,13 @@ onMounted(() => {
 
         <!-- Table View -->
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs sm:text-sm text-slate-700">
+          <table class="table-fixed w-full text-left text-xs sm:text-sm text-slate-700">
             <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
               <tr>
-                <th
-                  @click="handleSort('code')"
-                  class="py-3.5 px-6 cursor-pointer hover:text-slate-900 select-none"
-                >
-                  <div class="flex items-center gap-1.5">
-                    <span>{{ t('divisions.table.col_code') }}</span>
-                    <svg
-                      :class="['w-3.5 h-3.5 transition-transform', sortBy === 'code' && sortOrder === 'desc' ? 'rotate-180 text-[#1E3A8A]' : sortBy === 'code' ? 'text-[#1E3A8A]' : 'text-slate-300']"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12" />
-                    </svg>
-                  </div>
-                </th>
-
+                <!-- 1. Administrative Division Name & NIS Code -->
                 <th
                   @click="handleSort('name_km')"
-                  class="py-3.5 px-6 cursor-pointer hover:text-slate-900 select-none"
+                  class="py-3.5 px-6 cursor-pointer hover:text-slate-900 select-none w-[30%]"
                 >
                   <div class="flex items-center gap-1.5">
                     <span>{{ t('divisions.table.col_name_km') }}</span>
@@ -960,46 +1122,36 @@ onMounted(() => {
                   </div>
                 </th>
 
-                <th
-                  @click="handleSort('name_en')"
-                  class="py-3.5 px-6 cursor-pointer hover:text-slate-900 select-none"
-                >
-                  <div class="flex items-center gap-1.5">
-                    <span>{{ t('divisions.table.col_name_en') }}</span>
-                    <svg
-                      :class="['w-3.5 h-3.5 transition-transform', sortBy === 'name_en' && sortOrder === 'desc' ? 'rotate-180 text-[#1E3A8A]' : sortBy === 'name_en' ? 'text-[#1E3A8A]' : 'text-slate-300']"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12" />
-                    </svg>
-                  </div>
+                <!-- 2. Administrative Hierarchy & Full Breadcrumb -->
+                <th class="py-3.5 px-6 w-[28%]">
+                  {{ t('divisions_assistant.hierarchy_path') }}
                 </th>
 
-                <th class="py-3.5 px-6">{{ t('divisions.table.col_level') }}</th>
-                <th class="py-3.5 px-6">{{ t('divisions.table.col_type') }}</th>
-                <th class="py-3.5 px-6">{{ t('divisions.table.col_parent') }}</th>
-                <th class="py-3.5 px-6 text-right">{{ t('divisions.table.col_actions') }}</th>
+                <!-- 3. Tier Level & Classification -->
+                <th class="py-3.5 px-6 w-[14%]">
+                  {{ t('divisions.table.col_level') }}
+                </th>
+
+                <!-- 4. Interactive Senior Actions -->
+                <th class="py-3.5 px-6 text-right w-[28%]">
+                  {{ t('divisions.table.col_actions') }}
+                </th>
               </tr>
             </thead>
 
             <tbody class="divide-y divide-slate-100 font-normal">
               <template v-if="isLoading">
                 <tr v-for="n in 6" :key="n" class="animate-pulse">
-                  <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-16"></div></td>
-                  <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-28"></div></td>
-                  <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-32"></div></td>
+                  <td class="py-4 px-6"><div class="h-5 bg-slate-200 rounded w-32"></div></td>
+                  <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-44"></div></td>
                   <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-20"></div></td>
-                  <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-16"></div></td>
-                  <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-36"></div></td>
-                  <td class="py-4 px-6 text-right"><div class="h-4 bg-slate-200 rounded w-12 ml-auto"></div></td>
+                  <td class="py-4 px-6 text-right"><div class="h-8 bg-slate-200 rounded w-36 ml-auto"></div></td>
                 </tr>
               </template>
 
               <template v-else-if="entities.length === 0">
                 <tr>
-                  <td colspan="7" class="py-12 text-center text-slate-500">
+                  <td colspan="4" class="py-12 text-center text-slate-500">
                     <div class="flex flex-col items-center justify-center space-y-2">
                       <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1017,84 +1169,128 @@ onMounted(() => {
                 v-else
                 v-for="item in entities"
                 :key="item.code"
-                class="hover:bg-slate-50/80 transition-colors group"
+                :id="'div-row-' + item.code"
+                :class="[
+                  'transition-all duration-300 group',
+                  highlightedCode === item.code
+                    ? 'bg-blue-50/90 ring-2 ring-blue-500 shadow-md'
+                    : 'hover:bg-slate-50/80'
+                ]"
               >
-                <!-- NIS Code -->
-                <td class="py-4 px-6 font-mono font-semibold text-slate-900">
-                  {{ item.code }}
+                <!-- 1. Primary Name & NIS Identification -->
+                <td class="py-4 px-6">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-slate-900 text-sm sm:text-base leading-tight">{{ item.name_km }}</span>
+                      <span class="font-mono text-[10px] text-slate-500 bg-slate-100/90 border border-slate-200 px-2 py-0.5 rounded-md shrink-0">
+                        #{{ item.code }}
+                      </span>
+                    </div>
+                    <div class="text-xs text-slate-500 font-normal">
+                      {{ item.name_en }}
+                    </div>
+                  </div>
                 </td>
 
-                <!-- Khmer Name with Drill-Down Action Link -->
+                <!-- 2. Administrative Hierarchy & Breadcrumb -->
+                <td class="py-4 px-6 text-slate-600">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-1.5 text-xs text-slate-800 font-medium truncate" :title="item.parent_name_km">
+                      <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span class="truncate">{{ item.parent_name_km || 'ព្រះរាជាណាចក្រកម្ពុជា' }}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 truncate pl-5">
+                      {{ item.parent_name_en || 'Kingdom of Cambodia' }}
+                    </div>
+                  </div>
+                </td>
+
+                <!-- 3. Tier Level Badge & Type -->
                 <td class="py-4 px-6">
-                  <div class="flex items-center gap-2">
-                    <span class="font-medium text-slate-900 text-sm">{{ item.name_km }}</span>
-                    <!-- Drill Down Link if Province/District/Commune -->
+                  <div class="space-y-1">
+                    <span
+                      :class="[
+                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border',
+                        getLevelBadgeClass(item.level)
+                      ]"
+                    >
+                      {{ getLevelDisplayName(item.level) }}
+                    </span>
+                    <div class="text-[11px] text-slate-500 font-normal">
+                      {{ item.type || '-' }}
+                    </div>
+                  </div>
+                </td>
+
+                <!-- 4. Interactive Senior Actions -->
+                <td class="py-4 px-6 text-right whitespace-nowrap">
+                  <div class="inline-flex items-center justify-end gap-1.5 flex-wrap">
+                    <!-- Action A: Copy Full Address (1-Click) -->
+                    <button
+                      type="button"
+                      @click="copyFullAddress(item)"
+                      class="h-8 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-[11px] font-medium inline-flex items-center gap-1 transition-all active:scale-[0.98] shadow-2xs cursor-pointer"
+                      :title="t('divisions_assistant.copy_full_address')"
+                    >
+                      <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      <span>{{ t('divisions_assistant.copy_full_address') }}</span>
+                    </button>
+
+                    <!-- Action B: Drill Down Children (if province/district/commune) -->
                     <button
                       v-if="item.level !== 'village'"
                       type="button"
                       @click.stop="handleDrillDown(item)"
-                      class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#1E3A8A] hover:underline bg-blue-50/70 hover:bg-blue-100/70 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
-                      :title="item.level === 'province' ? t('divisions.view_children_districts') : item.level === 'district' ? t('divisions.view_children_communes') : t('divisions.view_children_villages')"
+                      class="h-8 px-2.5 rounded-lg bg-blue-50/80 hover:bg-blue-100/90 text-[#1E3A8A] border border-blue-200 text-[11px] font-semibold inline-flex items-center gap-1 transition-all active:scale-[0.98] cursor-pointer"
                     >
-                      <span>{{ item.level === 'province' ? t('divisions.view_children_districts') : item.level === 'district' ? t('divisions.view_children_communes') : t('divisions.view_children_villages') }}</span>
+                      <span>{{ item.level === 'province' ? t('divisions_assistant.view_districts') : item.level === 'district' ? t('divisions_assistant.view_communes') : t('divisions_assistant.view_villages') }}</span>
                       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                       </svg>
                     </button>
-                  </div>
-                </td>
 
-                <!-- Latin Name -->
-                <td class="py-4 px-6 text-slate-700">
-                  {{ item.name_en }}
-                </td>
-
-                <!-- Level Badge -->
-                <td class="py-4 px-6">
-                  <span
-                    :class="[
-                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border',
-                      getLevelBadgeClass(item.level)
-                    ]"
-                  >
-                    {{ getLevelDisplayName(item.level) }}
-                  </span>
-                </td>
-
-                <!-- Classification Type -->
-                <td class="py-4 px-6 text-slate-600 text-xs">
-                  {{ item.type || '-' }}
-                </td>
-
-                <!-- Parent Jurisdiction -->
-                <td class="py-4 px-6 text-slate-500 text-xs max-w-xs truncate" :title="item.parent_name_km">
-                  {{ item.parent_name_km || '-' }}
-                </td>
-
-                <!-- Actions -->
-                <td class="py-4 px-6 text-right whitespace-nowrap">
-                  <div class="inline-flex items-center gap-1.5 opacity-90 group-hover:opacity-100">
+                    <!-- Action C: Report Issue Button (User & Officer) -->
                     <button
                       type="button"
-                      @click="openEditModal(item)"
-                      class="p-1.5 rounded-lg text-slate-500 hover:text-[#1E3A8A] hover:bg-blue-50 transition-colors cursor-pointer"
-                      title="Edit Division"
+                      @click="openReportModal(item)"
+                      class="h-8 px-2.5 rounded-lg bg-amber-50/80 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-semibold inline-flex items-center gap-1 transition-all active:scale-[0.98] cursor-pointer"
+                      :title="t('divisions_assistant.report_issue')"
                     >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
                       </svg>
+                      <span>{{ t('divisions_assistant.report_issue') }}</span>
                     </button>
 
-                    <button
-                      type="button"
-                      @click="openDeleteModal(item)"
-                      class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                      title="Delete Division"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
+                    <!-- Action D: Administrator Only Controls -->
+                    <template v-if="authStore.isAdmin">
+                      <button
+                        type="button"
+                        @click="openEditModal(item)"
+                        class="h-8 w-8 rounded-lg text-slate-500 hover:text-[#1E3A8A] hover:bg-blue-50 border border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Edit Division"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+
+                      <button
+                        type="button"
+                        @click="openDeleteModal(item)"
+                        class="h-8 w-8 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Delete Division"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </template>
                   </div>
                 </td>
               </tr>
@@ -1421,6 +1617,16 @@ onMounted(() => {
           </div>
         </div>
       </div>
+
+      <!-- ============================================================= -->
+      <!-- MODAL 4: USER REPORT DIVISION DISCREPANCY MODAL               -->
+      <!-- ============================================================= -->
+      <ReportDivisionModal
+        :isOpen="isReportModalOpen"
+        :division="reportingDivision || {}"
+        @close="isReportModalOpen = false"
+        @submitted="handleReportSubmitted"
+      />
 
     </div>
   </main>

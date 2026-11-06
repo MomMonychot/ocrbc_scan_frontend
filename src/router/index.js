@@ -5,8 +5,17 @@ import VerificationView from '../views/VerificationView.vue'
 import AboutView from '../views/AboutView.vue'
 import TemplatesView from '../views/TemplatesView.vue'
 import AdministrativeDivisionsView from '../views/AdministrativeDivisionsView.vue'
+import LoginView from '../views/LoginView.vue'
 
 const routes = [
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView,
+    meta: {
+      title: 'Sign In - OCRBC Scan'
+    }
+  },
   {
     path: '/',
     name: 'home',

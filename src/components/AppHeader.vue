@@ -1,11 +1,14 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import AdminNotificationDropdown from './AdminNotificationDropdown.vue'
+import { authStore } from '../services/authStore'
 
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 
 // Hidden on first open
 const isAboutMenuOpen = ref(false)
@@ -19,6 +22,12 @@ function toggleAboutMenu() {
 function closeMenus() {
   isAboutMenuOpen.value = false
   isMobileMenuOpen.value = false
+}
+
+function handleLogout() {
+  authStore.logout()
+  closeMenus()
+  router.push('/login')
 }
 
 function handleDocumentClick(event) {
@@ -260,10 +269,59 @@ onUnmounted(() => {
         </nav>
       </div>
 
-      <!-- Right Header Tools: Language Switcher & Mobile Menu Button -->
-      <div class="flex items-center gap-3 shrink-0">
+      <!-- Right Header Tools: Language Switcher, Notifications, User Profile & Mobile Menu Button -->
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        <!-- Admin Notification Bell (Shown when admin is logged in) -->
+        <AdminNotificationDropdown v-if="authStore.isAdmin" />
+
         <!-- Language Switcher Component -->
         <LanguageSwitcher />
+
+        <!-- User Authentication & Profile Pill (Desktop) -->
+        <div class="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200">
+          <!-- Logged In State -->
+          <div v-if="authStore.isAuthenticated" class="flex items-center gap-2">
+            <div
+              :class="[
+                'h-10 px-3 rounded-xl border flex items-center gap-2 text-xs font-semibold select-none',
+                authStore.isAdmin
+                  ? 'bg-amber-50/70 border-amber-200/80 text-amber-900'
+                  : 'bg-blue-50/70 border-blue-200/80 text-blue-900'
+              ]"
+            >
+              <span class="text-sm">{{ authStore.isAdmin ? '👑' : '👤' }}</span>
+              <div class="text-left leading-tight hidden md:block">
+                <div class="font-bold text-[11px] truncate max-w-[120px]">{{ authStore.user?.full_name_km || authStore.user?.username }}</div>
+                <div class="text-[9px] text-slate-500 uppercase tracking-wider">{{ authStore.isAdmin ? t('auth.role_admin') : t('auth.role_user') }}</div>
+              </div>
+            </div>
+
+            <!-- Logout Button -->
+            <button
+              type="button"
+              @click="handleLogout"
+              class="h-10 px-3 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:border-rose-200 hover:text-rose-700 text-slate-600 text-xs font-medium flex items-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
+              :title="t('auth.logout')"
+            >
+              <svg class="w-4 h-4 text-slate-400 group-hover:text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span class="hidden lg:inline">{{ t('auth.logout') }}</span>
+            </button>
+          </div>
+
+          <!-- Unauthenticated Sign In Button -->
+          <router-link
+            v-else
+            to="/login"
+            class="h-10 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-1.5 shadow-2xs active:scale-[0.98] transition-all"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            <span>{{ t('auth.login_btn') }}</span>
+          </router-link>
+        </div>
 
         <!-- Mobile Menu Toggle Button (Visible only on mobile/tablet) -->
         <button
@@ -373,6 +431,30 @@ onUnmounted(() => {
           class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
         >
           {{ t('nav.rules') }}
+        </router-link>
+      </div>
+
+      <!-- Mobile User Session -->
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-between px-3">
+        <div v-if="authStore.isAuthenticated" class="flex items-center gap-2">
+          <span class="text-sm">{{ authStore.isAdmin ? '👑' : '👤' }}</span>
+          <span class="font-bold text-xs text-slate-800">{{ authStore.user?.full_name_km || authStore.user?.username }}</span>
+        </div>
+        <button
+          v-if="authStore.isAuthenticated"
+          type="button"
+          @click="handleLogout"
+          class="text-xs font-semibold text-rose-600 hover:text-rose-700"
+        >
+          {{ t('auth.logout') }}
+        </button>
+        <router-link
+          v-else
+          to="/login"
+          @click="closeMenus"
+          class="w-full text-center py-2.5 rounded-xl bg-slate-900 text-white text-xs font-medium"
+        >
+          {{ t('auth.login_btn') }}
         </router-link>
       </div>
     </div>
